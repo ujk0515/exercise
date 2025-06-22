@@ -216,6 +216,33 @@
                     <h2 class="section-title">📥 데이터 불러오기</h2>
                     
                     <div class="data-loader-container">
+                        <!-- 월간 요약 섹션 (데이터 불러온 후 표시) -->
+                        <div id="monthlySummary" class="monthly-summary hidden">
+                            <div class="monthly-summary-header">
+                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
+                            </div>
+                            
+                            <div class="monthly-stats-grid">
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="totalWorkoutDays">0</div>
+                                    <div class="stat-label">총 운동일수</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgBurnCalories">0</div>
+                                    <div class="stat-label">평균 소모칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgFoodCalories">0</div>
+                                    <div class="stat-label">평균 섭취칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgCalorieBalance">0</div>
+                                    <div class="stat-label">평균 칼로리수지</div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- 월별 데이터 불러오기 버튼 -->
                         <div id="loadMonthBtn" class="load-month-btn">
                             📥 현재 월 데이터 불러오기
@@ -228,7 +255,11 @@
 
                         <!-- 캘린더 -->
                         <div class="calendar-container">
-                            <div class="calendar-header" id="calendarHeader">📅 운동 기록 캘린더</div>
+                            <div class="calendar-header">
+                                <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
+                                <div id="calendarHeader">📅 운동 기록 캘린더</div>
+                                <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
+                            </div>
                             <div class="calendar-grid" id="calendarGrid">
                                 <!-- 캘린더는 JavaScript로 동적 생성 -->
                             </div>
