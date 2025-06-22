@@ -253,8 +253,41 @@ class DataLoaderManager {
                 });
             });
             
-            // 4. 저녁 식사 데이터 적용
             const dayMeals = AppState.monthlyData.meals.filter(m => m.meal_date === AppState.selectedDateForLoad);
+
+            // 4-1. 아침 식사 데이터 적용
+            const breakfastData = dayMeals.find(m => m.meal_type === 'breakfast');
+            if (breakfastData && breakfastData.is_custom) {
+                DOM.get('useDefaultBreakfast').checked = false;
+                MealManager.toggleBreakfastMenu();
+                AppState.customBreakfastItems = [{
+                    id: Date.now(),
+                    name: breakfastData.menu_items || '불러온 아침',
+                    calories: breakfastData.total_calories || 0
+                }];
+                MealManager.renderCustomBreakfast();
+            } else if (breakfastData) {
+                DOM.get('useDefaultBreakfast').checked = true;
+                MealManager.toggleBreakfastMenu();
+            }
+
+            // 4-2. 점심 식사 데이터 적용
+            const lunchData = dayMeals.find(m => m.meal_type === 'lunch');
+            if (lunchData && lunchData.is_custom) {
+                DOM.get('useDefaultLunch').checked = false;
+                MealManager.toggleLunchMenu();
+                AppState.customLunchItems = [{
+                    id: Date.now(),
+                    name: lunchData.menu_items || '불러온 점심',
+                    calories: lunchData.total_calories || 0
+                }];
+                MealManager.renderCustomLunch();
+            } else if (lunchData) {
+                DOM.get('useDefaultLunch').checked = true;
+                MealManager.toggleLunchMenu();
+            }
+
+            // 4. 저녁 식사 데이터 적용
             const dinnerData = dayMeals.find(m => m.meal_type === 'dinner');
             
             if (dinnerData) {
