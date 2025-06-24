@@ -19,7 +19,11 @@ class WorkoutManager {
         const totalWeight = parseFloat(DOM.get('totalWeight').textContent);
         const btn = DOM.get('addWorkout');
         
-        btn.disabled = !exerciseSelected || totalWeight === 0;
+        // 맨몸 운동인지 확인
+        const exercise = EXERCISE_DATABASE[AppState.selectedCategory]?.exercises[exerciseSelected];
+        const isBodyweight = exercise?.bodyweight || false;
+
+        btn.disabled = !exerciseSelected || (!isBodyweight && totalWeight === 0);
     }
 
     // 웨이트 운동 추가

@@ -88,6 +88,10 @@
                             <div class="category-icon">🤷‍♂️</div>
                             <div>어깨</div>
                         </div>
+                        <div class="category-btn" data-category="legs">
+                            <div class="category-icon">🦵</div>
+                            <div>하체</div>
+                        </div>
                     </div>
 
                     <!-- 운동 선택 -->
@@ -458,7 +462,20 @@
                     'cable_face_pull': { name: '케이블 페이스 풀', met: 5.8 },
                     'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 5.5 }
                 }
+            },
+            legs: {
+                name: '하체',
+                exercises: {
+                    'leg_press': { name: '레그프레스', met: 7.0 },
+                    'seated_leg_press': { name: '시티드 레그프레스', met: 6.8 },
+                    'hip_adduction': { name: '힙 어덕션(안쪽)', met: 5.5 },
+                    'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 5.5 },
+                    'leg_extension': { name: '레그 익스텐션', met: 6.0 },
+                    'leg_curl': { name: '레그 컬', met: 6.0 },
+                    'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 4.5, bodyweight: true }
+                }
             }
+
         };
 
         // 무게 강도별 MET 보정값 (체중 대비)

@@ -95,12 +95,18 @@ const CalorieCalculator = {
         if (totalWeight === 0) return 0;
 
         // 무게 강도 계산 (체중 대비)
-        const weightRatio = totalWeight / AppState.userWeight;
+        // 맨몸 운동인지 확인
+        const isBodyweight = exercise.bodyweight || false;
+
+        // 무게 강도 계산 (체중 대비) - 맨몸 운동은 보정 없음
         let intensityBonus = 0;
-        if (weightRatio > 0.7) intensityBonus = WEIGHT_INTENSITY_BONUS.veryHeavy;
-        else if (weightRatio > 0.5) intensityBonus = WEIGHT_INTENSITY_BONUS.heavy;
-        else if (weightRatio > 0.3) intensityBonus = WEIGHT_INTENSITY_BONUS.moderate;
-        else intensityBonus = WEIGHT_INTENSITY_BONUS.light;
+        if (!isBodyweight && totalWeight > 0) {
+            const weightRatio = totalWeight / AppState.userWeight;
+            if (weightRatio > 0.7) intensityBonus = WEIGHT_INTENSITY_BONUS.veryHeavy;
+            else if (weightRatio > 0.5) intensityBonus = WEIGHT_INTENSITY_BONUS.heavy;
+            else if (weightRatio > 0.3) intensityBonus = WEIGHT_INTENSITY_BONUS.moderate;
+            else intensityBonus = WEIGHT_INTENSITY_BONUS.light;
+        }
 
         // 최종 MET 값
         const finalMET = exercise.met + intensityBonus;
