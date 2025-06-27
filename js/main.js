@@ -16,6 +16,9 @@ class FitnessApp {
         
         // 초기 캘린더 생성
         DataLoaderManager.generateCalendar();
+
+        // 초기 운동 총합 업데이트
+        WorkoutSummaryManager.updateWorkoutSummary();
         
         console.log('피트니스 트래커 애플리케이션이 초기화되었습니다.');
     }
