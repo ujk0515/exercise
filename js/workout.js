@@ -81,6 +81,9 @@ class WorkoutManager {
             `;
             container.appendChild(div);
         });
+        
+        // 운동 총합 업데이트
+        WorkoutSummaryManager.updateWorkoutSummary();
     }
 
     // 웨이트 운동 삭제
@@ -88,7 +91,9 @@ class WorkoutManager {
         AppState.workouts = ArrayUtils.removeById(AppState.workouts, id);
         WorkoutManager.renderWorkouts();
         SummaryManager.updateSummary();
+        WorkoutSummaryManager.updateWorkoutSummary();
     }
+}
 
     // 카테고리 변경 처리
     static changeCategory(category) {
@@ -165,6 +170,7 @@ class CardioManager {
         AppState.cardioWorkouts = ArrayUtils.removeById(AppState.cardioWorkouts, id);
         CardioManager.renderCardio();
         SummaryManager.updateSummary();
+        WorkoutSummaryManager.updateWorkoutSummary();
     }
 }
 
@@ -205,5 +211,34 @@ class SummaryManager {
         // 칼로리 수지 색상 변경
         const balanceElement = DOM.get('calorieBalance');
         balanceElement.style.color = balance > 0 ? '#fca5a5' : '#86efac';
+    }
+}
+
+// 운동 총합 관리 클래스
+class WorkoutSummaryManager {
+    // 운동 총합 업데이트
+    static updateWorkoutSummary() {
+        // 웨이트 운동 총 세트 계산
+        let totalSets = 0;
+        AppState.workouts.forEach(workout => {
+            totalSets += workout.sets;
+        });
+        
+        // 총 칼로리 계산 (웨이트 + 유산소)
+        let totalCalories = 0;
+        
+        // 웨이트 운동 칼로리
+        AppState.workouts.forEach(workout => {
+            totalCalories += workout.calories;
+        });
+        
+        // 유산소 운동 칼로리
+        AppState.cardioWorkouts.forEach(cardio => {
+            totalCalories += cardio.calories;
+        });
+        
+        // UI 업데이트
+        DOM.setText('totalWorkoutSets', totalSets);
+        DOM.setText('totalWorkoutCalories', Math.round(totalCalories));
     }
 }
