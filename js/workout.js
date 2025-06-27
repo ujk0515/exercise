@@ -86,14 +86,13 @@ class WorkoutManager {
         WorkoutSummaryManager.updateWorkoutSummary();
     }
 
-    // 웨이트 운동 삭제
+// 웨이트 운동 삭제
     static removeWorkout(id) {
         AppState.workouts = ArrayUtils.removeById(AppState.workouts, id);
         WorkoutManager.renderWorkouts();
         SummaryManager.updateSummary();
         WorkoutSummaryManager.updateWorkoutSummary();
     }
-}
 
     // 카테고리 변경 처리
     static changeCategory(category) {
