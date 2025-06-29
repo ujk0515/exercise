@@ -193,8 +193,21 @@
                 <div class="card-content">
                     <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
                     
+                    <!-- 운동 종류 선택 탭 추가 -->
+                    <div class="grid grid-2 form-group">
+                        <div class="category-btn active" data-cardio-type="treadmill">
+                            <div class="category-icon">🏃‍♂️</div>
+                            <div>런닝머신</div>
+                        </div>
+                        <div class="category-btn" data-cardio-type="cycle">
+                            <div class="category-icon">🚴‍♂️</div>
+                            <div>사이클</div>
+                        </div>
+                    </div>
+
+                    <!-- 런닝머신 폼 (기존) -->
+                    <div id="treadmillForm">
                     <h3 style="margin-bottom: 12px;">런닝머신</h3>
-                    
                     <div class="grid grid-3 form-group">
                         <div>
                             <label class="form-label">각도 (도)</label>
@@ -218,6 +231,33 @@
                         <div>
                             <label class="form-label">시간 (분)</label>
                             <input type="number" id="duration" class="form-input" min="1" max="120" value="30">
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- 사이클 폼 (새로 추가) -->
+                    <div id="cycleForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">사이클</h3>
+                        <div class="grid grid-2 form-group">
+                            <div>
+                                <label class="form-label">강도 (1-10)</label>
+                                <select id="cycleIntensity" class="form-select">
+                                    <option value="1">1단계</option>
+                                    <option value="2">2단계</option>
+                                    <option value="3">3단계</option>
+                                    <option value="4">4단계</option>
+                                    <option value="5" selected>5단계</option>
+                                    <option value="6">6단계</option>
+                                    <option value="7">7단계</option>
+                                    <option value="8">8단계</option>
+                                    <option value="9">9단계</option>
+                                    <option value="10">10단계</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">시간 (분)</label>
+                                <input type="number" id="cycleDuration" class="form-input" min="1" max="120" value="30">
+                            </div>
                         </div>
                     </div>
 
@@ -439,68 +479,69 @@
             USER_ID: '550e8400-e29b-41d4-a716-446655440000'
         };
 
-        // 운동 데이터베이스 (MET 기반)
+        // 운동 데이터베이스 (MET 기반) - 현실적으로 조정됨
         const EXERCISE_DATABASE = {
             back: {
                 name: '등',
                 exercises: {
-                    'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 6.5 },
-                    'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 6.0 },
-                    'high_row_cable': { name: '하이로우 (케이블)', met: 6.8 },
-                    'high_row_machine': { name: '하이로우 (머신)', met: 6.5 },
-                    'seated_row': { name: '시티드 로우', met: 6.5 },
-                    'one_arm_seated_row': { name: '원암 시티드 로우', met: 7.0 },
-                    'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 5.5 },
-                    'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 6.2 },
-                    'tbar_row': { name: 'T바 로우', met: 7.2 }
+                    'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 4.8 },
+                    'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 4.5 },
+                    'high_row_cable': { name: '하이로우 (케이블)', met: 5.0 },
+                    'high_row_machine': { name: '하이로우 (머신)', met: 4.8 },
+                    'seated_row': { name: '시티드 로우', met: 4.8 },
+                    'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2 },
+                    'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0 },
+                    'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5 },
+                    'tbar_row': { name: 'T바 로우', met: 5.5 }
                 }
             },
             chest: {
                 name: '가슴',
                 exercises: {
-                    'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 8.0 },
-                    'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 7.5 },
-                    'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 7.0 },
-                    'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 7.8 },
-                    'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 7.5 },
-                    'cable_chest_press': { name: '케이블 체스트 프레스', met: 6.5 },
-                    'seated_chest_press': { name: '시티드 체스트 프레스', met: 6.0 },
-                    'pec_deck_fly': { name: '펙덱 플라이', met: 5.8 }
+                    'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 6.0 },
+                    'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 5.8 },
+                    'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 5.5 },
+                    'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 6.2 },
+                    'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 6.0 },
+                    'cable_chest_press': { name: '케이블 체스트 프레스', met: 4.8 },
+                    'seated_chest_press': { name: '시티드 체스트 프레스', met: 4.5 },
+                    'pec_deck_fly': { name: '펙덱 플라이', met: 4.2 }
                 }
             },
             shoulder: {
                 name: '어깨',
                 exercises: {
-                    'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 6.8 },
-                    'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 7.2 },
-                    'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 5.5 },
-                    'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 6.5 },
-                    'cable_face_pull': { name: '케이블 페이스 풀', met: 5.8 },
-                    'machine_shoulder_press': { name: '머신 숄더 프레스', met: 6.0 },
-                    'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 5.5 }
+                    'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0 },
+                    'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5 },
+                    'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0 },
+                    'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8 },
+                    'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2 },
+                    'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5 },
+                    'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 4.0 }
                 }
             },
             legs: {
                 name: '하체',
                 exercises: {
-                    'leg_press': { name: '레그프레스', met: 7.0 },
-                    'seated_leg_press': { name: '시티드 레그프레스', met: 6.8 },
-                    'hip_adduction': { name: '힙 어덕션(안쪽)', met: 5.5 },
-                    'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 5.5 },
-                    'leg_extension': { name: '레그 익스텐션', met: 6.0 },
-                    'leg_curl': { name: '레그 컬', met: 6.0 },
-                    'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 4.5, bodyweight: true }
+                    'leg_press': { name: '레그프레스', met: 5.5 },
+                    'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0 },
+                    'seated_leg_press': { name: '시티드 레그프레스', met: 5.2 },
+                    'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8 },
+                    'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0 },
+                    'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0 },
+                    'leg_extension': { name: '레그 익스텐션', met: 4.5 },
+                    'leg_curl': { name: '레그 컬', met: 4.5 },
+                    'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 3.5, bodyweight: true }
                 }
             }
-
         };
 
-        // 무게 강도별 MET 보정값 (체중 대비)
+        // 무게 강도별 MET 보정값 (체중 대비) - 현실적으로 조정됨
         const WEIGHT_INTENSITY_BONUS = {
-            light: 0,      // 체중의 0-30%
-            moderate: 0.5, // 체중의 31-50%  
-            heavy: 1.0,    // 체중의 51-70%
-            veryHeavy: 1.5 // 체중의 71%+
+            light: 0,        // 체중의 0-30%
+            moderate: 0.2,   // 체중의 31-50% (기존 0.5에서 감소)
+            heavy: 0.4,      // 체중의 51-70% (기존 1.0에서 감소)
+            veryHeavy: 0.6   // 체중의 71%+ (기존 1.5에서 감소)
         };
 
         // 런닝머신 MET 값 (속도별)

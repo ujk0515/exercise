@@ -35,7 +35,8 @@ class FitnessApp {
     // 웨이트 운동 관련 이벤트 리스너
     static setupWorkoutEventListeners() {
         // 카테고리 선택
-        DOM.getAll('.category-btn').forEach(btn => {
+        // 카테고리 선택 (웨이트 운동만)
+        DOM.getAll('[data-category]').forEach(btn => {
             btn.addEventListener('click', function() {
                 const category = this.dataset.category;
                 WorkoutManager.changeCategory(category);
@@ -55,13 +56,20 @@ class FitnessApp {
 
         // 체중 변경 이벤트
         DOM.get('userWeight').addEventListener('input', function() {
-            AppState.userWeight = parseInt(this.value) || 87;  // DEFAULT_VALUES 대신 직접 값
+            AppState.userWeight = parseInt(this.value) || 87;
             SummaryManager.updateSummary();
         });
     }
 
     // 유산소 운동 관련 이벤트 리스너
     static setupCardioEventListeners() {
+        // 유산소 종류 선택
+        DOM.getAll('[data-cardio-type]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                CardioManager.changeCardioType(this.dataset.cardioType);
+            });
+        });
+        
         // 유산소 추가
         DOM.get('addCardio').addEventListener('click', CardioManager.addCardio);
     }

@@ -62,8 +62,9 @@ class SupabaseManager {
                 user_id: SUPABASE_CONFIG.USER_ID,
                 workout_date: selectedDate,
                 exercise_type: cardio.type,
-                incline: parseInt(cardio.incline),
-                speed: parseFloat(cardio.speed),
+                incline: cardio.incline || null,
+                speed: cardio.speed || null,
+                intensity: cardio.intensity || null,
                 duration: parseInt(cardio.duration),
                 calories: parseInt(cardio.calories)
             }));

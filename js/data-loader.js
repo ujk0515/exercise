@@ -218,7 +218,11 @@ static async loadMonthlyDataFromSupabase() {
                 <div class="preview-section">
                     <div class="preview-title">🏃‍♂️ 유산소 운동 (${dayCardio.length}개)</div>
                     ${dayCardio.map(c => `
-                        <div class="preview-item">• ${c.exercise_type} - ${c.incline}도, ${c.speed}km/h, ${c.duration}분 (${c.calories}kcal)</div>
+                        <div class="preview-item">• ${c.exercise_type} - ${
+                            c.exercise_type === '런닝머신' 
+                                ? `${c.incline}도, ${c.speed}km/h, ${c.duration}분`
+                                : `강도 ${c.intensity}단계, ${c.duration}분`
+                        } (${c.calories}kcal)</div>
                     `).join('')}
                 </div>
             `;
@@ -293,14 +297,21 @@ static async loadMonthlyDataFromSupabase() {
             // 3. 유산소 운동 데이터 적용
             const dayCardio = AppState.monthlyData.cardio.filter(c => c.workout_date === AppState.selectedDateForLoad);
             dayCardio.forEach(c => {
-                AppState.cardioWorkouts.push({
+                const cardioItem = {
                     id: Date.now() + Math.random(),
                     type: c.exercise_type,
-                    incline: c.incline,
-                    speed: c.speed,
                     duration: c.duration,
                     calories: c.calories
-                });
+                };
+
+                if (c.exercise_type === '런닝머신') {
+                    cardioItem.incline = c.incline;
+                    cardioItem.speed = c.speed;
+                } else {
+                    cardioItem.intensity = c.intensity;
+                }
+
+                AppState.cardioWorkouts.push(cardioItem);
             });
             
             const dayMeals = AppState.monthlyData.meals.filter(m => m.meal_date === AppState.selectedDateForLoad);

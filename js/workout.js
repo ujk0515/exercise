@@ -86,7 +86,7 @@ class WorkoutManager {
         WorkoutSummaryManager.updateWorkoutSummary();
     }
 
-// 웨이트 운동 삭제
+    // 웨이트 운동 삭제
     static removeWorkout(id) {
         AppState.workouts = ArrayUtils.removeById(AppState.workouts, id);
         WorkoutManager.renderWorkouts();
@@ -114,26 +114,53 @@ class WorkoutManager {
 class CardioManager {
     // 유산소 운동 추가
     static addCardio() {
-        const incline = parseInt(DOM.getValue('incline'));
-        const speed = parseFloat(DOM.getValue('speed'));
-        const duration = parseInt(DOM.getValue('duration'));
-        const calories = CalorieCalculator.calculateTreadmill(incline, speed, duration);
+        let cardio;
         
-        const cardio = {
-            id: Date.now(),
-            type: '런닝머신',
-            incline,
-            speed,
-            duration,
-            calories
-        };
-        
+        if (AppState.selectedCardioType === 'treadmill') {
+            const incline = parseInt(DOM.getValue('incline'));
+            const speed = parseFloat(DOM.getValue('speed'));
+            const duration = parseInt(DOM.getValue('duration'));
+            const calories = CalorieCalculator.calculateTreadmill(incline, speed, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '런닝머신',
+                incline, speed, duration, calories
+            };
+            DOM.setValue('duration', 30);
+        } else {
+            const intensity = parseInt(DOM.getValue('cycleIntensity'));
+            const duration = parseInt(DOM.getValue('cycleDuration'));
+            const calories = CalorieCalculator.calculateCycle(intensity, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '사이클',
+                intensity, duration, calories
+            };
+            DOM.setValue('cycleDuration', 30);
+        }
+
         AppState.cardioWorkouts.push(cardio);
         CardioManager.renderCardio();
-        
-        // 시간만 리셋
-        DOM.setValue('duration', 30);  // DEFAULT_VALUES 대신 직접 값
         SummaryManager.updateSummary();
+        WorkoutSummaryManager.updateWorkoutSummary();
+    }
+
+    // 유산소 운동 종류 변경
+    static changeCardioType(type) {
+        DOM.getAll('[data-cardio-type]').forEach(btn => DOM.removeClass(btn, 'active'));
+        document.querySelector(`[data-cardio-type="${type}"]`).classList.add('active');
+        
+        AppState.selectedCardioType = type;
+        
+        if (type === 'treadmill') {
+            DOM.show(DOM.get('treadmillForm'));
+            DOM.hide(DOM.get('cycleForm'));
+        } else {
+            DOM.hide(DOM.get('treadmillForm'));
+            DOM.show(DOM.get('cycleForm'));
+        }
     }
 
     // 유산소 운동 기록 렌더링
@@ -153,7 +180,11 @@ class CardioManager {
             div.innerHTML = `
                 <div>
                     <div style="font-weight: 600;">${cardio.type}</div>
-                    <div class="workout-details">각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분</div>
+                    <div class="workout-details">${
+                        cardio.type === '런닝머신' 
+                            ? `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`
+                            : `강도 ${cardio.intensity}단계, ${cardio.duration}분`
+                    }</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="calories">${cardio.calories}kcal</span>

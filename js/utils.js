@@ -12,7 +12,8 @@ const AppState = {
     },
     selectedDateForLoad: null,
     selectedCategory: 'back',
-    userWeight: 87  // DEFAULT_VALUES 대신 직접 값 설정
+    userWeight: 87,
+    selectedCardioType: 'treadmill',
 };
 
 // DOM 유틸리티 함수들
@@ -79,9 +80,15 @@ const DateUtils = {
     monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 };
 
+// 사이클 MET 값 (강도별)
+const CYCLE_MET = {
+    1: 3.5, 2: 4.0, 3: 4.5, 4: 5.0, 5: 5.5,
+    6: 6.0, 7: 7.0, 8: 8.0, 9: 9.0, 10: 10.0
+};
+
 // 칼로리 계산 유틸리티
 const CalorieCalculator = {
-    // 운동 칼로리 계산
+    // 운동 칼로리 계산 - 현실적으로 수정됨
     calculateExercise: (exerciseKey, weightCombination, reps, sets, category = AppState.selectedCategory) => {
         const exercise = EXERCISE_DATABASE[category].exercises[exerciseKey];
         if (!exercise) return 0;
@@ -92,29 +99,31 @@ const CalorieCalculator = {
             totalWeight += parseFloat(weight) * count;
         });
         
+        // 맨몸 운동 처리
+        const isBodyweight = exercise.bodyweight || false;
+        if (isBodyweight) {
+            // 맨몸 운동은 단순 계산
+            const totalMinutes = (reps * sets * 2) / 60; // 1회당 2초로 계산
+            const hours = totalMinutes / 60;
+            return Math.round(exercise.met * AppState.userWeight * hours);
+        }
+
         if (totalWeight === 0) return 0;
 
-        // 무게 강도 계산 (체중 대비)
-        // 맨몸 운동인지 확인
-        const isBodyweight = exercise.bodyweight || false;
-
-        // 무게 강도 계산 (체중 대비) - 맨몸 운동은 보정 없음
+        // 무게 강도 계산 (체중 대비) - 더 현실적으로 조정
         let intensityBonus = 0;
-        if (!isBodyweight && totalWeight > 0) {
-            const weightRatio = totalWeight / AppState.userWeight;
-            if (weightRatio > 0.7) intensityBonus = WEIGHT_INTENSITY_BONUS.veryHeavy;
-            else if (weightRatio > 0.5) intensityBonus = WEIGHT_INTENSITY_BONUS.heavy;
-            else if (weightRatio > 0.3) intensityBonus = WEIGHT_INTENSITY_BONUS.moderate;
-            else intensityBonus = WEIGHT_INTENSITY_BONUS.light;
-        }
+        const weightRatio = totalWeight / AppState.userWeight;
+        if (weightRatio > 0.7) intensityBonus = WEIGHT_INTENSITY_BONUS.veryHeavy;
+        else if (weightRatio > 0.5) intensityBonus = WEIGHT_INTENSITY_BONUS.heavy;
+        else if (weightRatio > 0.3) intensityBonus = WEIGHT_INTENSITY_BONUS.moderate;
+        else intensityBonus = WEIGHT_INTENSITY_BONUS.light;
 
         // 최종 MET 값
         const finalMET = exercise.met + intensityBonus;
 
-        // 운동 시간 계산 (초 단위)
-        const repTime = 3; // 1회당 3초
-        const restTime = 90; // 세트간 휴식 90초
-        const totalSeconds = (reps * sets * repTime) + ((sets - 1) * restTime);
+        // 운동 시간 계산 - 현실적으로 수정 (휴식 시간 제외)
+        const repTime = 2; // 1회당 2초로 감소 (기존 3초)
+        const totalSeconds = reps * sets * repTime; // 휴식 시간 제외
         const hours = totalSeconds / 3600;
 
         // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
@@ -143,16 +152,23 @@ const CalorieCalculator = {
     },
 
     // 기초대사량 계산
-    calculateBMR: () => Math.round(AppState.userWeight * 24)
+    calculateBMR: () => Math.round(AppState.userWeight * 24),
+
+    // 사이클 칼로리 계산
+    calculateCycle: (intensity, duration) => {
+        const baseMET = CYCLE_MET[intensity] || 5.5;
+        const hours = duration / 60;
+        return Math.round(baseMET * AppState.userWeight * hours);
+    }
 };
 
 // 폼 유틸리티
 const FormUtils = {
-    // 웨이트 폼 초기화
+    // 웨이트 폼 초기화 (운동 선택은 유지)
     resetWorkoutForm: () => {
-        DOM.setValue('exerciseSelect', '');
-        DOM.setValue('reps', 10);  // DEFAULT_VALUES 대신 직접 값
-        DOM.setValue('sets', 3);   // DEFAULT_VALUES 대신 직접 값
+        // DOM.setValue('exerciseSelect', '');  // 이 줄을 주석처리하여 운동 선택 유지
+        DOM.setValue('reps', 10);
+        DOM.setValue('sets', 3);
         DOM.getAll('.weight-input').forEach(input => input.value = 0);
         WeightUtils.updateTotalWeight();
         if (window.WorkoutManager) {
@@ -162,9 +178,11 @@ const FormUtils = {
 
     // 유산소 폼 초기화
     resetCardioForm: () => {
-        DOM.setValue('incline', 1);   // DEFAULT_VALUES 대신 직접 값
-        DOM.setValue('speed', 6.0);   // DEFAULT_VALUES 대신 직접 값
-        DOM.setValue('duration', 30); // DEFAULT_VALUES 대신 직접 값
+        DOM.setValue('incline', 1);
+        DOM.setValue('speed', 6.0);
+        DOM.setValue('duration', 30);
+        DOM.setValue('cycleIntensity', 5);
+        DOM.setValue('cycleDuration', 30);
     },
 
     // 커스텀 음식 폼 초기화
