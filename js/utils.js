@@ -14,6 +14,8 @@ const AppState = {
     selectedCategory: 'back',
     userWeight: 87,
     selectedCardioType: 'treadmill',
+    currentCalendarYear: new Date().getFullYear(),
+    currentCalendarMonth: new Date().getMonth(),
 };
 
 // DOM 유틸리티 함수들
