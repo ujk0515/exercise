@@ -116,6 +116,10 @@ class FitnessApp {
         
         // 데이터 적용 버튼
         DOM.get('applyDataBtn').addEventListener('click', DataLoaderManager.applySelectedDateData);
+
+        // 캘린더 이동 버튼들
+        DOM.get('prevMonthBtn').addEventListener('click', DataLoaderManager.moveToPreviousMonth);
+        DOM.get('nextMonthBtn').addEventListener('click', DataLoaderManager.moveToNextMonth);
     }
 
     // 유틸리티 관련 이벤트 리스너
