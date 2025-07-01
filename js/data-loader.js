@@ -63,9 +63,8 @@ static async loadMonthlyDataFromSupabase() {
         loadBtn.textContent = '📥 데이터 불러오는 중...';
         loadBtn.style.backgroundColor = '#9ca3af';
         
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
+        const year = AppState.currentCalendarYear;
+        const month = AppState.currentCalendarMonth + 1;
         
         const result = await supabaseManager.loadMonthlyData(year, month);
         
