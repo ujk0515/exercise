@@ -2,9 +2,8 @@
 class DataLoaderManager {
     // 캘린더 생성
     static generateCalendar() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth();
+        const year = AppState.currentCalendarYear;
+        const month = AppState.currentCalendarMonth;
         
         // 캘린더 헤더 업데이트
         DOM.setText('calendarHeader', `📅 ${DateUtils.monthNames[month]} 운동 기록 캘린더`);
@@ -403,5 +402,28 @@ static async loadMonthlyDataFromSupabase() {
         DOM.hide(DOM.get('dataPreview'));
         DOM.hide(DOM.get('applyDataBtn'));
         DataLoaderManager.generateCalendar();
+    }
+    // 이전달 이동
+    static moveToPreviousMonth() {
+        if (AppState.currentCalendarMonth === 0) {
+            AppState.currentCalendarYear--;
+            AppState.currentCalendarMonth = 11;
+        } else {
+            AppState.currentCalendarMonth--;
+        }
+        DataLoaderManager.generateCalendar();
+        DataLoaderManager.resetDataLoader();
+    }
+    
+    // 다음달 이동  
+    static moveToNextMonth() {
+        if (AppState.currentCalendarMonth === 11) {
+            AppState.currentCalendarYear++;
+            AppState.currentCalendarMonth = 0;
+        } else {
+            AppState.currentCalendarMonth++;
+        }
+        DataLoaderManager.generateCalendar();
+        DataLoaderManager.resetDataLoader();
     }
 }
