@@ -193,8 +193,8 @@ class FitnessApp {
         setTimeout(() => {
             window.location.reload();
         }, 1000);
-    });
-}
+    }
+    }
 
     // 전체 데이터 초기화
     static resetAllData() {
