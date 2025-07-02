@@ -618,33 +618,60 @@ body {
     cursor: not-allowed;
 }
 
-/* Monthly Summary */
-.monthly-summary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Monthly Summary - 월간/연간 요약 통합 */
+.summary-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.monthly-summary, .yearly-summary {
     color: white;
     padding: 16px;
     border-radius: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 0;
 }
 
-.monthly-summary-header {
-    font-size: 16px;
+.monthly-summary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.yearly-summary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.monthly-summary-header, .yearly-summary-header {
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     text-align: center;
 }
 
-.monthly-stats-grid {
+.monthly-stats-grid, .yearly-stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
 }
 
-.monthly-stat-item {
+.monthly-stat-item, .yearly-stat-item {
     background: rgba(255, 255, 255, 0.2);
-    padding: 12px;
+    padding: 8px;
     border-radius: 6px;
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    .summary-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .monthly-stats-grid, .yearly-stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .stat-value {
