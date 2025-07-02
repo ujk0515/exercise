@@ -1,4 +1,5 @@
 // 메인 애플리케이션 관리 클래스
+// 메인 애플리케이션 관리 클래스
 class FitnessApp {
     // 애플리케이션 초기화
     static init() {
@@ -14,20 +15,24 @@ class FitnessApp {
         // 초기 칼로리 계산
         SummaryManager.updateSummary();
         
-        // 초기 캘린더 생성
-        DataLoaderManager.generateCalendar();
+        // 초기 캘린더 생성 (안전한 호출로 수정)
+        if (typeof DataLoaderManager !== 'undefined') {
+            DataLoaderManager.generateCalendar();
+            
+            // 스마트 자동 데이터 로딩 (페이지 로드 1.5초 후)
+            setTimeout(async () => {
+                try {
+                    await DataLoaderManager.autoLoadCurrentMonthData();
+                } catch (error) {
+                    console.error('자동 데이터 로딩 실패:', error);
+                }
+            }, 1500);
+        } else {
+            console.error('DataLoaderManager를 찾을 수 없습니다. data-loader.js 파일을 확인하세요.');
+        }
 
         // 초기 운동 총합 업데이트
         WorkoutSummaryManager.updateWorkoutSummary();
-        
-        // 스마트 자동 데이터 로딩 (페이지 로드 1.5초 후)
-        setTimeout(async () => {
-            try {
-                await DataLoaderManager.autoLoadCurrentMonthData();
-            } catch (error) {
-                console.error('자동 데이터 로딩 실패:', error);
-            }
-        }, 1500);
         
         console.log('피트니스 트래커 애플리케이션이 초기화되었습니다.');
     }
@@ -120,16 +125,32 @@ class FitnessApp {
 
     // 데이터 불러오기 관련 이벤트 리스너
     static setupDataLoaderEventListeners() {
-        // 월별 데이터 불러오기 버튼
-        DOM.get('loadMonthBtn').addEventListener('click', DataLoaderManager.loadMonthlyDataFromSupabase);
-        
-        // 데이터 적용 버튼
-        DOM.get('applyDataBtn').addEventListener('click', DataLoaderManager.applySelectedDateData);
-
-        // 캘린더 이동 버튼들
-        DOM.get('prevMonthBtn').addEventListener('click', DataLoaderManager.moveToPreviousMonth);
-        DOM.get('nextMonthBtn').addEventListener('click', DataLoaderManager.moveToNextMonth);
+    // DataLoaderManager가 정의되어 있는지 확인
+    if (typeof DataLoaderManager === 'undefined') {
+        console.error('DataLoaderManager가 정의되지 않았습니다. data-loader.js 파일을 확인하세요.');
+        return;
     }
+    
+    // 월별 데이터 불러오기 버튼
+    const loadBtn = DOM.get('loadMonthBtn');
+    if (loadBtn) {
+        loadBtn.addEventListener('click', DataLoaderManager.loadMonthlyDataFromSupabase);
+    }
+    
+    // 데이터 적용 버튼
+    const applyBtn = DOM.get('applyDataBtn');
+    if (applyBtn) {
+        applyBtn.addEventListener('click', DataLoaderManager.applySelectedDateData);
+    }
+
+    // 캘린더 이동 버튼들
+    const prevBtn = DOM.get('prevMonthBtn');
+    const nextBtn = DOM.get('nextMonthBtn');
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', DataLoaderManager.moveToPreviousMonth);
+        nextBtn.addEventListener('click', DataLoaderManager.moveToNextMonth);
+    }
+}
 
     // 유틸리티 관련 이벤트 리스너
     static setupUtilityEventListeners() {
