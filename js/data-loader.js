@@ -36,10 +36,11 @@ class DataLoaderManager {
             if (currentDate.getMonth() !== month) {
                 dayElement.className += ' disabled';
             } else {
-                // 현재 월의 날짜는 활성화하되, 데이터가 없으면 나중에 비활성화
+                // 현재 월의 날짜는 일단 모두 disabled로 시작 (데이터 로드 후 has-data 클래스로 활성화)
+                dayElement.className += ' disabled';
                 dayElement.dataset.date = DateUtils.formatDate(currentDate);
                 dayElement.addEventListener('click', function() {
-                    if (!this.classList.contains('disabled')) {
+                    if (this.classList.contains('has-data')) {
                         DataLoaderManager.selectCalendarDate(this.dataset.date);
                     }
                 });
