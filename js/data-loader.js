@@ -500,3 +500,58 @@ class DataLoaderManager {
         DataLoaderManager.resetDataLoader();
     }
 }
+
+// 스마트 자동 데이터 로딩 (새로 추가)
+    static async autoLoadCurrentMonthData() {
+        try {
+            const year = AppState.currentCalendarYear;
+            const month = AppState.currentCalendarMonth + 1;
+            
+            // 이미 해당 월 데이터가 있는지 확인
+            const hasExistingData = AppState.monthlyData.workouts.length > 0 || 
+                                  AppState.monthlyData.cardio.length > 0 || 
+                                  AppState.monthlyData.meals.length > 0;
+            
+            if (hasExistingData) {
+                console.log('이미 데이터가 로드되어 있습니다.');
+                return;
+            }
+            
+            // 조용히 데이터 불러오기 (로딩 메시지 없이)
+            console.log(`${year}년 ${month}월 데이터를 자동으로 불러옵니다...`);
+            
+            const result = await supabaseManager.loadMonthlyData(year, month);
+            
+            if (result.success && (result.data.workouts.length > 0 || 
+                                 result.data.cardio.length > 0 || 
+                                 result.data.meals.length > 0)) {
+                
+                // 데이터 저장
+                AppState.monthlyData = result.data;
+                
+                // 월간 통계 계산 및 표시
+                DataLoaderManager.calculateAndShowMonthlySummary(result.data, year, month);
+                
+                // 캘린더 업데이트
+                DataLoaderManager.updateCalendarWithData();
+                
+                // 조용한 성공 메시지
+                console.log(`✅ ${year}년 ${month}월 데이터 자동 로딩 완료`);
+                
+                // 선택적: 작은 알림 (3초 후 자동 사라짐)
+                setTimeout(() => {
+                    NotificationUtils.showSuccessPopup(
+                        `📊 ${year}년 ${DateUtils.monthNames[month-1]} 데이터가 자동으로 로드되었습니다`,
+                        2000
+                    );
+                }, 500);
+                
+            } else {
+                console.log('불러올 데이터가 없습니다.');
+            }
+            
+        } catch (error) {
+            console.log('자동 데이터 로딩 실패:', error.message);
+            // 실패해도 앱은 정상 동작하도록 에러를 조용히 처리
+        }
+    }
