@@ -555,3 +555,4 @@ class DataLoaderManager {
             // 실패해도 앱은 정상 동작하도록 에러를 조용히 처리
         }
     }
+}
