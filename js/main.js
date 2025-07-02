@@ -182,8 +182,19 @@ class FitnessApp {
             AppState.customLunchItems,
             AppState.customDinnerItems,
             AppState.userWeight
-        );
-    }
+        ).then(() => {
+        // 저장 완료 후 1초 뒤에 새로고침
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }).catch((error) => {
+        console.error('저장 오류:', error);
+        // 에러가 발생해도 새로고침
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    });
+}
 
     // 전체 데이터 초기화
     static resetAllData() {
@@ -222,7 +233,11 @@ class FitnessApp {
         SummaryManager.updateSummary();
         
         NotificationUtils.alert('모든 데이터가 초기화되었습니다.');
-    }
+
+            // 초기화 완료 후 1초 뒤에 새로고침
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
 }
 
 // DOM이 로드되면 애플리케이션 초기화
