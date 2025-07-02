@@ -262,6 +262,66 @@ class SupabaseManager {
             return { success: false, error };
         }
     }
+        // 연간 데이터 조회 (새로 추가)
+    async loadYearlyData(year) {
+        try {
+            const startDate = `${year}-01-01`;
+            const endDate = `${year}-12-31`;
+            
+            console.log('연간 조회 기간:', startDate, '~', endDate);
+            
+            // 웨이트 운동 조회
+            const { data: workoutsData, error: workoutsError } = await this.client
+                .from('workouts')
+                .select('*')
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .gte('workout_date', startDate)
+                .lte('workout_date', endDate)
+                .order('workout_date', { ascending: true });
+            
+            if (workoutsError) throw workoutsError;
+            
+            // 유산소 운동 조회
+            const { data: cardioData, error: cardioError } = await this.client
+                .from('cardio_workouts')
+                .select('*')
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .gte('workout_date', startDate)
+                .lte('workout_date', endDate)
+                .order('workout_date', { ascending: true });
+            
+            if (cardioError) throw cardioError;
+            
+            // 식사 데이터 조회
+            const { data: mealsData, error: mealsError } = await this.client
+                .from('meals')
+                .select('*')
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .gte('meal_date', startDate)
+                .lte('meal_date', endDate)
+                .order('meal_date', { ascending: true });
+            
+            if (mealsError) throw mealsError;
+            
+            console.log('연간 조회 결과:', {
+                workouts: workoutsData?.length || 0,
+                cardio: cardioData?.length || 0,
+                meals: mealsData?.length || 0
+            });
+            
+            return {
+                success: true,
+                data: {
+                    workouts: workoutsData || [],
+                    cardio: cardioData || [],
+                    meals: mealsData || []
+                }
+            };
+        } catch (error) {
+            console.error('연간 데이터 조회 오류:', error);
+            return { success: false, error };
+        }
+    }    
 }
 
 // 전역 Supabase 매니저 인스턴스
