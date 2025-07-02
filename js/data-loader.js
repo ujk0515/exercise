@@ -494,19 +494,29 @@ class DataLoaderManager {
         }
         DataLoaderManager.generateCalendar();
         DataLoaderManager.resetDataLoader();
+        
+        // 이동한 달의 데이터 자동 불러오기
+        setTimeout(() => {
+            DataLoaderManager.autoLoadCurrentMonthData();
+        }, 500);
     }
     
-// 다음달 이동  
-static moveToNextMonth() {
-    if (AppState.currentCalendarMonth === 11) {
-        AppState.currentCalendarYear++;
-        AppState.currentCalendarMonth = 0;
-    } else {
-        AppState.currentCalendarMonth++;
+    // 다음달 이동  
+    static moveToNextMonth() {
+        if (AppState.currentCalendarMonth === 11) {
+            AppState.currentCalendarYear++;
+            AppState.currentCalendarMonth = 0;
+        } else {
+            AppState.currentCalendarMonth++;
+        }
+        DataLoaderManager.generateCalendar();
+        DataLoaderManager.resetDataLoader();
+        
+        // 이동한 달의 데이터 자동 불러오기
+        setTimeout(() => {
+            DataLoaderManager.autoLoadCurrentMonthData();
+        }, 500);
     }
-    DataLoaderManager.generateCalendar();
-    DataLoaderManager.resetDataLoader();
-}
 
 // 스마트 자동 데이터 로딩 (새로 추가)
 static async autoLoadCurrentMonthData() {
