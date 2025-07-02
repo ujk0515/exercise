@@ -275,28 +275,57 @@
                     <h2 class="section-title">📥 데이터 불러오기</h2>
                     
                     <div class="data-loader-container">
-                        <!-- 월간 요약 섹션 (데이터 불러온 후 표시) -->
-                        <div id="monthlySummary" class="monthly-summary hidden">
-                            <div class="monthly-summary-header">
-                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
+                        <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
+                        <div id="summaryContainer" class="summary-container hidden">
+                            <!-- 월간 요약 (왼쪽) -->
+                            <div class="monthly-summary">
+                                <div class="monthly-summary-header">
+                                    📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
+                                </div>
+                                
+                                <div class="monthly-stats-grid">
+                                    <div class="monthly-stat-item">
+                                        <div class="stat-value" id="totalWorkoutDays">0</div>
+                                        <div class="stat-label">총 운동일수</div>
+                                    </div>
+                                    <div class="monthly-stat-item">
+                                        <div class="stat-value" id="avgBurnCalories">0</div>
+                                        <div class="stat-label">평균 소모칼로리</div>
+                                    </div>
+                                    <div class="monthly-stat-item">
+                                        <div class="stat-value" id="avgFoodCalories">0</div>
+                                        <div class="stat-label">평균 섭취칼로리</div>
+                                    </div>
+                                    <div class="monthly-stat-item">
+                                        <div class="stat-value" id="avgCalorieBalance">0</div>
+                                        <div class="stat-label">평균 칼로리수지</div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="monthly-stats-grid">
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="totalWorkoutDays">0</div>
-                                    <div class="stat-label">총 운동일수</div>
+                            <!-- 연간 요약 (우측) -->
+                            <div class="yearly-summary">
+                                <div class="yearly-summary-header">
+                                    📈 <span id="summaryYear">2025년</span> 연간 요약
                                 </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgBurnCalories">0</div>
-                                    <div class="stat-label">평균 소모칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgFoodCalories">0</div>
-                                    <div class="stat-label">평균 섭취칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgCalorieBalance">0</div>
-                                    <div class="stat-label">평균 칼로리수지</div>
+                                
+                                <div class="yearly-stats-grid">
+                                    <div class="yearly-stat-item">
+                                        <div class="stat-value" id="yearlyWorkoutDays">0</div>
+                                        <div class="stat-label">총 운동일수</div>
+                                    </div>
+                                    <div class="yearly-stat-item">
+                                        <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
+                                        <div class="stat-label">평균 소모칼로리</div>
+                                    </div>
+                                    <div class="yearly-stat-item">
+                                        <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
+                                        <div class="stat-label">평균 섭취칼로리</div>
+                                    </div>
+                                    <div class="yearly-stat-item">
+                                        <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
+                                        <div class="stat-label">평균 칼로리수지</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
