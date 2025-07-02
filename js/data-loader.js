@@ -77,7 +77,17 @@ static async loadMonthlyDataFromSupabase() {
         
         // 월간 통계 계산 및 표시
         DataLoaderManager.calculateAndShowMonthlySummary(result.data, year, month);
+
+        // 연간 통계 계산 및 표시 (새로 추가)
+        static async calculateAndShowYearlySummary(year) {
+            // ... (위에서 제공한 전체 함수 코드)
+        }
         
+        // 기본 연간 요약 표시 (새로 추가)
+        static showDefaultYearlySummary(year) {
+            // ... (위에서 제공한 전체 함수 코드)
+        }
+                
         // 성공 팝업 표시
         const totalDays = new Set([
             ...AppState.monthlyData.workouts.map(w => w.workout_date),
@@ -401,6 +411,9 @@ static async loadMonthlyDataFromSupabase() {
         DOM.hide(DOM.get('dataPreview'));
         DOM.hide(DOM.get('applyDataBtn'));
         DataLoaderManager.generateCalendar();
+        DOM.hide(DOM.get('monthlySummary'));
+        DOM.hide(DOM.get('summaryContainer'));
+        
     }
     // 이전달 이동
     static moveToPreviousMonth() {
