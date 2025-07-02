@@ -19,14 +19,17 @@ class FitnessApp {
         if (typeof DataLoaderManager !== 'undefined') {
             DataLoaderManager.generateCalendar();
             
-            // 스마트 자동 데이터 로딩 (페이지 로드 1.5초 후)
-            setTimeout(async () => {
-                try {
-                    await DataLoaderManager.autoLoadCurrentMonthData();
-                } catch (error) {
-                    console.error('자동 데이터 로딩 실패:', error);
-                }
-            }, 1500);
+            // 스마트 자동 데이터 로딩 (페이지 로드 2초 후로 변경)
+            setTimeout(() => {
+                console.log('자동 데이터 로딩 시작...');
+                DataLoaderManager.autoLoadCurrentMonthData()
+                    .then(() => {
+                        console.log('자동 데이터 로딩 완료');
+                    })
+                    .catch((error) => {
+                        console.error('자동 데이터 로딩 실패:', error);
+                    });
+            }, 2000);
         } else {
             console.error('DataLoaderManager를 찾을 수 없습니다. data-loader.js 파일을 확인하세요.');
         }
@@ -238,6 +241,8 @@ class FitnessApp {
     setTimeout(() => {
         window.location.reload();
     }, 1000);
+}
+
 }
 
 // DOM이 로드되면 애플리케이션 초기화
