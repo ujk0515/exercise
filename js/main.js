@@ -21,8 +21,12 @@ class FitnessApp {
         WorkoutSummaryManager.updateWorkoutSummary();
         
         // 스마트 자동 데이터 로딩 (페이지 로드 1.5초 후)
-        setTimeout(() => {
-            DataLoaderManager.autoLoadCurrentMonthData();
+        setTimeout(async () => {
+            try {
+                await DataLoaderManager.autoLoadCurrentMonthData();
+            } catch (error) {
+                console.error('자동 데이터 로딩 실패:', error);
+            }
         }, 1500);
         
         console.log('피트니스 트래커 애플리케이션이 초기화되었습니다.');
