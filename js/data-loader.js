@@ -28,7 +28,7 @@ class DataLoaderManager {
         startDate.setDate(startDate.getDate() - firstDay.getDay());
         
         // 날짜 채우기
-        const currentDate = new Date(startDate);
+       const currentDate = new Date(startDate);
         for (let i = 0; i < 42; i++) { // 6주 = 42일
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
@@ -36,7 +36,7 @@ class DataLoaderManager {
             if (currentDate.getMonth() !== month) {
                 dayElement.className += ' disabled';
             } else {
-                dayElement.className += ' disabled'; // 초기에는 모든 날짜 비활성화
+                // 현재 월의 날짜는 활성화하되, 데이터가 없으면 나중에 비활성화
                 dayElement.dataset.date = DateUtils.formatDate(currentDate);
                 dayElement.addEventListener('click', function() {
                     if (!this.classList.contains('disabled')) {
