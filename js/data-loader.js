@@ -93,10 +93,11 @@ class DataLoaderManager {
             
         } catch (error) {
             console.error('데이터 불러오기 오류:', error);
-            NotificationUtils.alert('데이터 불러오기 실패: ' + (error.message || '알 수 없는 오류'));
+            NotificationUtils.alert('데이터 불러오기 실패: ' + (error?.message || '알 수 없는 오류'));
         } finally {
             loadBtn.textContent = '📥 현재 월 데이터 불러오기';
             loadBtn.style.backgroundColor = '#10b981';
+            loadBtn.disabled = false; // 이 줄을 추가해야 됩니다
         }
     }
 
@@ -228,9 +229,15 @@ class DataLoaderManager {
         ]);
         
         DOM.getAll('.calendar-day').forEach(day => {
-            if (day.dataset.date && dataDateSet.has(day.dataset.date)) {
-                DOM.removeClass(day, 'disabled');
-                DOM.addClass(day, 'has-data');
+            if (day.dataset.date) {
+                if (dataDateSet.has(day.dataset.date)) {
+                    DOM.removeClass(day, 'disabled');
+                    DOM.addClass(day, 'has-data');
+                } else {
+                    // 데이터가 없는 날짜는 비활성화 상태 유지
+                    DOM.addClass(day, 'disabled');
+                    DOM.removeClass(day, 'has-data');
+                }
             }
         });
     }
@@ -539,10 +546,12 @@ static async autoLoadCurrentMonthData() {
             
             // 선택적: 작은 알림 (2초 후 자동 사라짐)
             setTimeout(() => {
-                NotificationUtils.showSuccessPopup(
-                    `📊 ${year}년 ${DateUtils.monthNames[month-1]} 데이터가 자동으로 로드되었습니다`,
-                    2000
-                );
+                if (typeof NotificationUtils !== 'undefined' && NotificationUtils.showSuccessPopup) {
+                    NotificationUtils.showSuccessPopup(
+                        `📊 ${year}년 ${DateUtils.monthNames[month-1]} 데이터가 자동으로 로드되었습니다`,
+                        2000
+                    );
+                }
             }, 500);
             
         } else {
