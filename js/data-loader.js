@@ -55,60 +55,50 @@ class DataLoaderManager {
     }
 
     // 월별 데이터 불러오기
-static async loadMonthlyDataFromSupabase() {
-    const loadBtn = DOM.get('loadMonthBtn');
-    const successPopup = DOM.get('successPopup');
-    
-    try {
-        loadBtn.textContent = '📥 데이터 불러오는 중...';
-        loadBtn.style.backgroundColor = '#9ca3af';
+    static async loadMonthlyDataFromSupabase() {
+        const loadBtn = DOM.get('loadMonthBtn');
+        const successPopup = DOM.get('successPopup');
         
-        const year = AppState.currentCalendarYear;
-        const month = AppState.currentCalendarMonth + 1;
-        
-        const result = await supabaseManager.loadMonthlyData(year, month);
-        
-        if (!result.success) {
-            throw result.error;
+        try {
+            loadBtn.textContent = '📥 데이터 불러오는 중...';
+            loadBtn.style.backgroundColor = '#9ca3af';
+            
+            const year = AppState.currentCalendarYear;
+            const month = AppState.currentCalendarMonth + 1;
+            
+            const result = await supabaseManager.loadMonthlyData(year, month);
+            
+            if (!result.success) {
+                throw result.error;
+            }
+            
+            // 데이터 저장
+            AppState.monthlyData = result.data;
+            
+            // 월간 통계 계산 및 표시
+            DataLoaderManager.calculateAndShowMonthlySummary(result.data, year, month);
+            
+            // 성공 팝업 표시
+            const totalDays = new Set([
+                ...AppState.monthlyData.workouts.map(w => w.workout_date),
+                ...AppState.monthlyData.cardio.map(c => c.workout_date),
+                ...AppState.monthlyData.meals.map(m => m.meal_date)
+            ]).size;
+            
+            const message = `✅ ${year}년 ${DateUtils.monthNames[month-1]} 데이터를 모두 불러왔습니다! (총 ${totalDays}일의 기록)`;
+            NotificationUtils.showSuccessPopup(message);
+            
+            // 캘린더 업데이트
+            DataLoaderManager.updateCalendarWithData();
+            
+        } catch (error) {
+            console.error('데이터 불러오기 오류:', error);
+            NotificationUtils.alert('데이터 불러오기 실패: ' + (error.message || '알 수 없는 오류'));
+        } finally {
+            loadBtn.textContent = '📥 현재 월 데이터 불러오기';
+            loadBtn.style.backgroundColor = '#10b981';
         }
-        
-        // 데이터 저장
-        AppState.monthlyData = result.data;
-        
-        // 월간 통계 계산 및 표시
-        DataLoaderManager.calculateAndShowMonthlySummary(result.data, year, month);
-
-        // 연간 통계 계산 및 표시 (새로 추가)
-        static async calculateAndShowYearlySummary(year) {
-            // ... (위에서 제공한 전체 함수 코드)
-        }
-        
-        // 기본 연간 요약 표시 (새로 추가)
-        static showDefaultYearlySummary(year) {
-            // ... (위에서 제공한 전체 함수 코드)
-        }
-                
-        // 성공 팝업 표시
-        const totalDays = new Set([
-            ...AppState.monthlyData.workouts.map(w => w.workout_date),
-            ...AppState.monthlyData.cardio.map(c => c.workout_date),
-            ...AppState.monthlyData.meals.map(m => m.meal_date)
-        ]).size;
-        
-        const message = `✅ ${year}년 ${DateUtils.monthNames[month-1]} 데이터를 모두 불러왔습니다! (총 ${totalDays}일의 기록)`;
-        NotificationUtils.showSuccessPopup(message);
-        
-        // 캘린더 업데이트
-        DataLoaderManager.updateCalendarWithData();
-        
-    } catch (error) {
-        console.error('데이터 불러오기 오류:', error);
-        NotificationUtils.alert('데이터 불러오기 실패: ' + (error.message || '알 수 없는 오류'));
-    } finally {
-        loadBtn.textContent = '📥 현재 월 데이터 불러오기';
-        loadBtn.style.backgroundColor = '#10b981';
     }
-}
 
     // 월간 통계 계산 및 표시
     static calculateAndShowMonthlySummary(data, year, month) {
@@ -146,15 +136,87 @@ static async loadMonthlyDataFromSupabase() {
             Math.round(dailyValues.reduce((sum, day) => sum + day.foodCalories, 0) / dailyValues.length) : 0;
         const avgCalorieBalance = avgFoodCalories - avgBurnCalories;
         
-        // UI 업데이트
+        // 월간 UI 업데이트
         DOM.setText('summaryMonth', `${year}년 ${month}월`);
         DOM.setText('totalWorkoutDays', totalWorkoutDays);
         DOM.setText('avgBurnCalories', avgBurnCalories);
         DOM.setText('avgFoodCalories', avgFoodCalories);
         DOM.setText('avgCalorieBalance', (avgCalorieBalance > 0 ? '+' : '') + avgCalorieBalance);
         
-        // 월간 요약 표시
-        DOM.show(DOM.get('monthlySummary'));
+        // 연간 데이터 로드 및 표시
+        DataLoaderManager.calculateAndShowYearlySummary(year);
+        
+        // 요약 컨테이너 표시
+        DOM.show(DOM.get('summaryContainer'));
+    }
+
+    // 연간 통계 계산 및 표시
+    static async calculateAndShowYearlySummary(year) {
+        try {
+            // 연간 데이터 조회
+            const result = await supabaseManager.loadYearlyData(year);
+            
+            if (!result.success) {
+                console.warn('연간 데이터 조회 실패:', result.error);
+                // 연간 데이터가 없어도 월간은 표시
+                DataLoaderManager.showDefaultYearlySummary(year);
+                return;
+            }
+            
+            const { workouts, cardio, meals } = result.data;
+            
+            // 운동일 계산
+            const workoutDates = new Set([
+                ...workouts.map(w => w.workout_date),
+                ...cardio.map(c => c.workout_date)
+            ]);
+            const yearlyWorkoutDays = workoutDates.size;
+            
+            // 일별 데이터 그룹화
+            const yearlyDailyData = {};
+            
+            // 운동 칼로리 집계
+            [...workouts, ...cardio].forEach(item => {
+                const date = item.workout_date;
+                if (!yearlyDailyData[date]) yearlyDailyData[date] = { burnCalories: 0, foodCalories: 0 };
+                yearlyDailyData[date].burnCalories += item.calories || 0;
+            });
+            
+            // 식사 칼로리 집계
+            meals.forEach(meal => {
+                const date = meal.meal_date;
+                if (!yearlyDailyData[date]) yearlyDailyData[date] = { burnCalories: 0, foodCalories: 0 };
+                yearlyDailyData[date].foodCalories += meal.total_calories || 0;
+            });
+            
+            // 연간 평균 계산
+            const yearlyDailyValues = Object.values(yearlyDailyData);
+            const yearlyAvgBurnCalories = yearlyDailyValues.length > 0 ? 
+                Math.round(yearlyDailyValues.reduce((sum, day) => sum + (day.burnCalories + (87 * 24)), 0) / yearlyDailyValues.length) : 0;
+            const yearlyAvgFoodCalories = yearlyDailyValues.length > 0 ? 
+                Math.round(yearlyDailyValues.reduce((sum, day) => sum + day.foodCalories, 0) / yearlyDailyValues.length) : 0;
+            const yearlyAvgCalorieBalance = yearlyAvgFoodCalories - yearlyAvgBurnCalories;
+            
+            // 연간 UI 업데이트
+            DOM.setText('summaryYear', `${year}년`);
+            DOM.setText('yearlyWorkoutDays', yearlyWorkoutDays);
+            DOM.setText('yearlyAvgBurnCalories', yearlyAvgBurnCalories);
+            DOM.setText('yearlyAvgFoodCalories', yearlyAvgFoodCalories);
+            DOM.setText('yearlyAvgCalorieBalance', (yearlyAvgCalorieBalance > 0 ? '+' : '') + yearlyAvgCalorieBalance);
+            
+        } catch (error) {
+            console.error('연간 데이터 계산 오류:', error);
+            DataLoaderManager.showDefaultYearlySummary(year);
+        }
+    }
+
+    // 기본 연간 요약 표시
+    static showDefaultYearlySummary(year) {
+        DOM.setText('summaryYear', `${year}년`);
+        DOM.setText('yearlyWorkoutDays', 0);
+        DOM.setText('yearlyAvgBurnCalories', 0);
+        DOM.setText('yearlyAvgFoodCalories', 0);
+        DOM.setText('yearlyAvgCalorieBalance', 0);
     }
 
     // 캘린더에 데이터 반영
@@ -410,11 +472,10 @@ static async loadMonthlyDataFromSupabase() {
         DOM.hide(DOM.get('successPopup'));
         DOM.hide(DOM.get('dataPreview'));
         DOM.hide(DOM.get('applyDataBtn'));
-        DataLoaderManager.generateCalendar();
-        DOM.hide(DOM.get('monthlySummary'));
         DOM.hide(DOM.get('summaryContainer'));
-        
+        DataLoaderManager.generateCalendar();
     }
+    
     // 이전달 이동
     static moveToPreviousMonth() {
         if (AppState.currentCalendarMonth === 0) {
