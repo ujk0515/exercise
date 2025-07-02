@@ -167,80 +167,72 @@ class FitnessApp {
         DOM.get('resetAll').addEventListener('click', FitnessApp.resetAllData);
     }
 
-    // 전체 데이터 Supabase에 저장
-    static saveAllDataToSupabase() {
-        const selectedDate = DOM.getValue('selectedDate');
-        const useDefaultBreakfast = DOM.get('useDefaultBreakfast').checked;
-        const useDefaultLunch = DOM.get('useDefaultLunch').checked;
-        const useDefaultDinner = DOM.get('useDefaultDinner').checked;
-        
-        supabaseManager.saveAllData(
-            selectedDate,
-            AppState.workouts,
-            AppState.cardioWorkouts,
-            useDefaultBreakfast,
-            useDefaultLunch,
-            useDefaultDinner,
-            AppState.customBreakfastItems,
-            AppState.customLunchItems,
-            AppState.customDinnerItems,
-            AppState.userWeight
-        ).then(() => {
-        // 저장 완료 후 1초 뒤에 새로고침
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    }).catch((error) => {
-        console.error('저장 오류:', error);
-        // 에러가 발생해도 새로고침
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    }
+   // 전체 데이터 Supabase에 저장
+static saveAllDataToSupabase() {
+    const selectedDate = DOM.getValue('selectedDate');
+    const useDefaultBreakfast = DOM.get('useDefaultBreakfast').checked;
+    const useDefaultLunch = DOM.get('useDefaultLunch').checked;
+    const useDefaultDinner = DOM.get('useDefaultDinner').checked;
+    
+    supabaseManager.saveAllData(
+        selectedDate,
+        AppState.workouts,
+        AppState.cardioWorkouts,
+        useDefaultBreakfast,
+        useDefaultLunch,
+        useDefaultDinner,
+        AppState.customBreakfastItems,
+        AppState.customLunchItems,
+        AppState.customDinnerItems,
+        AppState.userWeight
+    );
+    
+    // 간단한 새로고침
+    setTimeout(() => { window.location.reload(); }, 1000);
+}
+
+// 전체 데이터 초기화
+static resetAllData() {
+    if (!NotificationUtils.confirm('모든 운동 및 식사 기록을 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+        return;
     }
 
-    // 전체 데이터 초기화
-    static resetAllData() {
-        if (!NotificationUtils.confirm('모든 운동 및 식사 기록을 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-            return;
-        }
-
-        // 모든 데이터 배열 초기화
-        AppState.workouts = [];
-        AppState.cardioWorkouts = [];
-        AppState.customBreakfastItems = [];
-        AppState.customLunchItems = [];
-        AppState.customDinnerItems = [];
-        
-        // 웨이트 운동 폼 초기화
-        FormUtils.resetWorkoutForm();
-        
-        // 유산소 운동 폼 초기화  
-        FormUtils.resetCardioForm();
-        
-        // 식사 데이터 초기화
-        MealManager.resetMealData();
-        
-        // 커스텀 음식 입력 폼 초기화
-        FormUtils.resetCustomFoodForm();
-        
-        // 데이터 불러오기 UI 초기화
+    // 모든 데이터 배열 초기화
+    AppState.workouts = [];
+    AppState.cardioWorkouts = [];
+    AppState.customBreakfastItems = [];
+    AppState.customLunchItems = [];
+    AppState.customDinnerItems = [];
+    
+    // 웨이트 운동 폼 초기화
+    FormUtils.resetWorkoutForm();
+    
+    // 유산소 운동 폼 초기화  
+    FormUtils.resetCardioForm();
+    
+    // 식사 데이터 초기화
+    MealManager.resetMealData();
+    
+    // 커스텀 음식 입력 폼 초기화
+    FormUtils.resetCustomFoodForm();
+    
+    // 데이터 불러오기 UI 초기화
+    if (typeof DataLoaderManager !== 'undefined') {
         DataLoaderManager.resetDataLoader();
-        
-        // 화면 렌더링 업데이트
-        WorkoutManager.renderWorkouts();
-        CardioManager.renderCardio();
-        MealManager.renderCustomBreakfast();
-        MealManager.renderCustomLunch();
-        MealManager.renderCustomFoods();
-        SummaryManager.updateSummary();
-        
-        NotificationUtils.alert('모든 데이터가 초기화되었습니다.');
-
-            // 초기화 완료 후 1초 뒤에 새로고침
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
+    }
+    
+    // 화면 렌더링 업데이트
+    WorkoutManager.renderWorkouts();
+    CardioManager.renderCardio();
+    MealManager.renderCustomBreakfast();
+    MealManager.renderCustomLunch();
+    MealManager.renderCustomFoods();
+    SummaryManager.updateSummary();
+    
+    NotificationUtils.alert('모든 데이터가 초기화되었습니다.');
+    
+    // 간단한 새로고침
+    setTimeout(() => { window.location.reload(); }, 1000);
 }
 
 }
