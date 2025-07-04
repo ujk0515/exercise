@@ -2,7 +2,7 @@
 class SupabaseManager {
     constructor() {
         this.client = window.supabase.createClient(
-            SUPABASE_CONFIG.URL, 
+            SUPABASE_CONFIG.URL,
             SUPABASE_CONFIG.ANON_KEY
         );
     }
@@ -12,11 +12,11 @@ class SupabaseManager {
         try {
             const { error } = await this.client
                 .from('users')
-                .upsert({ 
+                .upsert({
                     id: SUPABASE_CONFIG.USER_ID,
-                    weight: weight 
+                    weight: weight
                 }, { onConflict: 'id' });
-            
+
             if (error) throw error;
             return { success: true };
         } catch (error) {
@@ -84,14 +84,14 @@ class SupabaseManager {
     // 식사 데이터 저장
     async saveMeals(selectedDate, useDefaultBreakfast, useDefaultLunch, useDefaultDinner, customBreakfastItems, customLunchItems, customDinnerItems) {
         try {
-            const breakfastCal = useDefaultBreakfast ? 
-                MEAL_CALORIES.breakfast : 
+            const breakfastCal = useDefaultBreakfast ?
+                MEAL_CALORIES.breakfast :
                 ArrayUtils.sum(customBreakfastItems, 'calories');
-            const lunchCal = useDefaultLunch ? 
-                MEAL_CALORIES.lunch : 
+            const lunchCal = useDefaultLunch ?
+                MEAL_CALORIES.lunch :
                 ArrayUtils.sum(customLunchItems, 'calories');
-            const dinnerCal = useDefaultDinner ? 
-                MEAL_CALORIES.defaultDinner : 
+            const dinnerCal = useDefaultDinner ?
+                MEAL_CALORIES.defaultDinner :
                 ArrayUtils.sum(customDinnerItems, 'calories');
 
             const mealData = [
@@ -101,8 +101,8 @@ class SupabaseManager {
                     meal_type: 'breakfast',
                     is_custom: !useDefaultBreakfast,
                     total_calories: breakfastCal,
-                    menu_items: useDefaultBreakfast ? 
-                        '단백질 쉐이크 1잔, 에사비 콤부차 1잔' : 
+                    menu_items: useDefaultBreakfast ?
+                        '단백질 쉐이크 1잔, 에사비 콤부차 1잔' :
                         customBreakfastItems.map(f => f.name).join(', ')
                 },
                 {
@@ -111,8 +111,8 @@ class SupabaseManager {
                     meal_type: 'lunch',
                     is_custom: !useDefaultLunch,
                     total_calories: lunchCal,
-                    menu_items: useDefaultLunch ? 
-                        '펜네 스파게티 100g, 저당 소스, 작은 소시지 4개' : 
+                    menu_items: useDefaultLunch ?
+                        '펜네 스파게티 100g, 저당 소스, 작은 소시지 4개' :
                         customLunchItems.map(f => f.name).join(', ')
                 },
                 {
@@ -121,8 +121,8 @@ class SupabaseManager {
                     meal_type: 'dinner',
                     is_custom: !useDefaultDinner,
                     total_calories: dinnerCal,
-                    menu_items: useDefaultDinner ? 
-                        '쌀밥 150g, 작은 소시지 4개' : 
+                    menu_items: useDefaultDinner ?
+                        '쌀밥 150g, 작은 소시지 4개' :
                         customDinnerItems.map(f => f.name).join(', ')
                 }
             ];
@@ -165,7 +165,7 @@ class SupabaseManager {
     // 전체 데이터 저장
     async saveAllData(selectedDate, workouts, cardioWorkouts, useDefaultBreakfast, useDefaultLunch, useDefaultDinner, customBreakfastItems, customLunchItems, customDinnerItems, userWeight) {
         const saveBtn = DOM.get('saveToSupabase');
-        
+
         try {
             saveBtn.textContent = '💾 저장 중...';
             saveBtn.disabled = true;
@@ -207,9 +207,9 @@ class SupabaseManager {
     async loadMonthlyData(year, month) {
         try {
             const { startDate, endDate } = DateUtils.getMonthRange(year, month);
-            
+
             console.log('조회 기간:', startDate, '~', endDate);
-            
+
             // 웨이트 운동 조회
             const { data: workoutsData, error: workoutsError } = await this.client
                 .from('workouts')
@@ -218,9 +218,9 @@ class SupabaseManager {
                 .gte('workout_date', startDate)
                 .lte('workout_date', endDate)
                 .order('workout_date', { ascending: true });
-            
+
             if (workoutsError) throw workoutsError;
-            
+
             // 유산소 운동 조회
             const { data: cardioData, error: cardioError } = await this.client
                 .from('cardio_workouts')
@@ -229,9 +229,9 @@ class SupabaseManager {
                 .gte('workout_date', startDate)
                 .lte('workout_date', endDate)
                 .order('workout_date', { ascending: true });
-            
+
             if (cardioError) throw cardioError;
-            
+
             // 식사 데이터 조회
             const { data: mealsData, error: mealsError } = await this.client
                 .from('meals')
@@ -240,15 +240,15 @@ class SupabaseManager {
                 .gte('meal_date', startDate)
                 .lte('meal_date', endDate)
                 .order('meal_date', { ascending: true });
-            
+
             if (mealsError) throw mealsError;
-            
+
             console.log('조회 결과:', {
                 workouts: workoutsData?.length || 0,
                 cardio: cardioData?.length || 0,
                 meals: mealsData?.length || 0
             });
-            
+
             return {
                 success: true,
                 data: {
@@ -262,14 +262,14 @@ class SupabaseManager {
             return { success: false, error };
         }
     }
-        // 연간 데이터 조회 (새로 추가)
+    // 연간 데이터 조회 (새로 추가)
     async loadYearlyData(year) {
         try {
             const startDate = `${year}-01-01`;
             const endDate = `${year}-12-31`;
-            
+
             console.log('연간 조회 기간:', startDate, '~', endDate);
-            
+
             // 웨이트 운동 조회
             const { data: workoutsData, error: workoutsError } = await this.client
                 .from('workouts')
@@ -278,9 +278,9 @@ class SupabaseManager {
                 .gte('workout_date', startDate)
                 .lte('workout_date', endDate)
                 .order('workout_date', { ascending: true });
-            
+
             if (workoutsError) throw workoutsError;
-            
+
             // 유산소 운동 조회
             const { data: cardioData, error: cardioError } = await this.client
                 .from('cardio_workouts')
@@ -289,9 +289,9 @@ class SupabaseManager {
                 .gte('workout_date', startDate)
                 .lte('workout_date', endDate)
                 .order('workout_date', { ascending: true });
-            
+
             if (cardioError) throw cardioError;
-            
+
             // 식사 데이터 조회
             const { data: mealsData, error: mealsError } = await this.client
                 .from('meals')
@@ -300,15 +300,15 @@ class SupabaseManager {
                 .gte('meal_date', startDate)
                 .lte('meal_date', endDate)
                 .order('meal_date', { ascending: true });
-            
+
             if (mealsError) throw mealsError;
-            
+
             console.log('연간 조회 결과:', {
                 workouts: workoutsData?.length || 0,
                 cardio: cardioData?.length || 0,
                 meals: mealsData?.length || 0
             });
-            
+
             return {
                 success: true,
                 data: {
@@ -321,7 +321,7 @@ class SupabaseManager {
             console.error('연간 데이터 조회 오류:', error);
             return { success: false, error };
         }
-    }    
+    }
 }
 
 // 전역 Supabase 매니저 인스턴스

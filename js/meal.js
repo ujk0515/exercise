@@ -5,7 +5,7 @@ class MealManager {
         const useDefault = DOM.get('useDefaultBreakfast').checked;
         const defaultBreakfast = DOM.get('defaultBreakfast');
         const customBreakfast = DOM.get('customBreakfast');
-        
+
         if (useDefault) {
             DOM.show(defaultBreakfast);
             DOM.hide(customBreakfast);
@@ -20,7 +20,7 @@ class MealManager {
         const useDefault = DOM.get('useDefaultLunch').checked;
         const defaultLunch = DOM.get('defaultLunch');
         const customLunch = DOM.get('customLunch');
-        
+
         if (useDefault) {
             DOM.show(defaultLunch);
             DOM.hide(customLunch);
@@ -35,7 +35,7 @@ class MealManager {
         const useDefault = DOM.get('useDefaultDinner').checked;
         const defaultDinner = DOM.get('defaultDinner');
         const customDinner = DOM.get('customDinner');
-        
+
         if (useDefault) {
             DOM.show(defaultDinner);
             DOM.hide(customDinner);
@@ -49,18 +49,18 @@ class MealManager {
     static addCustomBreakfast() {
         const name = DOM.getValue('newBreakfastName').trim();
         const calories = parseInt(DOM.getValue('newBreakfastCalories'));
-        
+
         if (!name || !calories) return;
-        
+
         const food = {
             id: Date.now(),
             name,
             calories
         };
-        
+
         AppState.customBreakfastItems.push(food);
         MealManager.renderCustomBreakfast();
-        
+
         // 폼 리셋
         DOM.setValue('newBreakfastName', '');
         DOM.setValue('newBreakfastCalories', '');
@@ -70,18 +70,18 @@ class MealManager {
     static addCustomLunch() {
         const name = DOM.getValue('newLunchName').trim();
         const calories = parseInt(DOM.getValue('newLunchCalories'));
-        
+
         if (!name || !calories) return;
-        
+
         const food = {
             id: Date.now(),
             name,
             calories
         };
-        
+
         AppState.customLunchItems.push(food);
         MealManager.renderCustomLunch();
-        
+
         // 폼 리셋
         DOM.setValue('newLunchName', '');
         DOM.setValue('newLunchCalories', '');
@@ -91,18 +91,18 @@ class MealManager {
     static addCustomFood() {
         const name = DOM.getValue('newFoodName').trim();
         const calories = parseInt(DOM.getValue('newFoodCalories'));
-        
+
         if (!name || !calories) return;
-        
+
         const food = {
             id: Date.now(),
             name,
             calories
         };
-        
+
         AppState.customDinnerItems.push(food);
         MealManager.renderCustomFoods();
-        
+
         // 폼 리셋
         FormUtils.resetCustomFoodForm();
     }
@@ -113,17 +113,17 @@ class MealManager {
         const listContainer = DOM.get('customBreakfastList');
         const emptyState = DOM.get('emptyCustomBreakfast');
         const totalElement = DOM.get('customBreakfastTotalCalories');
-        
+
         if (AppState.customBreakfastItems.length === 0) {
             DOM.hide(listContainer);
             DOM.show(emptyState);
             return;
         }
-        
+
         DOM.show(listContainer);
         DOM.hide(emptyState);
         container.innerHTML = '';
-        
+
         let total = 0;
         AppState.customBreakfastItems.forEach(food => {
             total += food.calories;
@@ -135,7 +135,7 @@ class MealManager {
             `;
             container.appendChild(div);
         });
-        
+
         DOM.setText('customBreakfastTotalCalories', total);
     }
 
@@ -145,17 +145,17 @@ class MealManager {
         const listContainer = DOM.get('customLunchList');
         const emptyState = DOM.get('emptyCustomLunch');
         const totalElement = DOM.get('customLunchTotalCalories');
-        
+
         if (AppState.customLunchItems.length === 0) {
             DOM.hide(listContainer);
             DOM.show(emptyState);
             return;
         }
-        
+
         DOM.show(listContainer);
         DOM.hide(emptyState);
         container.innerHTML = '';
-        
+
         let total = 0;
         AppState.customLunchItems.forEach(food => {
             total += food.calories;
@@ -167,7 +167,7 @@ class MealManager {
             `;
             container.appendChild(div);
         });
-        
+
         DOM.setText('customLunchTotalCalories', total);
     }
 
@@ -177,17 +177,17 @@ class MealManager {
         const listContainer = DOM.get('customFoodList');
         const emptyState = DOM.get('emptyCustomFood');
         const totalElement = DOM.get('customTotalCalories');
-        
+
         if (AppState.customDinnerItems.length === 0) {
             DOM.hide(listContainer);
             DOM.show(emptyState);
             return;
         }
-        
+
         DOM.show(listContainer);
         DOM.hide(emptyState);
         container.innerHTML = '';
-        
+
         let total = 0;
         AppState.customDinnerItems.forEach(food => {
             total += food.calories;
@@ -199,7 +199,7 @@ class MealManager {
             `;
             container.appendChild(div);
         });
-        
+
         DOM.setText('customTotalCalories', total);
     }
 
@@ -229,21 +229,21 @@ class MealManager {
         AppState.customBreakfastItems = [];
         AppState.customLunchItems = [];
         AppState.customDinnerItems = [];
-        
+
         DOM.get('useDefaultBreakfast').checked = true;
         DOM.get('useDefaultLunch').checked = true;
         DOM.get('useDefaultDinner').checked = true;
-        
+
         MealManager.toggleBreakfastMenu();
         MealManager.toggleLunchMenu();
         MealManager.toggleDinnerMenu();
-        
+
         DOM.setValue('newBreakfastName', '');
         DOM.setValue('newBreakfastCalories', '');
         DOM.setValue('newLunchName', '');
         DOM.setValue('newLunchCalories', '');
         FormUtils.resetCustomFoodForm();
-        
+
         MealManager.renderCustomBreakfast();
         MealManager.renderCustomLunch();
         MealManager.renderCustomFoods();

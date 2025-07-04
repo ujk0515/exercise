@@ -23,17 +23,17 @@ const DOM = {
     // 요소 선택
     get: (id) => document.getElementById(id),
     getAll: (selector) => document.querySelectorAll(selector),
-    
+
     // 클래스 조작
     addClass: (element, className) => element.classList.add(className),
     removeClass: (element, className) => element.classList.remove(className),
     toggleClass: (element, className) => element.classList.toggle(className),
     hasClass: (element, className) => element.classList.contains(className),
-    
+
     // 스타일 조작
     show: (element) => element.classList.remove('hidden'),
     hide: (element) => element.classList.add('hidden'),
-    
+
     // 값 설정/가져오기
     setValue: (id, value) => {
         const element = DOM.get(id);
@@ -61,7 +61,7 @@ const DOM = {
 const DateUtils = {
     // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
     today: () => new Date().toISOString().split('T')[0],
-    
+
     // Date 객체를 YYYY-MM-DD 형식으로 변환
     formatDate: (date) => {
         const year = date.getFullYear();
@@ -69,7 +69,7 @@ const DateUtils = {
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     },
-    
+
     // 월의 첫날과 마지막날 반환
     getMonthRange: (year, month) => {
         const lastDay = new Date(year, month, 0).getDate();
@@ -77,7 +77,7 @@ const DateUtils = {
         const endDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay}`;
         return { startDate, endDate };
     },
-    
+
     // 월 이름 배열
     monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 };
@@ -100,7 +100,7 @@ const CalorieCalculator = {
         Object.entries(weightCombination).forEach(([weight, count]) => {
             totalWeight += parseFloat(weight) * count;
         });
-        
+
         // 맨몸 운동 처리
         const isBodyweight = exercise.bodyweight || false;
         if (isBodyweight) {
@@ -250,7 +250,7 @@ const NotificationUtils = {
         const popup = DOM.get('successPopup');
         popup.textContent = message;
         DOM.show(popup);
-        
+
         setTimeout(() => {
             DOM.hide(popup);
         }, duration);
@@ -277,5 +277,15 @@ const ArrayUtils = {
     // 배열의 총합 계산
     sum: (array, property) => {
         return array.reduce((sum, item) => sum + (item[property] || 0), 0);
+    }
+};
+
+// 한국 시간 기준 날짜 유틸리티
+const KoreanDateUtils = {
+    // 한국 시간 기준 오늘 날짜 반환
+    getKoreanToday: () => {
+        const now = new Date();
+        const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
+        return koreanTime.toISOString().split('T')[0];
     }
 };
