@@ -333,7 +333,7 @@ class DataLoaderManager {
                     ${dayCardio.map(c => `
                         <div class="preview-item">• ${c.exercise_type} - ${c.exercise_type === '런닝머신'
                     ? `${c.incline}도, ${c.speed}km/h, ${c.duration}분`
-                    : `강도 ${c.intensity}단계, ${c.duration}분`
+                    : `강도 ${c.intensity}단계, ${c.rpm || 80}RPM, ${c.duration}분`
                 } (${c.calories}kcal)</div>
                     `).join('')}
                 </div>
