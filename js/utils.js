@@ -157,11 +157,16 @@ const CalorieCalculator = {
     // 기초대사량 계산
     calculateBMR: () => Math.round(AppState.userWeight * 24),
 
-    // 사이클 칼로리 계산
-    calculateCycle: (intensity, duration) => {
+    // 사이클 칼로리 계산 (RPM 포함)
+    calculateCycle: (intensity, rpm, duration) => {
         const baseMET = CYCLE_MET[intensity] || 5.5;
+        
+        // RPM 보정값 계산 (60 RPM을 기준으로 함)
+        const rpmBonus = Math.max(0, (rpm - 60) / 20 * 0.5);
+        const finalMET = baseMET + rpmBonus;
+        
         const hours = duration / 60;
-        return Math.round(baseMET * AppState.userWeight * hours);
+        return Math.round(finalMET * AppState.userWeight * hours);
     }
 };
 
@@ -290,3 +295,5 @@ const KoreanDateUtils = {
         return koreanTime.toISOString().split('T')[0];
     }
 };
+
+DOM.setValue('cycleRPM', 80);
