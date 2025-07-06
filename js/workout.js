@@ -130,15 +130,17 @@ class CardioManager {
             DOM.setValue('duration', 30);
         } else {
             const intensity = parseInt(DOM.getValue('cycleIntensity'));
+            const rpm = parseInt(DOM.getValue('cycleRPM'));
             const duration = parseInt(DOM.getValue('cycleDuration'));
-            const calories = CalorieCalculator.calculateCycle(intensity, duration);
-
+            const calories = CalorieCalculator.calculateCycle(intensity, rpm, duration);
+        
             cardio = {
                 id: Date.now(),
                 type: '사이클',
-                intensity, duration, calories
+                intensity, rpm, duration, calories
             };
             DOM.setValue('cycleDuration', 30);
+            DOM.setValue('cycleRPM', 80);
         }
 
         AppState.cardioWorkouts.push(cardio);
@@ -182,7 +184,7 @@ class CardioManager {
                     <div style="font-weight: 600;">${cardio.type}</div>
                     <div class="workout-details">${cardio.type === '런닝머신'
                     ? `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`
-                    : `강도 ${cardio.intensity}단계, ${cardio.duration}분`
+                    : `강도 ${cardio.intensity}단계, ${cardio.rpm || 80}RPM, ${cardio.duration}분`
                 }</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
