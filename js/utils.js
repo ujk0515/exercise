@@ -191,6 +191,7 @@ const FormUtils = {
         DOM.setValue('duration', 30);
         DOM.setValue('cycleIntensity', 5);
         DOM.setValue('cycleDuration', 30);
+        DOM.setValue('cycleRPM', 80);
     },
 
     // 커스텀 음식 폼 초기화
@@ -295,5 +296,3 @@ const KoreanDateUtils = {
         return koreanTime.toISOString().split('T')[0];
     }
 };
-
-DOM.setValue('cycleRPM', 80);
