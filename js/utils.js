@@ -14,6 +14,7 @@ const AppState = {
     selectedCategory: 'back',
     userWeight: 87,
     selectedCardioType: 'treadmill',
+    cycleRPM: 80,
     currentCalendarYear: new Date().getFullYear(),
     currentCalendarMonth: new Date().getMonth(),
 };
