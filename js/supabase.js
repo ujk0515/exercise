@@ -65,6 +65,7 @@ class SupabaseManager {
                 incline: cardio.incline || null,
                 speed: cardio.speed || null,
                 intensity: cardio.intensity || null,
+                rpm: cardio.rpm || null,
                 duration: parseInt(cardio.duration),
                 calories: parseInt(cardio.calories)
             }));
