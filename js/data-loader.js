@@ -421,6 +421,7 @@ class DataLoaderManager {
                     cardioItem.speed = c.speed;
                 } else {
                     cardioItem.intensity = c.intensity;
+                    cardioItem.rpm = c.rpm;
                 }
 
                 AppState.cardioWorkouts.push(cardioItem);
