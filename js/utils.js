@@ -17,6 +17,7 @@ const AppState = {
     cycleRPM: 80,
     currentCalendarYear: new Date().getFullYear(),
     currentCalendarMonth: new Date().getMonth(),
+    selectedLunchType: 'galbi',
 };
 
 // DOM 유틸리티 함수들
