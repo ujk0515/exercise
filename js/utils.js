@@ -155,7 +155,7 @@ const CalorieCalculator = {
     },
 
     // 기초대사량 계산
-    calculateBMR: () => Math.round(AppState.userWeight * 24),
+    calculateBMR: () => Math.round(AppState.userWeight * 24 * 1.3),
 
     // 사이클 칼로리 계산 (RPM 포함)
     calculateCycle: (intensity, rpm, duration) => {
