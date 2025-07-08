@@ -224,6 +224,27 @@ class MealManager {
         SummaryManager.updateSummary();
     }
 
+    // 점심 타입 변경 함수 (새로 추가)
+    static changeLunchType() {
+        const selectedType = document.querySelector('input[name="lunchType"]:checked').value;
+        AppState.selectedLunchType = selectedType;
+        
+        const calories = MEAL_CALORIES.lunch[selectedType];
+        DOM.setText('selectedLunchCalories', calories);
+        
+        SummaryManager.updateSummary();
+    }
+
+    // 점심 칼로리 계산 함수 (새로 추가)
+    static getLunchCalories() {
+        const useDefault = DOM.get('useDefaultLunch').checked;
+        if (useDefault) {
+            return MEAL_CALORIES.lunch[AppState.selectedLunchType];
+        } else {
+            return ArrayUtils.sum(AppState.customLunchItems, 'calories');
+        }
+    }
+
     // 식사 데이터 초기화
     static resetMealData() {
         AppState.customBreakfastItems = [];
@@ -237,6 +258,11 @@ class MealManager {
         MealManager.toggleBreakfastMenu();
         MealManager.toggleLunchMenu();
         MealManager.toggleDinnerMenu();
+
+        // 점심 라디오 버튼 초기화 (새로 추가)
+        AppState.selectedLunchType = 'galbi';
+        document.querySelector('input[name="lunchType"][value="galbi"]').checked = true;
+        DOM.setText('selectedLunchCalories', '480');
 
         DOM.setValue('newBreakfastName', '');
         DOM.setValue('newBreakfastCalories', '');
