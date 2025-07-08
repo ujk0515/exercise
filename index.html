@@ -448,46 +448,29 @@
                         </div>
                     </div>
 
-                    <!-- 1. index.html - 점심 부분만 수정 -->
-                    
-                    <!-- 기존 점심 부분을 이렇게 교체 -->
+                    <!-- 점심 -->
                     <div class="meal-card meal-lunch">
                         <div class="meal-title">☀️ 점심</div>
                     
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="useDefaultLunch" checked>
-                            <label for="useDefaultLunch" style="font-size: 14px;">기본 점심 메뉴 사용</label>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
+                    
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="galbi" checked>
+                                <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="kakdugi">
+                                <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="egg">
+                                <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
+                            </label>
                         </div>
                     
-                        <div id="defaultLunch">
-                            <div class="meal-item">• 펜네 스파게티 100g</div>
-                            <div class="meal-item">• 저당 소스</div>
-                            <div class="meal-item">• 작은 소시지 4개</div>
-                            <div class="meal-calories" style="color: #2563eb;">420kcal</div>
-                        </div>
-                    
-                        <div id="customLunch" class="hidden">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
-                    
-                            <!-- 3가지 볶음밥 라디오 버튼 -->
-                            <div style="margin-bottom: 12px;">
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="galbi" checked>
-                                    <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="kakdugi">
-                                    <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="egg">
-                                    <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
-                                </label>
-                            </div>
-                    
-                            <div style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                                선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
-                            </div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                            선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
                         </div>
                     </div>
 
