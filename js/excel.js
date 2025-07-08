@@ -1,34 +1,65 @@
 // 엑셀 다운로드 관리 클래스
 class ExcelManager {
     // 엑셀 데이터 다운로드
-    static downloadData() {
+    static async downloadData() {
         const selectedDate = DOM.getValue('selectedDate');
         const currentYear = AppState.currentCalendarYear;
         const currentMonth = AppState.currentCalendarMonth + 1;
 
-        // 워크북 생성
-        const workbook = XLSX.utils.book_new();
+        // 다운로드 버튼 상태 변경
+        const downloadBtn = DOM.get('downloadData');
+        const originalText = downloadBtn.textContent;
+        downloadBtn.textContent = '📥 데이터 준비 중...';
+        downloadBtn.disabled = true;
 
-        // === 1. 일일 데이터 시트 ===
-        const dailyData = ExcelManager.createDailyDataSheet(selectedDate);
-        const dailyWorksheet = XLSX.utils.aoa_to_sheet(dailyData);
-        XLSX.utils.book_append_sheet(workbook, dailyWorksheet, '일일기록');
+        try {
+            // 워크북 생성
+            const workbook = XLSX.utils.book_new();
 
-        // === 2. 월간 데이터 시트 ===
-        if (AppState.monthlyData.workouts.length > 0 || AppState.monthlyData.cardio.length > 0 || AppState.monthlyData.meals.length > 0) {
-            const monthlyData = ExcelManager.createMonthlyDataSheet(currentYear, currentMonth);
-            const monthlyWorksheet = XLSX.utils.aoa_to_sheet(monthlyData);
-            XLSX.utils.book_append_sheet(workbook, monthlyWorksheet, `${currentMonth}월데이터`);
+            // === 1. 일일 데이터 시트 ===
+            const dailyData = ExcelManager.createDailyDataSheet(selectedDate);
+            const dailyWorksheet = XLSX.utils.aoa_to_sheet(dailyData);
+            XLSX.utils.book_append_sheet(workbook, dailyWorksheet, '일일기록');
 
-            // === 3. 월간 상세 통계 시트 ===
-            const monthlyStats = ExcelManager.createMonthlyStatsSheet(currentYear, currentMonth);
-            const monthlyStatsWorksheet = XLSX.utils.aoa_to_sheet(monthlyStats);
-            XLSX.utils.book_append_sheet(workbook, monthlyStatsWorksheet, `${currentMonth}월통계`);
+            // === 2. 월간 데이터 시트 ===
+            if (AppState.monthlyData.workouts.length > 0 || AppState.monthlyData.cardio.length > 0 || AppState.monthlyData.meals.length > 0) {
+                const monthlyData = ExcelManager.createMonthlyDataSheet(currentYear, currentMonth);
+                const monthlyWorksheet = XLSX.utils.aoa_to_sheet(monthlyData);
+                XLSX.utils.book_append_sheet(workbook, monthlyWorksheet, `${currentMonth}월데이터`);
+
+                // === 3. 월간 상세 통계 시트 ===
+                const monthlyStats = ExcelManager.createMonthlyStatsSheet(currentYear, currentMonth);
+                const monthlyStatsWorksheet = XLSX.utils.aoa_to_sheet(monthlyStats);
+                XLSX.utils.book_append_sheet(workbook, monthlyStatsWorksheet, `${currentMonth}월통계`);
+            }
+
+            // === 4. 연간 데이터 조회 및 시트 생성 ===
+            downloadBtn.textContent = '📥 연간 데이터 조회 중...';
+            const yearlyResult = await supabaseManager.loadYearlyData(currentYear);
+            
+            if (yearlyResult.success && yearlyResult.data) {
+                const yearlyData = ExcelManager.createYearlyDataSheet(currentYear, yearlyResult.data);
+                const yearlyWorksheet = XLSX.utils.aoa_to_sheet(yearlyData);
+                XLSX.utils.book_append_sheet(workbook, yearlyWorksheet, `${currentYear}년데이터`);
+
+                // === 5. 연간 통계 시트 ===
+                const yearlyStats = ExcelManager.createYearlyStatsSheet(currentYear, yearlyResult.data);
+                const yearlyStatsWorksheet = XLSX.utils.aoa_to_sheet(yearlyStats);
+                XLSX.utils.book_append_sheet(workbook, yearlyStatsWorksheet, `${currentYear}년통계`);
+            }
+
+            // 엑셀 파일 다운로드
+            downloadBtn.textContent = '📥 파일 생성 중...';
+            const fileName = `운동기록_${selectedDate}_월간연간데이터포함.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+
+        } catch (error) {
+            console.error('엑셀 다운로드 오류:', error);
+            NotificationUtils.alert('엑셀 다운로드 중 오류가 발생했습니다: ' + error.message);
+        } finally {
+            downloadBtn.textContent = originalText;
+            downloadBtn.disabled = false;
         }
-
-        // 엑셀 파일 다운로드
-        const fileName = `운동기록_${selectedDate}_월간데이터포함.xlsx`;
-        XLSX.writeFile(workbook, fileName);
     }
 
     // 일일 데이터 시트 생성
@@ -159,6 +190,265 @@ class ExcelManager {
         allData.push(['수지상태', actualCalorieBalance > 0 ? '잉여' : '적자', '', '', '', '', '', '', '', '', '', '']);
 
         return allData;
+    }
+
+    // 연간 데이터 시트 생성
+    static createYearlyDataSheet(year, yearlyData) {
+        const { workouts, cardio, meals } = yearlyData;
+        const allData = [];
+
+        // 헤더
+        allData.push([`=== ${year}년 전체 데이터 ===`, '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 1. 연간 웨이트 운동 데이터 (월별 요약)
+        allData.push(['=== 연간 웨이트 운동 월별 요약 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['월', '운동횟수', '총세트수', '총소모칼로리', '평균무게(kg)', '', '', '', '', '', '', '']);
+        
+        const monthlyWorkoutSummary = ExcelManager.getMonthlyWorkoutSummary(workouts);
+        for (let month = 1; month <= 12; month++) {
+            const monthData = monthlyWorkoutSummary[month] || { count: 0, totalSets: 0, totalCalories: 0, avgWeight: 0 };
+            allData.push([
+                `${month}월`,
+                monthData.count,
+                monthData.totalSets,
+                monthData.totalCalories,
+                monthData.avgWeight,
+                '', '', '', '', '', '', ''
+            ]);
+        }
+
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 2. 연간 유산소 운동 데이터 (월별 요약)
+        allData.push(['=== 연간 유산소 운동 월별 요약 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['월', '운동횟수', '총시간(분)', '총소모칼로리', '평균시간(분)', '', '', '', '', '', '', '']);
+        
+        const monthlyCardioSummary = ExcelManager.getMonthlyCardioSummary(cardio);
+        for (let month = 1; month <= 12; month++) {
+            const monthData = monthlyCardioSummary[month] || { count: 0, totalDuration: 0, totalCalories: 0, avgDuration: 0 };
+            allData.push([
+                `${month}월`,
+                monthData.count,
+                monthData.totalDuration,
+                monthData.totalCalories,
+                monthData.avgDuration,
+                '', '', '', '', '', '', ''
+            ]);
+        }
+
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 3. 연간 식사 데이터 (월별 평균)
+        allData.push(['=== 연간 식사 월별 평균 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['월', '기록일수', '평균섭취칼로리', '아침평균', '점심평균', '저녁평균', '', '', '', '', '', '']);
+        
+        const monthlyMealSummary = ExcelManager.getMonthlyMealSummary(meals);
+        for (let month = 1; month <= 12; month++) {
+            const monthData = monthlyMealSummary[month] || { days: 0, avgTotal: 0, avgBreakfast: 0, avgLunch: 0, avgDinner: 0 };
+            allData.push([
+                `${month}월`,
+                monthData.days,
+                monthData.avgTotal,
+                monthData.avgBreakfast,
+                monthData.avgLunch,
+                monthData.avgDinner,
+                '', '', '', '', '', ''
+            ]);
+        }
+
+        return allData;
+    }
+
+    // 연간 통계 시트 생성
+    static createYearlyStatsSheet(year, yearlyData) {
+        const { workouts, cardio, meals } = yearlyData;
+        const allData = [];
+
+        // 헤더
+        allData.push([`=== ${year}년 종합 통계 ===`, '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 1. 연간 기본 통계
+        const workoutDates = new Set([...workouts.map(w => w.workout_date), ...cardio.map(c => c.workout_date)]);
+        const totalWorkoutDays = workoutDates.size;
+        const totalWeightExercises = workouts.length;
+        const totalCardioExercises = cardio.length;
+        const totalMealRecords = meals.length;
+
+        allData.push(['=== 연간 기본 통계 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['항목', '값', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 운동일수', totalWorkoutDays, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 웨이트 운동수', totalWeightExercises, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 유산소 운동수', totalCardioExercises, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 식사 기록수', totalMealRecords, '', '', '', '', '', '', '', '', '', '']);
+
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 2. 연간 칼로리 통계
+        const totalWorkoutCalories = [...workouts, ...cardio].reduce((sum, item) => sum + (item.calories || 0), 0);
+        const totalFoodCalories = meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
+        const avgDailyWorkoutCalories = totalWorkoutDays > 0 ? Math.round(totalWorkoutCalories / totalWorkoutDays) : 0;
+        const avgDailyFoodCalories = totalWorkoutDays > 0 ? Math.round(totalFoodCalories / totalWorkoutDays) : 0;
+
+        allData.push(['=== 연간 칼로리 통계 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['항목', '값', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 운동 소모칼로리', totalWorkoutCalories, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['총 섭취칼로리', totalFoodCalories, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['일평균 운동 소모칼로리', avgDailyWorkoutCalories, '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['일평균 섭취칼로리', avgDailyFoodCalories, '', '', '', '', '', '', '', '', '', '']);
+
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 3. 가장 많이 한 운동 TOP 10
+        allData.push(['=== 가장 많이 한 웨이트 운동 TOP 10 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['순위', '운동명', '실시횟수', '총세트수', '총소모칼로리', '', '', '', '', '', '', '']);
+
+        const workoutCounts = {};
+        workouts.forEach(workout => {
+            const name = workout.exercise_name;
+            if (!workoutCounts[name]) {
+                workoutCounts[name] = { count: 0, totalSets: 0, totalCalories: 0 };
+            }
+            workoutCounts[name].count++;
+            workoutCounts[name].totalSets += workout.sets;
+            workoutCounts[name].totalCalories += workout.calories;
+        });
+
+        const sortedWorkouts = Object.entries(workoutCounts)
+            .sort(([,a], [,b]) => b.count - a.count)
+            .slice(0, 10);
+
+        sortedWorkouts.forEach(([name, stats], index) => {
+            allData.push([
+                index + 1,
+                name,
+                stats.count,
+                stats.totalSets,
+                stats.totalCalories,
+                '', '', '', '', '', '', ''
+            ]);
+        });
+
+        allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+
+        // 4. 월별 운동 패턴
+        allData.push(['=== 월별 운동 패턴 ===', '', '', '', '', '', '', '', '', '', '', '']);
+        allData.push(['월', '운동일수', '웨이트횟수', '유산소횟수', '총소모칼로리', '평균섭취칼로리', '', '', '', '', '', '']);
+
+        for (let month = 1; month <= 12; month++) {
+            const monthWorkouts = workouts.filter(w => new Date(w.workout_date).getMonth() + 1 === month);
+            const monthCardio = cardio.filter(c => new Date(c.workout_date).getMonth() + 1 === month);
+            const monthMeals = meals.filter(m => new Date(m.meal_date).getMonth() + 1 === month);
+            
+            const monthWorkoutDates = new Set([...monthWorkouts.map(w => w.workout_date), ...monthCardio.map(c => c.workout_date)]);
+            const monthTotalCalories = [...monthWorkouts, ...monthCardio].reduce((sum, item) => sum + (item.calories || 0), 0);
+            const monthAvgFoodCalories = monthMeals.length > 0 ? 
+                Math.round(monthMeals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0) / monthMeals.length) : 0;
+
+            allData.push([
+                `${month}월`,
+                monthWorkoutDates.size,
+                monthWorkouts.length,
+                monthCardio.length,
+                monthTotalCalories,
+                monthAvgFoodCalories,
+                '', '', '', '', '', ''
+            ]);
+        }
+
+        return allData;
+    }
+
+    // 월별 웨이트 운동 요약 계산
+    static getMonthlyWorkoutSummary(workouts) {
+        const summary = {};
+        
+        workouts.forEach(workout => {
+            const month = new Date(workout.workout_date).getMonth() + 1;
+            if (!summary[month]) {
+                summary[month] = { count: 0, totalSets: 0, totalCalories: 0, totalWeight: 0, weightCount: 0 };
+            }
+            summary[month].count++;
+            summary[month].totalSets += workout.sets;
+            summary[month].totalCalories += workout.calories;
+            summary[month].totalWeight += workout.total_weight;
+            summary[month].weightCount++;
+        });
+
+        // 평균 무게 계산
+        Object.keys(summary).forEach(month => {
+            summary[month].avgWeight = summary[month].weightCount > 0 ? 
+                Math.round(summary[month].totalWeight / summary[month].weightCount) : 0;
+        });
+
+        return summary;
+    }
+
+    // 월별 유산소 운동 요약 계산
+    static getMonthlyCardioSummary(cardio) {
+        const summary = {};
+        
+        cardio.forEach(cardioItem => {
+            const month = new Date(cardioItem.workout_date).getMonth() + 1;
+            if (!summary[month]) {
+                summary[month] = { count: 0, totalDuration: 0, totalCalories: 0 };
+            }
+            summary[month].count++;
+            summary[month].totalDuration += cardioItem.duration;
+            summary[month].totalCalories += cardioItem.calories;
+        });
+
+        // 평균 시간 계산
+        Object.keys(summary).forEach(month => {
+            summary[month].avgDuration = summary[month].count > 0 ? 
+                Math.round(summary[month].totalDuration / summary[month].count) : 0;
+        });
+
+        return summary;
+    }
+
+    // 월별 식사 요약 계산
+    static getMonthlyMealSummary(meals) {
+        const summary = {};
+        
+        // 날짜별로 그룹화
+        const dailyMeals = {};
+        meals.forEach(meal => {
+            const month = new Date(meal.meal_date).getMonth() + 1;
+            const date = meal.meal_date;
+            
+            if (!dailyMeals[month]) dailyMeals[month] = {};
+            if (!dailyMeals[month][date]) {
+                dailyMeals[month][date] = { total: 0, breakfast: 0, lunch: 0, dinner: 0 };
+            }
+            
+            dailyMeals[month][date].total += meal.total_calories;
+            if (meal.meal_type === 'breakfast') dailyMeals[month][date].breakfast = meal.total_calories;
+            if (meal.meal_type === 'lunch') dailyMeals[month][date].lunch = meal.total_calories;
+            if (meal.meal_type === 'dinner') dailyMeals[month][date].dinner = meal.total_calories;
+        });
+
+        // 월별 평균 계산
+        Object.keys(dailyMeals).forEach(month => {
+            const monthData = dailyMeals[month];
+            const dates = Object.keys(monthData);
+            const days = dates.length;
+            
+            if (days > 0) {
+                summary[month] = {
+                    days: days,
+                    avgTotal: Math.round(dates.reduce((sum, date) => sum + monthData[date].total, 0) / days),
+                    avgBreakfast: Math.round(dates.reduce((sum, date) => sum + monthData[date].breakfast, 0) / days),
+                    avgLunch: Math.round(dates.reduce((sum, date) => sum + monthData[date].lunch, 0) / days),
+                    avgDinner: Math.round(dates.reduce((sum, date) => sum + monthData[date].dinner, 0) / days)
+                };
+            }
+        });
+
+        return summary;
     }
 
     // 월간 데이터 시트 생성
