@@ -459,6 +459,13 @@ class DataLoaderManager {
             } else if (lunchData) {
                 DOM.get('useDefaultLunch').checked = true;
                 MealManager.toggleLunchMenu();
+                // 볶음밥 타입 설정
+                if (lunchData.total_calories === 480) AppState.selectedLunchType = 'galbi';
+                else if (lunchData.total_calories === 475) AppState.selectedLunchType = 'kakdugi';
+                else if (lunchData.total_calories === 510) AppState.selectedLunchType = 'egg';
+                
+                document.querySelector(`input[name="lunchType"][value="${AppState.selectedLunchType}"]`).checked = true;
+                DOM.setText('selectedLunchCalories', lunchData.total_calories);
             }
 
             // 4. 저녁 식사 데이터 적용
