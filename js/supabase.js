@@ -89,7 +89,7 @@ class SupabaseManager {
                 MEAL_CALORIES.breakfast :
                 ArrayUtils.sum(customBreakfastItems, 'calories');
             const lunchCal = useDefaultLunch ?
-                MEAL_CALORIES.lunch :
+                MEAL_CALORIES.lunch[AppState.selectedLunchType] :
                 ArrayUtils.sum(customLunchItems, 'calories');
             const dinnerCal = useDefaultDinner ?
                 MEAL_CALORIES.defaultDinner :
@@ -113,7 +113,8 @@ class SupabaseManager {
                     is_custom: !useDefaultLunch,
                     total_calories: lunchCal,
                     menu_items: useDefaultLunch ?
-                        '펜네 스파게티 100g, 저당 소스, 작은 소시지 4개' :
+                        `파이어트 볶음밥 ${AppState.selectedLunchType === 'galbi' ? '숯불갈비맛' : 
+                            AppState.selectedLunchType === 'kakdugi' ? '매콤깍두기' : '간장계란'}` :
                         customLunchItems.map(f => f.name).join(', ')
                 },
                 {
