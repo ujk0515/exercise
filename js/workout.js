@@ -218,13 +218,15 @@ class SummaryManager {
         const basalMetabolicRate = CalorieCalculator.calculateBMR();
         const totalDailyCalorieBurn = basalMetabolicRate + totalWorkoutCalories;
 
-        // 식사 칼로리 계산
+        // 식사 칼로리 계산 - 점심 부분 수정
         const breakfastCal = DOM.get('useDefaultBreakfast').checked ?
             MEAL_CALORIES.breakfast :
             ArrayUtils.sum(AppState.customBreakfastItems, 'calories');
+        
         const lunchCal = DOM.get('useDefaultLunch').checked ?
-            MEAL_CALORIES.lunch :
+            MEAL_CALORIES.lunch[AppState.selectedLunchType] :
             ArrayUtils.sum(AppState.customLunchItems, 'calories');
+        
         const dinnerCal = DOM.get('useDefaultDinner').checked ?
             MEAL_CALORIES.defaultDinner :
             ArrayUtils.sum(AppState.customDinnerItems, 'calories');
