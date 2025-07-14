@@ -701,6 +701,28 @@ body {
     cursor: not-allowed;
 }
 
+.delete-data-btn {
+    background: #ef4444;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 12px;
+}
+
+.delete-data-btn:hover {
+    background: #dc2626;
+}
+
+.delete-data-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
 /* Monthly Summary - 월간/연간 요약 통합 */
 .summary-container {
     display: grid;
@@ -852,4 +874,115 @@ body {
         gap: 3px;
         font-size: 10px;
     }
+}
+
+/* 차트 관련 스타일 (기존 styles.css에 추가) */
+
+/* 차트 섹션 */
+.chart-section {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    min-height: 300px;
+}
+
+.chart-section.hidden {
+    display: none;
+}
+
+/* 차트 컨테이너 */
+#chartContainer {
+    margin-top: 16px;
+}
+
+/* 차트 로딩 상태 */
+.chart-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* 차트 에러 상태 */
+.chart-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    color: #ef4444;
+    font-size: 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+}
+
+/* 차트 탭 버튼 (기존 category-btn 스타일 확장) */
+.category-btn[data-chart] {
+    transition: all 0.3s ease;
+}
+
+.category-btn[data-chart]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.category-btn[data-chart].active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-color: #6366f1;
+}
+
+/* 차트 반응형 */
+@media (max-width: 768px) {
+    .chart-section {
+        padding: 12px;
+        min-height: 250px;
+    }
+    
+    .grid-4[data-chart] {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-section {
+        padding: 8px;
+        min-height: 200px;
+    }
+    
+    .grid-4[data-chart] {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .category-btn[data-chart] {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .category-icon {
+        font-size: 1.2rem;
+    }
+}
+
+/* 차트 캔버스 스타일 */
+canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* 차트 제목 */
+.chart-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
 }

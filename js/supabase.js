@@ -264,7 +264,8 @@ class SupabaseManager {
             return { success: false, error };
         }
     }
-    // 연간 데이터 조회 (새로 추가)
+
+    // 연간 데이터 조회
     async loadYearlyData(year) {
         try {
             const startDate = `${year}-01-01`;
@@ -321,6 +322,38 @@ class SupabaseManager {
             };
         } catch (error) {
             console.error('연간 데이터 조회 오류:', error);
+            return { success: false, error };
+        }
+    }
+
+    // 특정 날짜 데이터 삭제
+    async deleteDataByDate(selectedDate) {
+        try {
+            console.log(`${selectedDate} 데이터 삭제 시작...`);
+
+            const deletePromises = [
+                this.client.from('workouts').delete()
+                    .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                    .eq('workout_date', selectedDate),
+                this.client.from('cardio_workouts').delete()
+                    .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                    .eq('workout_date', selectedDate),
+                this.client.from('meals').delete()
+                    .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                    .eq('meal_date', selectedDate)
+            ];
+
+            const results = await Promise.all(deletePromises);
+            
+            // 에러 확인
+            results.forEach(result => {
+                if (result.error) throw result.error;
+            });
+
+            console.log(`${selectedDate} 데이터 삭제 완료`);
+            return { success: true };
+        } catch (error) {
+            console.error('데이터 삭제 오류:', error);
             return { success: false, error };
         }
     }

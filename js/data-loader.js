@@ -55,7 +55,6 @@ class DataLoaderManager {
                 });
             }
 
-
             dayElement.textContent = currentDate.getDate();
             calendarGrid.appendChild(dayElement);
 
@@ -108,7 +107,7 @@ class DataLoaderManager {
         } finally {
             loadBtn.textContent = '📥 현재 월 데이터 불러오기';
             loadBtn.style.backgroundColor = '#10b981';
-            loadBtn.disabled = false; // 이 줄을 추가해야 됩니다
+            loadBtn.disabled = false;
         }
     }
 
@@ -376,6 +375,26 @@ class DataLoaderManager {
         DOM.setHTML('previewContent', content);
         DOM.show(preview);
         DOM.show(applyBtn);
+
+        // 모든 데이터 존재 여부에 따라 삭제 버튼 활성화 결정
+        const totalData = dayWorkouts.length + dayCardio.length + dayMeals.length;
+        const deleteBtn = DOM.get('deleteDataBtn');
+
+        if (totalData > 0) {
+            // 데이터가 있으면 삭제 버튼 활성화
+            DOM.show(deleteBtn);
+            deleteBtn.disabled = false;
+            deleteBtn.style.backgroundColor = '#ef4444';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.textContent = `🗑️ 데이터 삭제 (총 ${totalData}개)`;
+        } else {
+            // 데이터가 없으면 삭제 버튼 비활성화
+            DOM.show(deleteBtn);
+            deleteBtn.disabled = true;
+            deleteBtn.style.backgroundColor = '#9ca3af';
+            deleteBtn.style.cursor = 'not-allowed';
+            deleteBtn.textContent = '🗑️ 삭제할 데이터가 없습니다';
+        }
     }
 
     // 선택한 날짜 데이터 적용
@@ -463,7 +482,7 @@ class DataLoaderManager {
                 if (lunchData.total_calories === 480) AppState.selectedLunchType = 'galbi';
                 else if (lunchData.total_calories === 475) AppState.selectedLunchType = 'kakdugi';
                 else if (lunchData.total_calories === 510) AppState.selectedLunchType = 'egg';
-                
+
                 document.querySelector(`input[name="lunchType"][value="${AppState.selectedLunchType}"]`).checked = true;
                 DOM.setText('selectedLunchCalories', lunchData.total_calories);
             }
@@ -510,6 +529,97 @@ class DataLoaderManager {
         }
     }
 
+    // 선택한 날짜 데이터 삭제
+    static async deleteSelectedDateData() {
+        if (!AppState.selectedDateForLoad) {
+            NotificationUtils.alert('삭제할 날짜를 먼저 선택해주세요.');
+            return;
+        }
+
+        const selectedDate = AppState.selectedDateForLoad;
+
+        // 해당 날짜의 데이터 개수 확인
+        const dayWorkouts = AppState.monthlyData.workouts.filter(w => w.workout_date === selectedDate);
+        const dayCardio = AppState.monthlyData.cardio.filter(c => c.workout_date === selectedDate);
+        const dayMeals = AppState.monthlyData.meals.filter(m => m.meal_date === selectedDate);
+
+        const totalData = dayWorkouts.length + dayCardio.length + dayMeals.length;
+
+        if (totalData === 0) {
+            NotificationUtils.alert('선택한 날짜에 삭제할 데이터가 없습니다.');
+            return;
+        }
+
+        // 삭제 확인
+        const confirmMessage = `${selectedDate}의 모든 데이터를 삭제하시겠습니까?\n\n` +
+            `• 웨이트 운동: ${dayWorkouts.length}개\n` +
+            `• 유산소 운동: ${dayCardio.length}개\n` +
+            `• 식사 기록: ${dayMeals.length}개\n\n` +
+            `⚠️ 이 작업은 되돌릴 수 없습니다.`;
+
+        if (!NotificationUtils.confirm(confirmMessage)) {
+            return;
+        }
+
+        const deleteBtn = DOM.get('deleteDataBtn');
+        const originalText = deleteBtn.textContent;
+
+        try {
+            deleteBtn.textContent = '🗑️ 삭제 중...';
+            deleteBtn.style.backgroundColor = '#9ca3af';
+            deleteBtn.style.cursor = 'not-allowed';
+            deleteBtn.disabled = true;
+
+            // Supabase에서 데이터 삭제
+            const result = await supabaseManager.deleteDataByDate(selectedDate);
+
+            if (!result.success) {
+                throw result.error;
+            }
+
+            // 로컬 데이터에서도 제거
+            AppState.monthlyData.workouts = AppState.monthlyData.workouts.filter(w => w.workout_date !== selectedDate);
+            AppState.monthlyData.cardio = AppState.monthlyData.cardio.filter(c => c.workout_date !== selectedDate);
+            AppState.monthlyData.meals = AppState.monthlyData.meals.filter(m => m.meal_date !== selectedDate);
+
+            // UI 업데이트
+            DataLoaderManager.updateCalendarWithData();
+
+            // 월간 통계 재계산
+            const year = AppState.currentCalendarYear;
+            const month = AppState.currentCalendarMonth + 1;
+            DataLoaderManager.calculateAndShowMonthlySummary(AppState.monthlyData, year, month);
+
+            // 미리보기 숨기기
+            DOM.hide(DOM.get('dataPreview'));
+            DOM.hide(DOM.get('applyDataBtn'));
+            DOM.hide(DOM.get('deleteDataBtn'));
+
+            // 캘린더에서 선택 해제
+            DOM.getAll('.calendar-day.active').forEach(day => {
+                DOM.removeClass(day, 'active');
+            });
+
+            AppState.selectedDateForLoad = null;
+
+            NotificationUtils.alert(`${selectedDate} 데이터가 완전히 삭제되었습니다!`);
+
+            // 1초 후 자동 새로고침
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+
+        } catch (error) {
+            console.error('데이터 삭제 오류:', error);
+            NotificationUtils.alert('데이터 삭제 중 오류가 발생했습니다: ' + (error?.message || '알 수 없는 오류'));
+        } finally {
+            deleteBtn.textContent = originalText;
+            deleteBtn.style.backgroundColor = '#ef4444';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.disabled = false;
+        }
+    }
+
     // 데이터 불러오기 관련 초기화
     static resetDataLoader() {
         AppState.monthlyData = {
@@ -522,6 +632,7 @@ class DataLoaderManager {
         DOM.hide(DOM.get('successPopup'));
         DOM.hide(DOM.get('dataPreview'));
         DOM.hide(DOM.get('applyDataBtn'));
+        DOM.hide(DOM.get('deleteDataBtn'));
         DOM.hide(DOM.get('summaryContainer'));
         DataLoaderManager.generateCalendar();
     }
@@ -560,7 +671,7 @@ class DataLoaderManager {
         }, 500);
     }
 
-    // 스마트 자동 데이터 로딩 (새로 추가)
+    // 스마트 자동 데이터 로딩
     static async autoLoadCurrentMonthData() {
         try {
             const year = AppState.currentCalendarYear;
@@ -617,5 +728,4 @@ class DataLoaderManager {
             // 실패해도 앱은 정상 동작하도록 에러를 조용히 처리
         }
     }
-
 }

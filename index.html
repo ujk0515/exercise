@@ -270,7 +270,8 @@
                             </div>
                             <div>
                                 <label class="form-label">평균 RPM</label>
-                                <input type="number" id="cycleRPM" class="form-input" min="30" max="150" value="80" step="1">
+                                <input type="number" id="cycleRPM" class="form-input" min="30" max="150" value="80"
+                                    step="1">
                             </div>
                             <div>
                                 <label class="form-label">시간 (분)</label>
@@ -389,8 +390,13 @@
                         <div id="dataPreview" class="selected-data-preview hidden">
                             <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
                             <div id="previewContent"></div>
-                            <div id="applyDataBtn" class="apply-data-btn hidden">
-                                📥 이 날짜 데이터를 현재 화면에 적용
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
+                                    📥 이 날짜 데이터를 현재 화면에 적용
+                                </div>
+                                <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
+                                    🗑️ 이 날짜 데이터를 완전히 삭제
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -451,54 +457,66 @@
                     <!-- 점심 -->
                     <div class="meal-card meal-lunch">
                         <div class="meal-title">☀️ 점심</div>
-                    
+
                         <div class="checkbox-container">
-                            <input type="checkbox" id="useDefaultLunch" checked onchange="MealManager.toggleLunchMenu(); SummaryManager.updateSummary();">
+                            <input type="checkbox" id="useDefaultLunch" checked
+                                onchange="MealManager.toggleLunchMenu(); SummaryManager.updateSummary();">
                             <label for="useDefaultLunch" style="font-size: 14px;">기본 점심 메뉴 사용</label>
                         </div>
-                    
+
                         <div id="defaultLunch">
                             <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
-                            
+
                             <div style="margin-bottom: 12px;">
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="galbi" checked onchange="MealManager.changeLunchType()">
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                    <input type="radio" name="lunchType" value="galbi" checked
+                                        onchange="MealManager.changeLunchType()">
                                     <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="kakdugi" onchange="MealManager.changeLunchType()">
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                    <input type="radio" name="lunchType" value="kakdugi"
+                                        onchange="MealManager.changeLunchType()">
                                     <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="egg" onchange="MealManager.changeLunchType()">
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                    <input type="radio" name="lunchType" value="egg"
+                                        onchange="MealManager.changeLunchType()">
                                     <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
                                 </label>
                             </div>
-                            
-                            <div style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+
+                            <div
+                                style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
                                 선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
                             </div>
                         </div>
-                    
+
                         <div id="customLunch" class="hidden">
                             <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 점심 입력</div>
-                    
+
                             <div class="custom-food-form">
-                                <input type="text" id="newLunchName" class="form-input" placeholder="음식명" style="font-size: 12px;">
-                                <input type="number" id="newLunchCalories" class="form-input" placeholder="칼로리" style="font-size: 12px;">
-                                <button id="addCustomLunch" class="btn btn-primary" style="font-size: 12px; padding: 6px 12px;">
+                                <input type="text" id="newLunchName" class="form-input" placeholder="음식명"
+                                    style="font-size: 12px;">
+                                <input type="number" id="newLunchCalories" class="form-input" placeholder="칼로리"
+                                    style="font-size: 12px;">
+                                <button id="addCustomLunch" class="btn btn-primary"
+                                    style="font-size: 12px; padding: 6px 12px;">
                                     ➕ 음식 추가
                                 </button>
                             </div>
-                    
+
                             <div id="customLunchList" class="custom-food-list hidden">
                                 <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
                                 <div id="customLunchItems"></div>
-                                <div style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                <div
+                                    style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
                                     총 칼로리: <span id="customLunchTotalCalories">0</span>kcal
                                 </div>
                             </div>
-                    
+
                             <div id="emptyCustomLunch" class="empty-state">
                                 커스텀 음식을 추가해주세요
                             </div>
@@ -553,9 +571,75 @@
         </div>
     </div>
 
+    <!-- 통계 및 그래프 섹션 (기존 식사 기록 카드 아래에 추가) -->
+    <div class="card">
+        <div class="card-content">
+            <h2 class="section-title">📊 통계 및 그래프</h2>
+
+            <!-- 차트 탭 버튼 -->
+            <div class="grid grid-4 form-group">
+                <div class="category-btn active" data-chart="balance">
+                    <div class="category-icon">📈</div>
+                    <div>칼로리 추이</div>
+                </div>
+                <div class="category-btn" data-chart="composition">
+                    <div class="category-icon">📊</div>
+                    <div>오늘 구성</div>
+                </div>
+                <div class="category-btn" data-chart="workout">
+                    <div class="category-icon">🏋️‍♂️</div>
+                    <div>운동별 비교</div>
+                </div>
+                <div class="category-btn" data-chart="trend">
+                    <div class="category-icon">📅</div>
+                    <div>월간 트렌드</div>
+                </div>
+            </div>
+
+            <!-- 차트 컨테이너들 -->
+            <div id="chartContainer">
+                <!-- 칼로리 추이 차트 -->
+                <div id="calorieBalanceChart" class="chart-section">
+                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                        차트를 로딩 중입니다...
+                    </div>
+                </div>
+
+                <!-- 오늘 구성 차트 -->
+                <div id="dailyCompositionChart" class="chart-section hidden">
+                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                        차트를 로딩 중입니다...
+                    </div>
+                </div>
+
+                <!-- 운동별 비교 차트 -->
+                <div id="workoutComparisonChart" class="chart-section hidden">
+                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                        차트를 로딩 중입니다...
+                    </div>
+                </div>
+
+                <!-- 월간 트렌드 차트 -->
+                <div id="monthlyTrendChart" class="chart-section hidden">
+                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                        차트를 로딩 중입니다...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 차트 새로고침 버튼 -->
+            <div style="text-align: center; margin-top: 16px;">
+                <button id="refreshCharts" class="btn btn-primary">
+                    🔄 차트 새로고침
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 외부 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
     <!-- 인라인 상수 정의 -->
     <script>
@@ -665,6 +749,7 @@
     <script src="js/meal.js"></script>
     <script src="js/data-loader.js"></script>
     <script src="js/excel.js"></script>
+    <script src="js/charts.js"></script>
     <script src="js/main.js"></script>
 </body>
 

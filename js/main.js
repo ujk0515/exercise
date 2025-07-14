@@ -37,6 +37,13 @@ class FitnessApp {
         // 초기 운동 총합 업데이트
         WorkoutSummaryManager.updateWorkoutSummary();
 
+        // 차트 초기화 (새로 추가)
+        if (typeof ChartManager !== 'undefined') {
+            setTimeout(() => {
+                ChartManager.renderAllCharts();
+            }, 1000);
+        }
+
         console.log('피트니스 트래커 애플리케이션이 초기화되었습니다.');
     }
 
@@ -146,6 +153,12 @@ class FitnessApp {
             applyBtn.addEventListener('click', DataLoaderManager.applySelectedDateData);
         }
 
+        // 데이터 삭제 버튼
+        const deleteBtn = DOM.get('deleteDataBtn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', DataLoaderManager.deleteSelectedDateData);
+        }
+
         // 캘린더 이동 버튼들
         const prevBtn = DOM.get('prevMonthBtn');
         const nextBtn = DOM.get('nextMonthBtn');
@@ -165,6 +178,16 @@ class FitnessApp {
 
         // 전체 초기화
         DOM.get('resetAll').addEventListener('click', FitnessApp.resetAllData);
+
+        // 차트 관련 이벤트 리스너 (새로 추가)
+        DOM.getAll('[data-chart]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const chartType = this.dataset.chart;
+                ChartManager.switchChart(chartType);
+            });
+        });
+
+        DOM.get('refreshCharts').addEventListener('click', ChartManager.renderAllCharts);
     }
 
     // 전체 데이터 Supabase에 저장
