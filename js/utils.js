@@ -18,6 +18,10 @@ const AppState = {
     currentCalendarYear: new Date().getFullYear(),
     currentCalendarMonth: new Date().getMonth(),
     selectedLunchType: 'galbi',
+    // 새로 추가된 사용자 정보
+    userAge: 25,
+    userHeight: 175,
+    userGender: 'male'
 };
 
 // DOM 유틸리티 함수들
@@ -155,8 +159,31 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    // 기초대사량 계산
+    // 기초대사량 계산 (기존 방식 유지)
     calculateBMR: () => Math.round(AppState.userWeight * 24 * 1.3),
+
+    // 미플린 공식 기반 BMR 계산 (새로 추가)
+    calculateMifflinBMR: () => {
+        const weight = AppState.userWeight;
+        const height = AppState.userHeight;
+        const age = AppState.userAge;
+        const gender = AppState.userGender;
+
+        let bmr;
+        if (gender === 'male') {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+        } else {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+        }
+
+        return Math.round(bmr);
+    },
+
+    // TDEE 계산 (새로 추가)
+    calculateTDEE: (activityLevel = 1.55) => {
+        const bmr = CalorieCalculator.calculateMifflinBMR();
+        return Math.round(bmr * activityLevel);
+    },
 
     // 사이클 칼로리 계산 (RPM 포함)
     calculateCycle: (intensity, rpm, duration) => {
@@ -168,6 +195,30 @@ const CalorieCalculator = {
         
         const hours = duration / 60;
         return Math.round(finalMET * AppState.userWeight * hours);
+    }
+};
+
+// 사용자 정보 관리 유틸리티 (새로 추가)
+const UserInfoManager = {
+    // 사용자 정보 업데이트
+    updateUserInfo: () => {
+        AppState.userAge = parseInt(DOM.getValue('userAge')) || 25;
+        AppState.userHeight = parseInt(DOM.getValue('userHeight')) || 175;
+        AppState.userWeight = parseInt(DOM.getValue('userWeight')) || 87;
+        
+        const genderElement = document.querySelector('input[name="userGender"]:checked');
+        AppState.userGender = genderElement ? genderElement.value : 'male';
+    },
+
+    // BMR/TDEE 표시 업데이트
+    updateBMRDisplay: () => {
+        UserInfoManager.updateUserInfo();
+        
+        const bmr = CalorieCalculator.calculateMifflinBMR();
+        const tdee = CalorieCalculator.calculateTDEE();
+        
+        DOM.setText('bmrValue', bmr.toLocaleString());
+        DOM.setText('tdeeValue', tdee.toLocaleString());
     }
 };
 

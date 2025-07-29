@@ -3,21 +3,29 @@ class WorkoutManager {
     // 운동 목록 로드
     static loadExercises(category) {
         const select = DOM.get('exerciseSelect');
+        if (!select) return;
+        
         select.innerHTML = '<option value="">운동을 선택하세요</option>';
 
-        Object.entries(EXERCISE_DATABASE[category].exercises).forEach(([key, exercise]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = exercise.name;
-            select.appendChild(option);
-        });
+        if (EXERCISE_DATABASE[category] && EXERCISE_DATABASE[category].exercises) {
+            Object.entries(EXERCISE_DATABASE[category].exercises).forEach(([key, exercise]) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = exercise.name;
+                select.appendChild(option);
+            });
+        }
     }
 
     // 운동 추가 버튼 상태 업데이트
     static updateAddWorkoutButton() {
         const exerciseSelected = DOM.getValue('exerciseSelect');
-        const totalWeight = parseFloat(DOM.get('totalWeight').textContent);
+        const totalWeightElement = DOM.get('totalWeight');
         const btn = DOM.get('addWorkout');
+        
+        if (!totalWeightElement || !btn) return;
+        
+        const totalWeight = parseFloat(totalWeightElement.textContent);
 
         // 맨몸 운동인지 확인
         const exercise = EXERCISE_DATABASE[AppState.selectedCategory]?.exercises[exerciseSelected];
@@ -32,9 +40,14 @@ class WorkoutManager {
         const reps = parseInt(DOM.getValue('reps'));
         const sets = parseInt(DOM.getValue('sets'));
 
+        if (!exerciseKey || !reps || !sets) return;
+
         const weightCombination = WeightUtils.getWeightCombination();
         const totalWeight = WeightUtils.calculateTotalWeight();
         const calories = CalorieCalculator.calculateExercise(exerciseKey, weightCombination, reps, sets);
+        
+        if (!EXERCISE_DATABASE[AppState.selectedCategory]?.exercises[exerciseKey]) return;
+        
         const exerciseName = EXERCISE_DATABASE[AppState.selectedCategory].exercises[exerciseKey].name;
 
         const workout = {
@@ -51,16 +64,21 @@ class WorkoutManager {
         WorkoutManager.renderWorkouts();
 
         // 폼 리셋
-        FormUtils.resetWorkoutForm();
+        if (typeof FormUtils !== 'undefined') {
+            FormUtils.resetWorkoutForm();
+        }
         SummaryManager.updateSummary();
     }
 
     // 웨이트 운동 기록 렌더링
     static renderWorkouts() {
         const container = DOM.get('workoutRecords');
+        if (!container) return;
 
         if (AppState.workouts.length === 0) {
-            RenderUtils.renderEmptyState(container, '아직 웨이트 운동 기록이 없습니다');
+            if (typeof RenderUtils !== 'undefined') {
+                RenderUtils.renderEmptyState(container, '아직 웨이트 운동 기록이 없습니다');
+            }
             return;
         }
 
@@ -76,14 +94,18 @@ class WorkoutManager {
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="calories">${workout.calories}kcal</span>
-                    ${RenderUtils.createDeleteButton(workout.id, 'WorkoutManager.removeWorkout')}
+                    ${typeof RenderUtils !== 'undefined' ? 
+                        RenderUtils.createDeleteButton(workout.id, 'WorkoutManager.removeWorkout') : 
+                        `<button class="btn btn-danger" onclick="WorkoutManager.removeWorkout(${workout.id})">🗑️</button>`}
                 </div>
             `;
             container.appendChild(div);
         });
 
         // 운동 총합 업데이트
-        WorkoutSummaryManager.updateWorkoutSummary();
+        if (typeof WorkoutSummaryManager !== 'undefined') {
+            WorkoutSummaryManager.updateWorkoutSummary();
+        }
     }
 
     // 웨이트 운동 삭제
@@ -91,7 +113,9 @@ class WorkoutManager {
         AppState.workouts = ArrayUtils.removeById(AppState.workouts, id);
         WorkoutManager.renderWorkouts();
         SummaryManager.updateSummary();
-        WorkoutSummaryManager.updateWorkoutSummary();
+        if (typeof WorkoutSummaryManager !== 'undefined') {
+            WorkoutSummaryManager.updateWorkoutSummary();
+        }
     }
 
     // 카테고리 변경 처리
@@ -120,6 +144,9 @@ class CardioManager {
             const incline = parseInt(DOM.getValue('incline'));
             const speed = parseFloat(DOM.getValue('speed'));
             const duration = parseInt(DOM.getValue('duration'));
+            
+            if (!incline || !speed || !duration) return;
+            
             const calories = CalorieCalculator.calculateTreadmill(incline, speed, duration);
 
             cardio = {
@@ -132,6 +159,9 @@ class CardioManager {
             const intensity = parseInt(DOM.getValue('cycleIntensity'));
             const rpm = parseInt(DOM.getValue('cycleRPM'));
             const duration = parseInt(DOM.getValue('cycleDuration'));
+            
+            if (!intensity || !rpm || !duration) return;
+            
             const calories = CalorieCalculator.calculateCycle(intensity, rpm, duration);
         
             cardio = {
@@ -146,31 +176,42 @@ class CardioManager {
         AppState.cardioWorkouts.push(cardio);
         CardioManager.renderCardio();
         SummaryManager.updateSummary();
-        WorkoutSummaryManager.updateWorkoutSummary();
+        if (typeof WorkoutSummaryManager !== 'undefined') {
+            WorkoutSummaryManager.updateWorkoutSummary();
+        }
     }
 
     // 유산소 운동 종류 변경
     static changeCardioType(type) {
         DOM.getAll('[data-cardio-type]').forEach(btn => DOM.removeClass(btn, 'active'));
-        document.querySelector(`[data-cardio-type="${type}"]`).classList.add('active');
+        const selectedBtn = document.querySelector(`[data-cardio-type="${type}"]`);
+        if (selectedBtn) {
+            selectedBtn.classList.add('active');
+        }
 
         AppState.selectedCardioType = type;
 
+        const treadmillForm = DOM.get('treadmillForm');
+        const cycleForm = DOM.get('cycleForm');
+
         if (type === 'treadmill') {
-            DOM.show(DOM.get('treadmillForm'));
-            DOM.hide(DOM.get('cycleForm'));
+            if (treadmillForm) DOM.show(treadmillForm);
+            if (cycleForm) DOM.hide(cycleForm);
         } else {
-            DOM.hide(DOM.get('treadmillForm'));
-            DOM.show(DOM.get('cycleForm'));
+            if (treadmillForm) DOM.hide(treadmillForm);
+            if (cycleForm) DOM.show(cycleForm);
         }
     }
 
     // 유산소 운동 기록 렌더링
     static renderCardio() {
         const container = DOM.get('cardioRecords');
+        if (!container) return;
 
         if (AppState.cardioWorkouts.length === 0) {
-            RenderUtils.renderEmptyState(container, '아직 유산소 운동 기록이 없습니다');
+            if (typeof RenderUtils !== 'undefined') {
+                RenderUtils.renderEmptyState(container, '아직 유산소 운동 기록이 없습니다');
+            }
             return;
         }
 
@@ -189,7 +230,9 @@ class CardioManager {
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="calories">${cardio.calories}kcal</span>
-                    ${RenderUtils.createDeleteButton(cardio.id, 'CardioManager.removeCardio')}
+                    ${typeof RenderUtils !== 'undefined' ? 
+                        RenderUtils.createDeleteButton(cardio.id, 'CardioManager.removeCardio') : 
+                        `<button class="btn btn-danger" onclick="CardioManager.removeCardio(${cardio.id})">🗑️</button>`}
                 </div>
             `;
             container.appendChild(div);
@@ -201,7 +244,9 @@ class CardioManager {
         AppState.cardioWorkouts = ArrayUtils.removeById(AppState.cardioWorkouts, id);
         CardioManager.renderCardio();
         SummaryManager.updateSummary();
-        WorkoutSummaryManager.updateWorkoutSummary();
+        if (typeof WorkoutSummaryManager !== 'undefined') {
+            WorkoutSummaryManager.updateWorkoutSummary();
+        }
     }
 }
 
@@ -218,32 +263,50 @@ class SummaryManager {
         const basalMetabolicRate = CalorieCalculator.calculateBMR();
         const totalDailyCalorieBurn = basalMetabolicRate + totalWorkoutCalories;
 
-        // 식사 칼로리 계산 - 점심 부분 수정
-        const breakfastCal = DOM.get('useDefaultBreakfast').checked ?
+        // 식사 칼로리 계산 - 안전한 접근
+        const useDefaultBreakfast = DOM.get('useDefaultBreakfast');
+        const useDefaultLunch = DOM.get('useDefaultLunch');
+        const useDefaultDinner = DOM.get('useDefaultDinner');
+
+        const breakfastCal = useDefaultBreakfast?.checked ?
             MEAL_CALORIES.breakfast :
             ArrayUtils.sum(AppState.customBreakfastItems, 'calories');
         
-        const lunchCal = DOM.get('useDefaultLunch').checked ?
+        const lunchCal = useDefaultLunch?.checked ?
             MEAL_CALORIES.lunch[AppState.selectedLunchType] :
             ArrayUtils.sum(AppState.customLunchItems, 'calories');
         
-        const dinnerCal = DOM.get('useDefaultDinner').checked ?
+        const dinnerCal = useDefaultDinner?.checked ?
             MEAL_CALORIES.defaultDinner :
             ArrayUtils.sum(AppState.customDinnerItems, 'calories');
+        
         const totalFoodCalories = breakfastCal + lunchCal + dinnerCal;
 
         // 실제 칼로리 수지 (기초대사량 포함)
         const balance = totalFoodCalories - totalDailyCalorieBurn;
 
-        // UI 업데이트
-        DOM.setText('totalWorkoutCal', totalDailyCalorieBurn);
-        DOM.setText('totalFoodCal', totalFoodCalories);
-        DOM.setText('calorieBalance', (balance > 0 ? '+' : '') + balance);
-        DOM.setText('balanceStatus', balance > 0 ? '🔺 잉여' : '🔻 적자');
-
-        // 칼로리 수지 색상 변경
-        const balanceElement = DOM.get('calorieBalance');
-        balanceElement.style.color = balance > 0 ? '#fca5a5' : '#86efac';
+        // UI 업데이트 - 안전한 요소 접근
+        const totalWorkoutCalElement = DOM.get('totalWorkoutCal');
+        if (totalWorkoutCalElement) {
+            DOM.setText('totalWorkoutCal', totalDailyCalorieBurn);
+        }
+        
+        const totalFoodCalElement = DOM.get('totalFoodCal');
+        if (totalFoodCalElement) {
+            DOM.setText('totalFoodCal', totalFoodCalories);
+        }
+        
+        const calorieBalanceElement = DOM.get('calorieBalance');
+        if (calorieBalanceElement) {
+            DOM.setText('calorieBalance', (balance > 0 ? '+' : '') + balance);
+            // 안전한 스타일 접근
+            calorieBalanceElement.style.color = balance > 0 ? '#fca5a5' : '#86efac';
+        }
+        
+        const balanceStatusElement = DOM.get('balanceStatus');
+        if (balanceStatusElement) {
+            DOM.setText('balanceStatus', balance > 0 ? '🔺 잉여' : '🔻 적자');
+        }
     }
 }
 
@@ -270,8 +333,15 @@ class WorkoutSummaryManager {
             totalCalories += cardio.calories;
         });
 
-        // UI 업데이트
-        DOM.setText('totalWorkoutSets', totalSets);
-        DOM.setText('totalWorkoutCalories', Math.round(totalCalories));
+        // UI 업데이트 - 안전한 요소 접근
+        const totalWorkoutSetsElement = DOM.get('totalWorkoutSets');
+        if (totalWorkoutSetsElement) {
+            DOM.setText('totalWorkoutSets', totalSets);
+        }
+        
+        const totalWorkoutCaloriesElement = DOM.get('totalWorkoutCalories');
+        if (totalWorkoutCaloriesElement) {
+            DOM.setText('totalWorkoutCalories', Math.round(totalCalories));
+        }
     }
 }

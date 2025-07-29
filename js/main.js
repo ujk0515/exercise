@@ -1,10 +1,12 @@
 // 메인 애플리케이션 관리 클래스
-// 메인 애플리케이션 관리 클래스
 class FitnessApp {
     // 애플리케이션 초기화
     static init() {
         // 오늘 날짜 설정
         DOM.setValue('selectedDate', DateUtils.today());
+
+        // 초기 사용자 정보 설정
+        FitnessApp.initUserInfo();
 
         // 초기 운동 목록 로드
         WorkoutManager.loadExercises(AppState.selectedCategory);
@@ -14,6 +16,11 @@ class FitnessApp {
 
         // 초기 칼로리 계산
         SummaryManager.updateSummary();
+
+        // 초기 BMR/TDEE 계산 및 표시
+        if (typeof UserInfoManager !== 'undefined') {
+            UserInfoManager.updateBMRDisplay();
+        }
 
         // 초기 캘린더 생성 (안전한 호출로 수정)
         if (typeof DataLoaderManager !== 'undefined') {
@@ -35,7 +42,9 @@ class FitnessApp {
         }
 
         // 초기 운동 총합 업데이트
-        WorkoutSummaryManager.updateWorkoutSummary();
+        if (typeof WorkoutSummaryManager !== 'undefined') {
+            WorkoutSummaryManager.updateWorkoutSummary();
+        }
 
         // 차트 초기화 (새로 추가)
         if (typeof ChartManager !== 'undefined') {
@@ -47,6 +56,15 @@ class FitnessApp {
         console.log('피트니스 트래커 애플리케이션이 초기화되었습니다.');
     }
 
+    // 초기 사용자 정보 설정
+    static initUserInfo() {
+        // HTML에서 설정된 기본값들로 AppState 초기화
+        AppState.userAge = parseInt(DOM.getValue('userAge')) || 25;
+        AppState.userHeight = parseInt(DOM.getValue('userHeight')) || 175;
+        AppState.userWeight = parseInt(DOM.getValue('userWeight')) || 87;
+        AppState.userGender = 'male'; // 기본값
+    }
+
     // 이벤트 리스너 설정
     static setupEventListeners() {
         FitnessApp.setupWorkoutEventListeners();
@@ -54,35 +72,113 @@ class FitnessApp {
         FitnessApp.setupMealEventListeners();
         FitnessApp.setupDataLoaderEventListeners();
         FitnessApp.setupUtilityEventListeners();
+        FitnessApp.setupUserInfoEventListeners(); // 새로 추가
+    }
+
+    // 사용자 정보 관련 이벤트 리스너 (새로 추가)
+    static setupUserInfoEventListeners() {
+        // 나이 입력 변경
+        const ageInput = DOM.get('userAge');
+        if (ageInput) {
+            ageInput.addEventListener('input', function () {
+                AppState.userAge = parseInt(this.value) || 25;
+                if (typeof UserInfoManager !== 'undefined') {
+                    UserInfoManager.updateBMRDisplay();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
+
+        // 키 입력 변경
+        const heightInput = DOM.get('userHeight');
+        if (heightInput) {
+            heightInput.addEventListener('input', function () {
+                AppState.userHeight = parseInt(this.value) || 175;
+                if (typeof UserInfoManager !== 'undefined') {
+                    UserInfoManager.updateBMRDisplay();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
+
+        // 헤더 체중 입력 변경
+        const headerWeightInput = DOM.get('userWeightHeader');
+        if (headerWeightInput) {
+            headerWeightInput.addEventListener('input', function () {
+                AppState.userWeight = parseInt(this.value) || 87;
+                DOM.setValue('userWeight', this.value); // 웨이트 섹션 동기화
+                if (typeof UserInfoManager !== 'undefined') {
+                    UserInfoManager.updateBMRDisplay();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
+
+        // 성별 선택 변경
+        DOM.getAll('input[name="userGender"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                AppState.userGender = this.value;
+                if (typeof UserInfoManager !== 'undefined') {
+                    UserInfoManager.updateBMRDisplay();
+                }
+                SummaryManager.updateSummary();
+            });
+        });
     }
 
     // 웨이트 운동 관련 이벤트 리스너
     static setupWorkoutEventListeners() {
-        // 카테고리 선택
         // 카테고리 선택 (웨이트 운동만)
         DOM.getAll('[data-category]').forEach(btn => {
             btn.addEventListener('click', function () {
                 const category = this.dataset.category;
-                WorkoutManager.changeCategory(category);
+                if (typeof WorkoutManager !== 'undefined') {
+                    WorkoutManager.changeCategory(category);
+                }
             });
         });
 
         // 무게 입력 변경
         DOM.getAll('.weight-input').forEach(input => {
-            input.addEventListener('input', WeightUtils.updateTotalWeight);
+            input.addEventListener('input', function() {
+                if (typeof WeightUtils !== 'undefined') {
+                    WeightUtils.updateTotalWeight();
+                }
+            });
         });
 
         // 운동 선택 변경
-        DOM.get('exerciseSelect').addEventListener('change', WorkoutManager.updateAddWorkoutButton);
+        const exerciseSelect = DOM.get('exerciseSelect');
+        if (exerciseSelect) {
+            exerciseSelect.addEventListener('change', function() {
+                if (typeof WorkoutManager !== 'undefined') {
+                    WorkoutManager.updateAddWorkoutButton();
+                }
+            });
+        }
 
         // 운동 추가
-        DOM.get('addWorkout').addEventListener('click', WorkoutManager.addWorkout);
+        const addWorkout = DOM.get('addWorkout');
+        if (addWorkout) {
+            addWorkout.addEventListener('click', function() {
+                if (typeof WorkoutManager !== 'undefined') {
+                    WorkoutManager.addWorkout();
+                }
+            });
+        }
 
-        // 체중 변경 이벤트
-        DOM.get('userWeight').addEventListener('input', function () {
-            AppState.userWeight = parseInt(this.value) || 87;
-            SummaryManager.updateSummary();
-        });
+        // 웨이트 섹션 체중 변경 이벤트
+        const weightInput = DOM.get('userWeight');
+        if (weightInput) {
+            weightInput.addEventListener('input', function () {
+                AppState.userWeight = parseInt(this.value) || 87;
+                DOM.setValue('userWeightHeader', this.value); // 헤더 동기화
+                if (typeof UserInfoManager !== 'undefined') {
+                    UserInfoManager.updateBMRDisplay();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
     }
 
     // 유산소 운동 관련 이벤트 리스너
@@ -90,47 +186,88 @@ class FitnessApp {
         // 유산소 종류 선택
         DOM.getAll('[data-cardio-type]').forEach(btn => {
             btn.addEventListener('click', function () {
-                CardioManager.changeCardioType(this.dataset.cardioType);
+                if (typeof CardioManager !== 'undefined') {
+                    CardioManager.changeCardioType(this.dataset.cardioType);
+                }
             });
         });
 
         // 유산소 추가
-        DOM.get('addCardio').addEventListener('click', CardioManager.addCardio);
+        const addCardio = DOM.get('addCardio');
+        if (addCardio) {
+            addCardio.addEventListener('click', function() {
+                if (typeof CardioManager !== 'undefined') {
+                    CardioManager.addCardio();
+                }
+            });
+        }
     }
 
     // 식사 관련 이벤트 리스너
     static setupMealEventListeners() {
         // 아침 메뉴 토글
-        DOM.get('useDefaultBreakfast').addEventListener('change', () => {
-            MealManager.toggleBreakfastMenu();
-            SummaryManager.updateSummary();
-        });
+        const useDefaultBreakfast = DOM.get('useDefaultBreakfast');
+        if (useDefaultBreakfast) {
+            useDefaultBreakfast.addEventListener('change', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.toggleBreakfastMenu();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
 
         // 점심 메뉴 토글
-        DOM.get('useDefaultLunch').addEventListener('change', () => {
-            MealManager.toggleLunchMenu();
-            SummaryManager.updateSummary();
-        });
+        const useDefaultLunch = DOM.get('useDefaultLunch');
+        if (useDefaultLunch) {
+            useDefaultLunch.addEventListener('change', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.toggleLunchMenu();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
 
         // 저녁 메뉴 토글
-        DOM.get('useDefaultDinner').addEventListener('change', () => {
-            MealManager.toggleDinnerMenu();
-            SummaryManager.updateSummary();
-        });
+        const useDefaultDinner = DOM.get('useDefaultDinner');
+        if (useDefaultDinner) {
+            useDefaultDinner.addEventListener('change', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.toggleDinnerMenu();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
 
         // 커스텀 음식 추가
-        DOM.get('addCustomBreakfast').addEventListener('click', () => {
-            MealManager.addCustomBreakfast();
-            SummaryManager.updateSummary();
-        });
-        DOM.get('addCustomLunch').addEventListener('click', () => {
-            MealManager.addCustomLunch();
-            SummaryManager.updateSummary();
-        });
-        DOM.get('addCustomFood').addEventListener('click', () => {
-            MealManager.addCustomFood();
-            SummaryManager.updateSummary();
-        });
+        const addCustomBreakfast = DOM.get('addCustomBreakfast');
+        if (addCustomBreakfast) {
+            addCustomBreakfast.addEventListener('click', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.addCustomBreakfast();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
+
+        const addCustomLunch = DOM.get('addCustomLunch');
+        if (addCustomLunch) {
+            addCustomLunch.addEventListener('click', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.addCustomLunch();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
+
+        const addCustomFood = DOM.get('addCustomFood');
+        if (addCustomFood) {
+            addCustomFood.addEventListener('click', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.addCustomFood();
+                }
+                SummaryManager.updateSummary();
+            });
+        }
     }
 
     // 데이터 불러오기 관련 이벤트 리스너
@@ -171,47 +308,73 @@ class FitnessApp {
     // 유틸리티 관련 이벤트 리스너
     static setupUtilityEventListeners() {
         // 데이터 다운로드
-        DOM.get('downloadData').addEventListener('click', ExcelManager.downloadData);
+        const downloadBtn = DOM.get('downloadData');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                if (typeof ExcelManager !== 'undefined') {
+                    ExcelManager.downloadData();
+                }
+            });
+        }
 
         // Supabase 저장
-        DOM.get('saveToSupabase').addEventListener('click', FitnessApp.saveAllDataToSupabase);
+        const saveBtn = DOM.get('saveToSupabase');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', FitnessApp.saveAllDataToSupabase);
+        }
 
         // 전체 초기화
-        DOM.get('resetAll').addEventListener('click', FitnessApp.resetAllData);
+        const resetBtn = DOM.get('resetAll');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', FitnessApp.resetAllData);
+        }
 
-        // 차트 관련 이벤트 리스너 (새로 추가)
+        // 차트 관련 이벤트 리스너
         DOM.getAll('[data-chart]').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const chartType = this.dataset.chart;
-                ChartManager.switchChart(chartType);
+                if (typeof ChartManager !== 'undefined') {
+                    ChartManager.switchChart(chartType);
+                }
             });
         });
 
-        DOM.get('refreshCharts').addEventListener('click', ChartManager.renderAllCharts);
+        const refreshChartsBtn = DOM.get('refreshCharts');
+        if (refreshChartsBtn) {
+            refreshChartsBtn.addEventListener('click', function () {
+                if (typeof ChartManager !== 'undefined') {
+                    ChartManager.renderAllCharts();
+                }
+            });
+        }
     }
 
     // 전체 데이터 Supabase에 저장
     static saveAllDataToSupabase() {
         const selectedDate = DOM.getValue('selectedDate');
-        const useDefaultBreakfast = DOM.get('useDefaultBreakfast').checked;
-        const useDefaultLunch = DOM.get('useDefaultLunch').checked;
-        const useDefaultDinner = DOM.get('useDefaultDinner').checked;
+        const useDefaultBreakfast = DOM.get('useDefaultBreakfast')?.checked || false;
+        const useDefaultLunch = DOM.get('useDefaultLunch')?.checked || false;
+        const useDefaultDinner = DOM.get('useDefaultDinner')?.checked || false;
 
-        supabaseManager.saveAllData(
-            selectedDate,
-            AppState.workouts,
-            AppState.cardioWorkouts,
-            useDefaultBreakfast,
-            useDefaultLunch,
-            useDefaultDinner,
-            AppState.customBreakfastItems,
-            AppState.customLunchItems,
-            AppState.customDinnerItems,
-            AppState.userWeight
-        );
+        if (typeof supabaseManager !== 'undefined') {
+            supabaseManager.saveAllData(
+                selectedDate,
+                AppState.workouts,
+                AppState.cardioWorkouts,
+                useDefaultBreakfast,
+                useDefaultLunch,
+                useDefaultDinner,
+                AppState.customBreakfastItems,
+                AppState.customLunchItems,
+                AppState.customDinnerItems,
+                AppState.userWeight
+            );
 
-        // 간단한 새로고침
-        setTimeout(() => { window.location.reload(); }, 1000);
+            // 간단한 새로고침
+            setTimeout(() => { window.location.reload(); }, 1000);
+        } else {
+            console.error('supabaseManager가 정의되지 않았습니다.');
+        }
     }
 
     // 전체 데이터 초기화
@@ -228,16 +391,24 @@ class FitnessApp {
         AppState.customDinnerItems = [];
 
         // 웨이트 운동 폼 초기화
-        FormUtils.resetWorkoutForm();
+        if (typeof FormUtils !== 'undefined') {
+            FormUtils.resetWorkoutForm();
+        }
 
         // 유산소 운동 폼 초기화  
-        FormUtils.resetCardioForm();
+        if (typeof FormUtils !== 'undefined') {
+            FormUtils.resetCardioForm();
+        }
 
         // 식사 데이터 초기화
-        MealManager.resetMealData();
+        if (typeof MealManager !== 'undefined') {
+            MealManager.resetMealData();
+        }
 
         // 커스텀 음식 입력 폼 초기화
-        FormUtils.resetCustomFoodForm();
+        if (typeof FormUtils !== 'undefined') {
+            FormUtils.resetCustomFoodForm();
+        }
 
         // 데이터 불러오기 UI 초기화
         if (typeof DataLoaderManager !== 'undefined') {
@@ -245,11 +416,20 @@ class FitnessApp {
         }
 
         // 화면 렌더링 업데이트
-        WorkoutManager.renderWorkouts();
-        CardioManager.renderCardio();
-        MealManager.renderCustomBreakfast();
-        MealManager.renderCustomLunch();
-        MealManager.renderCustomFoods();
+        if (typeof WorkoutManager !== 'undefined') {
+            WorkoutManager.renderWorkouts();
+        }
+        
+        if (typeof CardioManager !== 'undefined') {
+            CardioManager.renderCardio();
+        }
+        
+        if (typeof MealManager !== 'undefined') {
+            MealManager.renderCustomBreakfast();
+            MealManager.renderCustomLunch();
+            MealManager.renderCustomFoods();
+        }
+        
         SummaryManager.updateSummary();
 
         NotificationUtils.alert('모든 데이터가 초기화되었습니다.');
@@ -257,7 +437,6 @@ class FitnessApp {
         // 간단한 새로고침
         setTimeout(() => { window.location.reload(); }, 1000);
     }
-
 }
 
 // DOM이 로드되면 애플리케이션 초기화
@@ -266,6 +445,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // 전역 함수들 (HTML에서 직접 호출되는 함수들)
-window.WorkoutManager = WorkoutManager;
-window.CardioManager = CardioManager;
-window.MealManager = MealManager;
+if (typeof WorkoutManager !== 'undefined') {
+    window.WorkoutManager = WorkoutManager;
+}
+if (typeof CardioManager !== 'undefined') {
+    window.CardioManager = CardioManager;
+}
+if (typeof MealManager !== 'undefined') {
+    window.MealManager = MealManager;
+}

@@ -18,6 +18,48 @@
                         <h1 class="card-title">🏋️‍♂️ 운동 기록 일지</h1>
                         <p>체계적인 운동 및 식단 관리 시스템</p>
                     </div>
+                    <div class="header-middle">
+                        <div class="user-info">
+                            <div class="info-group">
+                                <span>👤</span>
+                                <input type="number" id="userAge" class="info-input" placeholder="25" min="10" max="100"
+                                    value="25">
+                                <span>세</span>
+                            </div>
+
+                            <div class="info-group">
+                                <span>📏</span>
+                                <input type="number" id="userHeight" class="info-input height-input" placeholder="175"
+                                    min="100" max="250" value="175">
+                                <span>cm</span>
+                            </div>
+
+                            <div class="info-group">
+                                <span>⚖️</span>
+                                <input type="number" id="userWeightHeader" class="info-input" placeholder="87" min="30"
+                                    max="200" value="87">
+                                <span>kg</span>
+                            </div>
+
+                            <div class="gender-group">
+                                <span>⚧</span>
+                                <label class="gender-label">
+                                    <input type="radio" name="userGender" value="male" checked>
+                                    남성
+                                </label>
+                                <label class="gender-label">
+                                    <input type="radio" name="userGender" value="female">
+                                    여성
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="bmr-results">
+                            <span class="bmr-inline">📊 BMR: <strong id="bmrValue">1,847</strong> kcal</span>
+                            <span class="bmr-separator">|</span>
+                            <span class="bmr-inline">🔥 TDEE: <strong id="tdeeValue">2,355</strong> kcal</span>
+                        </div>
+                    </div>
                     <div>
                         <input type="date" id="selectedDate" class="date-input">
                     </div>
@@ -25,550 +67,509 @@
             </div>
         </div>
 
-        <!-- 일일 요약 -->
-        <div class="summary-card">
-            <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                📊 일일 요약
-            </h2>
-
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <div class="summary-value" id="totalWorkoutCal">0</div>
-                    <div class="summary-label">소모 칼로리</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-value" id="totalFoodCal">960</div>
-                    <div class="summary-label">섭취 칼로리</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-value" id="calorieBalance">+960</div>
-                    <div class="summary-label">칼로리 수지</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-value" id="balanceStatus">🔺 잉여</div>
-                    <div class="summary-label">상태</div>
-                </div>
-            </div>
-
-            <div class="grid grid-3">
-                <button id="downloadData" class="btn"
-                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                    📥 엑셀 다운로드
-                </button>
-                <button id="saveToSupabase" class="btn"
-                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                    💾 Supabase 저장
-                </button>
-                <button id="resetAll" class="btn"
-                    style="background: rgba(255,100,100,0.8); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                    🔄 전체 초기화
-                </button>
-            </div>
-        </div>
-
-        <!-- 웨이트 & 운동기록 & 유산소 운동 & 데이터 불러오기 (4분할) -->
-        <div class="grid grid-4">
-            <!-- 웨이트 운동 -->
-            <div class="card">
-                <div class="card-content">
-                    <h2 class="section-title">🏋️‍♂️ 웨이트 운동</h2>
-
-                    <!-- 체중 입력 -->
-                    <div class="form-group">
-                        <label class="form-label">체중 (kg)</label>
-                        <input type="number" id="userWeight" class="form-input" min="30" max="200" value="87">
-                    </div>
-
-                    <!-- 카테고리 선택 -->
-                    <div class="grid grid-3 form-group">
-                        <div class="category-btn active" data-category="back">
-                            <div class="category-icon">🔙</div>
-                            <div>등</div>
-                        </div>
-                        <div class="category-btn" data-category="chest">
-                            <div class="category-icon">🫸</div>
-                            <div>가슴</div>
-                        </div>
-                        <div class="category-btn" data-category="shoulder">
-                            <div class="category-icon">🤷‍♂️</div>
-                            <div>어깨</div>
-                        </div>
-                        <div class="category-btn" data-category="legs">
-                            <div class="category-icon">🦵</div>
-                            <div>하체</div>
-                        </div>
-                    </div>
-
-                    <!-- 운동 선택 -->
-                    <div class="form-group">
-                        <label class="form-label">운동 종목</label>
-                        <select id="exerciseSelect" class="form-select">
-                            <option value="">운동을 선택하세요</option>
-                        </select>
-                    </div>
-
-                    <!-- 무게 조합 -->
-                    <div class="form-group">
-                        <label class="form-label">무게 조합</label>
-                        <div class="grid grid-6">
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">1kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="1" min="0" max="10"
-                                    value="0">
-                            </div>
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">2.5kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="2.5" min="0" max="10"
-                                    value="0">
-                            </div>
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">5kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="5" min="0" max="10"
-                                    value="0">
-                            </div>
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">10kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="10" min="0" max="10"
-                                    value="0">
-                            </div>
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">15kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="15" min="0" max="10"
-                                    value="0">
-                            </div>
-                            <div>
-                                <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">20kg</div>
-                                <input type="number" class="form-input weight-input" data-weight="20" min="0" max="10"
-                                    value="0">
-                            </div>
-                        </div>
-                        <div class="weight-total">총 무게: <span id="totalWeight">0</span>kg</div>
-                    </div>
-
-                    <!-- 횟수, 세트 -->
-                    <div class="grid grid-2 form-group">
-                        <div>
-                            <label class="form-label">횟수</label>
-                            <input type="number" id="reps" class="form-input" min="1" max="50" value="10">
-                        </div>
-                        <div>
-                            <label class="form-label">세트</label>
-                            <input type="number" id="sets" class="form-input" min="1" max="10" value="3">
-                        </div>
-                    </div>
-
-                    <button id="addWorkout" class="btn btn-primary btn-full" disabled>
-                        ➕ 운동 추가
-                    </button>
-                </div>
-            </div>
-
-            <!-- 운동 기록 -->
-            <div class="card">
-                <div class="card-content">
-                    <h2 class="section-title">📋 운동 기록</h2>
-
-                    <div class="workout-summary-section">
-                        <div class="workout-summary-grid">
-                            <div class="summary-stat">
-                                <div class="stat-number" id="totalWorkoutSets">0</div>
-                                <div class="stat-label">총 세트</div>
-                            </div>
-                            <div class="summary-stat">
-                                <div class="stat-number" id="totalWorkoutCalories">0</div>
-                                <div class="stat-label">총 소모칼로리</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 웨이트 운동 기록 -->
-                    <div class="records-section">
-                        <div class="records-title">🏋️‍♂️ 웨이트 운동 기록</div>
-                        <div id="workoutRecords">
-                            <div class="empty-state">아직 웨이트 운동 기록이 없습니다</div>
-                        </div>
-                    </div>
-
-                    <!-- 유산소 운동 기록 -->
-                    <div class="records-section">
-                        <div class="records-title">🏃‍♂️ 유산소 운동 기록</div>
-                        <div id="cardioRecords">
-                            <div class="empty-state">아직 유산소 운동 기록이 없습니다</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 유산소 운동 -->
-            <div class="card">
-                <div class="card-content">
-                    <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
-
-                    <!-- 운동 종류 선택 탭 추가 -->
-                    <div class="grid grid-2 form-group">
-                        <div class="category-btn active" data-cardio-type="treadmill">
-                            <div class="category-icon">🏃‍♂️</div>
-                            <div>런닝머신</div>
-                        </div>
-                        <div class="category-btn" data-cardio-type="cycle">
-                            <div class="category-icon">🚴‍♂️</div>
-                            <div>사이클</div>
-                        </div>
-                    </div>
-
-                    <!-- 런닝머신 폼 (기존) -->
-                    <div id="treadmillForm">
-                        <h3 style="margin-bottom: 12px;">런닝머신</h3>
-                        <div class="grid grid-3 form-group">
-                            <div>
-                                <label class="form-label">각도 (도)</label>
-                                <select id="incline" class="form-select">
-                                    <option value="1">1도</option>
-                                    <option value="2">2도</option>
-                                    <option value="3">3도</option>
-                                    <option value="4">4도</option>
-                                    <option value="5">5도</option>
-                                    <option value="6">6도</option>
-                                    <option value="7">7도</option>
-                                    <option value="8">8도</option>
-                                    <option value="9">9도</option>
-                                    <option value="10">10도</option>
-                                    <option value="11">11도</option>
-                                    <option value="12">12도</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">속도 (km/h)</label>
-                                <input type="number" id="speed" class="form-input" min="0.1" max="12.0" step="0.1"
-                                    value="6.0">
-                            </div>
-                            <div>
-                                <label class="form-label">시간 (분)</label>
-                                <input type="number" id="duration" class="form-input" min="1" max="120" value="30">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 사이클 폼 (새로 추가) -->
-                    <div id="cycleForm" class="hidden">
-                        <h3 style="margin-bottom: 12px;">사이클</h3>
-                        <div class="grid grid-3 form-group">
-                            <div>
-                                <label class="form-label">강도 (1-10)</label>
-                                <select id="cycleIntensity" class="form-select">
-                                    <option value="1">1단계</option>
-                                    <option value="2">2단계</option>
-                                    <option value="3">3단계</option>
-                                    <option value="4">4단계</option>
-                                    <option value="5" selected>5단계</option>
-                                    <option value="6">6단계</option>
-                                    <option value="7">7단계</option>
-                                    <option value="8">8단계</option>
-                                    <option value="9">9단계</option>
-                                    <option value="10">10단계</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">평균 RPM</label>
-                                <input type="number" id="cycleRPM" class="form-input" min="30" max="150" value="80"
-                                    step="1">
-                            </div>
-                            <div>
-                                <label class="form-label">시간 (분)</label>
-                                <input type="number" id="cycleDuration" class="form-input" min="1" max="120" value="30">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button id="addCardio" class="btn btn-success btn-full">
-                        ➕ 유산소 추가
-                    </button>
-                </div>
-            </div>
-
-            <!-- 데이터 불러오기 -->
-            <div class="card">
-                <div class="card-content">
-                    <h2 class="section-title">📥 데이터 불러오기</h2>
-
-                    <div class="data-loader-container">
-                        <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
-                        <div id="summaryContainer" class="summary-container hidden">
-                            <!-- 월간 요약 (왼쪽) -->
-                            <div class="monthly-summary">
-                                <div class="monthly-summary-header">
-                                    📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
-                                </div>
-
-                                <div class="monthly-stats-grid">
-                                    <div class="monthly-stat-item">
-                                        <div class="stat-value" id="totalWorkoutDays">0</div>
-                                        <div class="stat-label">총 운동일수</div>
-                                    </div>
-                                    <div class="monthly-stat-item">
-                                        <div class="stat-value" id="avgBurnCalories">0</div>
-                                        <div class="stat-label">평균 소모칼로리</div>
-                                    </div>
-                                    <div class="monthly-stat-item">
-                                        <div class="stat-value" id="avgFoodCalories">0</div>
-                                        <div class="stat-label">평균 섭취칼로리</div>
-                                    </div>
-                                    <div class="monthly-stat-item">
-                                        <div class="stat-value" id="avgCalorieBalance">0</div>
-                                        <div class="stat-label">평균 칼로리수지</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 연간 요약 (우측) -->
-                            <div class="yearly-summary">
-                                <div class="yearly-summary-header">
-                                    📈 <span id="summaryYear">2025년</span> 연간 요약
-                                </div>
-
-                                <div class="yearly-stats-grid">
-                                    <div class="yearly-stat-item">
-                                        <div class="stat-value" id="yearlyWorkoutDays">0</div>
-                                        <div class="stat-label">총 운동일수</div>
-                                    </div>
-                                    <div class="yearly-stat-item">
-                                        <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
-                                        <div class="stat-label">평균 소모칼로리</div>
-                                    </div>
-                                    <div class="yearly-stat-item">
-                                        <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
-                                        <div class="stat-label">평균 섭취칼로리</div>
-                                    </div>
-                                    <div class="yearly-stat-item">
-                                        <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
-                                        <div class="stat-label">평균 칼로리수지</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- 월별 데이터 불러오기 버튼 -->
-                        <div id="loadMonthBtn" class="load-month-btn">
-                            📥 현재 월 데이터 불러오기
-                        </div>
-
-                        <!-- 성공 팝업 -->
-                        <div id="successPopup" class="success-popup hidden">
-                            ✅ 데이터를 모두 불러왔습니다!
-                        </div>
-
-                        <!-- 캘린더 -->
-                        <div class="calendar-container">
-                            <div class="calendar-header">
-                                <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
-                                <div id="calendarHeader">📅 운동 기록 캘린더</div>
-                                <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
-                            </div>
-                            <div class="calendar-grid" id="calendarGrid">
-                                <!-- 캘린더는 JavaScript로 동적 생성 -->
-                            </div>
-
-                            <!-- 범례 수정 -->
-                            <div class="calendar-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color legend-green"></div>
-                                    <span>운동함</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color legend-red"></div>
-                                    <span>운동 안함</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color legend-blue"></div>
-                                    <span>오늘</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 선택된 날짜 데이터 미리보기 -->
-                        <div id="dataPreview" class="selected-data-preview hidden">
-                            <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
-                            <div id="previewContent"></div>
-                            <div style="display: flex; gap: 8px; margin-top: 12px;">
-                                <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
-                                    📥 이 날짜 데이터를 현재 화면에 적용
-                                </div>
-                                <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
-                                    🗑️ 이 날짜 데이터를 완전히 삭제
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 식사 기록 -->
+    <!-- 웨이트 & 운동기록 & 유산소 운동 & 데이터 불러오기 (4분할) -->
+    <div class="grid grid-4">
+        <!-- 웨이트 운동 -->
         <div class="card">
             <div class="card-content">
-                <h2 class="section-title">🍽️ 식사 기록</h2>
+                <h2 class="section-title">🏋️‍♂️ 웨이트 운동</h2>
 
-                <div class="grid grid-3">
-                    <!-- 아침 -->
-                    <div class="meal-card meal-breakfast">
-                        <div class="meal-title">🌅 아침</div>
+                <!-- 체중 입력 -->
+                <div class="form-group">
+                    <label class="form-label">체중 (kg)</label>
+                    <input type="number" id="userWeight" class="form-input" min="30" max="200" value="87">
+                </div>
 
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="useDefaultBreakfast" checked>
-                            <label for="useDefaultBreakfast" style="font-size: 14px;">기본 아침 메뉴 사용</label>
+                <!-- 카테고리 선택 -->
+                <div class="grid grid-3 form-group">
+                    <div class="category-btn active" data-category="back">
+                        <div class="category-icon">🔙</div>
+                        <div>등</div>
+                    </div>
+                    <div class="category-btn" data-category="chest">
+                        <div class="category-icon">🫸</div>
+                        <div>가슴</div>
+                    </div>
+                    <div class="category-btn" data-category="shoulder">
+                        <div class="category-icon">🤷‍♂️</div>
+                        <div>어깨</div>
+                    </div>
+                    <div class="category-btn" data-category="legs">
+                        <div class="category-icon">🦵</div>
+                        <div>하체</div>
+                    </div>
+                </div>
+
+                <!-- 운동 선택 -->
+                <div class="form-group">
+                    <label class="form-label">운동 종목</label>
+                    <select id="exerciseSelect" class="form-select">
+                        <option value="">운동을 선택하세요</option>
+                    </select>
+                </div>
+
+                <!-- 무게 조합 -->
+                <div class="form-group">
+                    <label class="form-label">무게 조합</label>
+                    <div class="grid grid-6">
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">1kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="1" min="0" max="10"
+                                value="0">
                         </div>
-
-                        <div id="defaultBreakfast">
-                            <div class="meal-item">• 단백질 쉐이크 1잔</div>
-                            <div class="meal-item">• 에사비 콤부차 1잔</div>
-                            <div class="meal-calories" style="color: #d97706;">180kcal</div>
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">2.5kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="2.5" min="0" max="10"
+                                value="0">
                         </div>
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">5kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="5" min="0" max="10"
+                                value="0">
+                        </div>
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">10kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="10" min="0" max="10"
+                                value="0">
+                        </div>
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">15kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="15" min="0" max="10"
+                                value="0">
+                        </div>
+                        <div>
+                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">20kg</div>
+                            <input type="number" class="form-input weight-input" data-weight="20" min="0" max="10"
+                                value="0">
+                        </div>
+                    </div>
+                    <div class="weight-total">총 무게: <span id="totalWeight">0</span>kg</div>
+                </div>
 
-                        <div id="customBreakfast" class="hidden">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 아침 입력</div>
+                <!-- 횟수, 세트 -->
+                <div class="grid grid-2 form-group">
+                    <div>
+                        <label class="form-label">횟수</label>
+                        <input type="number" id="reps" class="form-input" min="1" max="50" value="10">
+                    </div>
+                    <div>
+                        <label class="form-label">세트</label>
+                        <input type="number" id="sets" class="form-input" min="1" max="10" value="3">
+                    </div>
+                </div>
 
-                            <div class="custom-food-form">
-                                <input type="text" id="newBreakfastName" class="form-input" placeholder="음식명"
-                                    style="font-size: 12px;">
-                                <input type="number" id="newBreakfastCalories" class="form-input" placeholder="칼로리"
-                                    style="font-size: 12px;">
-                                <button id="addCustomBreakfast" class="btn btn-primary"
-                                    style="font-size: 12px; padding: 6px 12px;">
-                                    ➕ 음식 추가
-                                </button>
+                <button id="addWorkout" class="btn btn-primary btn-full" disabled>
+                    ➕ 운동 추가
+                </button>
+            </div>
+        </div>
+
+        <!-- 운동 기록 -->
+        <div class="card">
+            <div class="card-content">
+                <h2 class="section-title">📋 운동 기록</h2>
+
+                <div class="workout-summary-section">
+                    <div class="workout-summary-grid">
+                        <div class="summary-stat">
+                            <div class="stat-number" id="totalWorkoutSets">0</div>
+                            <div class="stat-label">총 세트</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-number" id="totalWorkoutCalories">0</div>
+                            <div class="stat-label">총 소모칼로리</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 웨이트 운동 기록 -->
+                <div class="records-section">
+                    <div class="records-title">🏋️‍♂️ 웨이트 운동 기록</div>
+                    <div id="workoutRecords">
+                        <div class="empty-state">아직 웨이트 운동 기록이 없습니다</div>
+                    </div>
+                </div>
+
+                <!-- 유산소 운동 기록 -->
+                <div class="records-section">
+                    <div class="records-title">🏃‍♂️ 유산소 운동 기록</div>
+                    <div id="cardioRecords">
+                        <div class="empty-state">아직 유산소 운동 기록이 없습니다</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 유산소 운동 -->
+        <div class="card">
+            <div class="card-content">
+                <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
+
+                <!-- 운동 종류 선택 탭 추가 -->
+                <div class="grid grid-2 form-group">
+                    <div class="category-btn active" data-cardio-type="treadmill">
+                        <div class="category-icon">🏃‍♂️</div>
+                        <div>런닝머신</div>
+                    </div>
+                    <div class="category-btn" data-cardio-type="cycle">
+                        <div class="category-icon">🚴‍♂️</div>
+                        <div>사이클</div>
+                    </div>
+                </div>
+
+                <!-- 런닝머신 폼 (기존) -->
+                <div id="treadmillForm">
+                    <h3 style="margin-bottom: 12px;">런닝머신</h3>
+                    <div class="grid grid-3 form-group">
+                        <div>
+                            <label class="form-label">각도 (도)</label>
+                            <select id="incline" class="form-select">
+                                <option value="1">1도</option>
+                                <option value="2">2도</option>
+                                <option value="3">3도</option>
+                                <option value="4">4도</option>
+                                <option value="5">5도</option>
+                                <option value="6">6도</option>
+                                <option value="7">7도</option>
+                                <option value="8">8도</option>
+                                <option value="9">9도</option>
+                                <option value="10">10도</option>
+                                <option value="11">11도</option>
+                                <option value="12">12도</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">속도 (km/h)</label>
+                            <input type="number" id="speed" class="form-input" min="0.1" max="12.0" step="0.1"
+                                value="6.0">
+                        </div>
+                        <div>
+                            <label class="form-label">시간 (분)</label>
+                            <input type="number" id="duration" class="form-input" min="1" max="120" value="30">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 사이클 폼 (새로 추가) -->
+                <div id="cycleForm" class="hidden">
+                    <h3 style="margin-bottom: 12px;">사이클</h3>
+                    <div class="grid grid-3 form-group">
+                        <div>
+                            <label class="form-label">강도 (1-10)</label>
+                            <select id="cycleIntensity" class="form-select">
+                                <option value="1">1단계</option>
+                                <option value="2">2단계</option>
+                                <option value="3">3단계</option>
+                                <option value="4">4단계</option>
+                                <option value="5" selected>5단계</option>
+                                <option value="6">6단계</option>
+                                <option value="7">7단계</option>
+                                <option value="8">8단계</option>
+                                <option value="9">9단계</option>
+                                <option value="10">10단계</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">평균 RPM</label>
+                            <input type="number" id="cycleRPM" class="form-input" min="30" max="150" value="80"
+                                step="1">
+                        </div>
+                        <div>
+                            <label class="form-label">시간 (분)</label>
+                            <input type="number" id="cycleDuration" class="form-input" min="1" max="120" value="30">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="addCardio" class="btn btn-success btn-full">
+                    ➕ 유산소 추가
+                </button>
+            </div>
+        </div>
+
+        <!-- 데이터 불러오기 -->
+        <div class="card">
+            <div class="card-content">
+                <h2 class="section-title">📥 데이터 불러오기</h2>
+
+                <div class="data-loader-container">
+                    <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
+                    <div id="summaryContainer" class="summary-container hidden">
+                        <!-- 월간 요약 (왼쪽) -->
+                        <div class="monthly-summary">
+                            <div class="monthly-summary-header">
+                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
                             </div>
 
-                            <div id="customBreakfastList" class="custom-food-list hidden">
-                                <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                                <div id="customBreakfastItems"></div>
-                                <div
-                                    style="font-size: 14px; font-weight: 600; color: #d97706; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                    총 칼로리: <span id="customBreakfastTotalCalories">0</span>kcal
+                            <div class="monthly-stats-grid">
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="totalWorkoutDays">0</div>
+                                    <div class="stat-label">총 운동일수</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgBurnCalories">0</div>
+                                    <div class="stat-label">평균 소모칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgFoodCalories">0</div>
+                                    <div class="stat-label">평균 섭취칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgCalorieBalance">0</div>
+                                    <div class="stat-label">평균 칼로리수지</div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div id="emptyCustomBreakfast" class="empty-state">
-                                커스텀 음식을 추가해주세요
+                        <!-- 연간 요약 (우측) -->
+                        <div class="yearly-summary">
+                            <div class="yearly-summary-header">
+                                📈 <span id="summaryYear">2025년</span> 연간 요약
+                            </div>
+
+                            <div class="yearly-stats-grid">
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyWorkoutDays">0</div>
+                                    <div class="stat-label">총 운동일수</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
+                                    <div class="stat-label">평균 소모칼로리</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
+                                    <div class="stat-label">평균 섭취칼로리</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
+                                    <div class="stat-label">평균 칼로리수지</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 점심 -->
-                    <div class="meal-card meal-lunch">
-                        <div class="meal-title">☀️ 점심</div>
 
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="useDefaultLunch" checked
-                                onchange="MealManager.toggleLunchMenu(); SummaryManager.updateSummary();">
-                            <label for="useDefaultLunch" style="font-size: 14px;">기본 점심 메뉴 사용</label>
+                    <!-- 월별 데이터 불러오기 버튼 -->
+                    <div id="loadMonthBtn" class="load-month-btn">
+                        📥 현재 월 데이터 불러오기
+                    </div>
+
+                    <!-- 성공 팝업 -->
+                    <div id="successPopup" class="success-popup hidden">
+                        ✅ 데이터를 모두 불러왔습니다!
+                    </div>
+
+                    <!-- 캘린더 -->
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
+                            <div id="calendarHeader">📅 운동 기록 캘린더</div>
+                            <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- 캘린더는 JavaScript로 동적 생성 -->
                         </div>
 
-                        <div id="defaultLunch">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
-
-                            <div style="margin-bottom: 12px;">
-                                <label
-                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="galbi" checked
-                                        onchange="MealManager.changeLunchType()">
-                                    <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
-                                </label>
-                                <label
-                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="kakdugi"
-                                        onchange="MealManager.changeLunchType()">
-                                    <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
-                                </label>
-                                <label
-                                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                    <input type="radio" name="lunchType" value="egg"
-                                        onchange="MealManager.changeLunchType()">
-                                    <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
-                                </label>
+                        <!-- 범례 수정 -->
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-green"></div>
+                                <span>운동함</span>
                             </div>
-
-                            <div
-                                style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                                선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
+                            <div class="legend-item">
+                                <div class="legend-color legend-red"></div>
+                                <span>운동 안함</span>
                             </div>
-                        </div>
-
-                        <div id="customLunch" class="hidden">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 점심 입력</div>
-
-                            <div class="custom-food-form">
-                                <input type="text" id="newLunchName" class="form-input" placeholder="음식명"
-                                    style="font-size: 12px;">
-                                <input type="number" id="newLunchCalories" class="form-input" placeholder="칼로리"
-                                    style="font-size: 12px;">
-                                <button id="addCustomLunch" class="btn btn-primary"
-                                    style="font-size: 12px; padding: 6px 12px;">
-                                    ➕ 음식 추가
-                                </button>
-                            </div>
-
-                            <div id="customLunchList" class="custom-food-list hidden">
-                                <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                                <div id="customLunchItems"></div>
-                                <div
-                                    style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                    총 칼로리: <span id="customLunchTotalCalories">0</span>kcal
-                                </div>
-                            </div>
-
-                            <div id="emptyCustomLunch" class="empty-state">
-                                커스텀 음식을 추가해주세요
+                            <div class="legend-item">
+                                <div class="legend-color legend-blue"></div>
+                                <span>오늘</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 저녁 -->
-                    <div class="meal-card meal-dinner">
-                        <div class="meal-title">🌙 저녁</div>
-
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="useDefaultDinner" checked>
-                            <label for="useDefaultDinner" style="font-size: 14px;">기본 저녁 메뉴 사용</label>
-                        </div>
-
-                        <div id="defaultDinner">
-                            <div class="meal-item">• 쌀밥 150g</div>
-                            <div class="meal-item">• 작은 소시지 4개</div>
-                            <div class="meal-calories" style="color: #7c3aed;">360kcal</div>
-                        </div>
-
-                        <div id="customDinner" class="hidden">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 저녁 입력</div>
-
-                            <div class="custom-food-form">
-                                <input type="text" id="newFoodName" class="form-input" placeholder="음식명"
-                                    style="font-size: 12px;">
-                                <input type="number" id="newFoodCalories" class="form-input" placeholder="칼로리"
-                                    style="font-size: 12px;">
-                                <button id="addCustomFood" class="btn btn-primary"
-                                    style="font-size: 12px; padding: 6px 12px;">
-                                    ➕ 음식 추가
-                                </button>
+                    <!-- 선택된 날짜 데이터 미리보기 -->
+                    <div id="dataPreview" class="selected-data-preview hidden">
+                        <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
+                        <div id="previewContent"></div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
+                                📥 이 날짜 데이터를 현재 화면에 적용
                             </div>
-
-                            <div id="customFoodList" class="custom-food-list hidden">
-                                <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                                <div id="customFoodItems"></div>
-                                <div
-                                    style="font-size: 14px; font-weight: 600; color: #7c3aed; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                    총 칼로리: <span id="customTotalCalories">0</span>kcal
-                                </div>
-                            </div>
-
-                            <div id="emptyCustomFood" class="empty-state">
-                                커스텀 음식을 추가해주세요
+                            <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
+                                🗑️ 이 날짜 데이터를 완전히 삭제
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- 식사 기록 -->
+    <div class="card">
+        <div class="card-content">
+            <h2 class="section-title">🍽️ 식사 기록</h2>
+
+            <div class="grid grid-3">
+                <!-- 아침 -->
+                <div class="meal-card meal-breakfast">
+                    <div class="meal-title">🌅 아침</div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="useDefaultBreakfast" checked>
+                        <label for="useDefaultBreakfast" style="font-size: 14px;">기본 아침 메뉴 사용</label>
+                    </div>
+
+                    <div id="defaultBreakfast">
+                        <div class="meal-item">• 단백질 쉐이크 1잔</div>
+                        <div class="meal-item">• 에사비 콤부차 1잔</div>
+                        <div class="meal-calories" style="color: #d97706;">180kcal</div>
+                    </div>
+
+                    <div id="customBreakfast" class="hidden">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 아침 입력</div>
+
+                        <div class="custom-food-form">
+                            <input type="text" id="newBreakfastName" class="form-input" placeholder="음식명"
+                                style="font-size: 12px;">
+                            <input type="number" id="newBreakfastCalories" class="form-input" placeholder="칼로리"
+                                style="font-size: 12px;">
+                            <button id="addCustomBreakfast" class="btn btn-primary"
+                                style="font-size: 12px; padding: 6px 12px;">
+                                ➕ 음식 추가
+                            </button>
+                        </div>
+
+                        <div id="customBreakfastList" class="custom-food-list hidden">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
+                            <div id="customBreakfastItems"></div>
+                            <div
+                                style="font-size: 14px; font-weight: 600; color: #d97706; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                총 칼로리: <span id="customBreakfastTotalCalories">0</span>kcal
+                            </div>
+                        </div>
+
+                        <div id="emptyCustomBreakfast" class="empty-state">
+                            커스텀 음식을 추가해주세요
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 점심 -->
+                <div class="meal-card meal-lunch">
+                    <div class="meal-title">☀️ 점심</div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="useDefaultLunch" checked
+                            onchange="MealManager.toggleLunchMenu(); SummaryManager.updateSummary();">
+                        <label for="useDefaultLunch" style="font-size: 14px;">기본 점심 메뉴 사용</label>
+                    </div>
+
+                    <div id="defaultLunch">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
+
+                        <div style="margin-bottom: 12px;">
+                            <label
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="galbi" checked
+                                    onchange="MealManager.changeLunchType()">
+                                <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="kakdugi"
+                                    onchange="MealManager.changeLunchType()">
+                                <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="lunchType" value="egg"
+                                    onchange="MealManager.changeLunchType()">
+                                <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
+                            </label>
+                        </div>
+
+                        <div
+                            style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                            선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
+                        </div>
+                    </div>
+
+                    <div id="customLunch" class="hidden">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 점심 입력</div>
+
+                        <div class="custom-food-form">
+                            <input type="text" id="newLunchName" class="form-input" placeholder="음식명"
+                                style="font-size: 12px;">
+                            <input type="number" id="newLunchCalories" class="form-input" placeholder="칼로리"
+                                style="font-size: 12px;">
+                            <button id="addCustomLunch" class="btn btn-primary"
+                                style="font-size: 12px; padding: 6px 12px;">
+                                ➕ 음식 추가
+                            </button>
+                        </div>
+
+                        <div id="customLunchList" class="custom-food-list hidden">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
+                            <div id="customLunchItems"></div>
+                            <div
+                                style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                총 칼로리: <span id="customLunchTotalCalories">0</span>kcal
+                            </div>
+                        </div>
+
+                        <div id="emptyCustomLunch" class="empty-state">
+                            커스텀 음식을 추가해주세요
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 저녁 -->
+                <div class="meal-card meal-dinner">
+                    <div class="meal-title">🌙 저녁</div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="useDefaultDinner" checked>
+                        <label for="useDefaultDinner" style="font-size: 14px;">기본 저녁 메뉴 사용</label>
+                    </div>
+
+                    <div id="defaultDinner">
+                        <div class="meal-item">• 쌀밥 150g</div>
+                        <div class="meal-item">• 작은 소시지 4개</div>
+                        <div class="meal-calories" style="color: #7c3aed;">360kcal</div>
+                    </div>
+
+                    <div id="customDinner" class="hidden">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 저녁 입력</div>
+
+                        <div class="custom-food-form">
+                            <input type="text" id="newFoodName" class="form-input" placeholder="음식명"
+                                style="font-size: 12px;">
+                            <input type="number" id="newFoodCalories" class="form-input" placeholder="칼로리"
+                                style="font-size: 12px;">
+                            <button id="addCustomFood" class="btn btn-primary"
+                                style="font-size: 12px; padding: 6px 12px;">
+                                ➕ 음식 추가
+                            </button>
+                        </div>
+
+                        <div id="customFoodList" class="custom-food-list hidden">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
+                            <div id="customFoodItems"></div>
+                            <div
+                                style="font-size: 14px; font-weight: 600; color: #7c3aed; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                총 칼로리: <span id="customTotalCalories">0</span>kcal
+                            </div>
+                        </div>
+
+                        <div id="emptyCustomFood" class="empty-state">
+                            커스텀 음식을 추가해주세요
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- 통계 및 그래프 섹션 (기존 식사 기록 카드 아래에 추가) -->

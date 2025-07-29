@@ -84,10 +84,31 @@ body {
         margin-bottom: 24px;
     }
 
+    /* Date Header 반응형 */
     .date-header {
         flex-direction: column;
         gap: 16px;
         text-align: center;
+    }
+    
+    .header-middle {
+        margin: 0;
+        order: 2;
+        width: 100%;
+    }
+    
+    .user-info {
+        justify-content: center;
+    }
+    
+    .bmr-results {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        padding-left: 0;
+        padding-top: 12px;
+        margin-left: 0;
+        margin-top: 8px;
+        justify-content: center;
     }
 }
 
@@ -110,6 +131,33 @@ body {
 
     .container {
         padding: 8px;
+    }
+
+    /* Date Header 모바일 */
+    .header-middle {
+        padding: 12px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .info-group {
+        justify-content: center;
+    }
+    
+    .bmr-results {
+        flex-direction: column;
+        gap: 8px;
+        border-top: none;
+        padding-top: 8px;
+        margin-top: 8px;
+    }
+    
+    .bmr-separator {
+        display: none;
     }
 }
 
@@ -426,11 +474,116 @@ body {
     opacity: 0.9;
 }
 
-/* Date Header */
+/* Date Header - 수정된 3단 구조 */
 .date-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
+}
+
+.header-left {
+    flex-shrink: 0;
+}
+
+.header-middle {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 0 20px;
+}
+
+.header-right {
+    flex-shrink: 0;
+}
+
+/* 사용자 정보 입력 스타일 */
+.user-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.info-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.info-input {
+    width: 50px;
+    padding: 4px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.info-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.info-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.height-input {
+    width: 60px;
+}
+
+.gender-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.gender-label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.gender-group input[type="radio"] {
+    margin: 0 2px;
+}
+
+/* BMR/TDEE 결과 표시 스타일 */
+.bmr-results {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    padding-left: 16px;
+    margin-left: 8px;
+}
+
+.bmr-inline {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.bmr-inline strong {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.bmr-separator {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
 }
 
 .date-input {
