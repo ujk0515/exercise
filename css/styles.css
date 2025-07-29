@@ -84,31 +84,48 @@ body {
         margin-bottom: 24px;
     }
 
-    /* Date Header 반응형 */
+    /* Date Header 반응형 개선 */
     .date-header {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         text-align: center;
     }
     
+    .header-left {
+        order: 0;
+    }
+    
     .header-middle {
+        order: 1;
         margin: 0;
-        order: 2;
         width: 100%;
+        padding: 10px 16px;
+        gap: 12px;
+    }
+    
+    .header-right {
+        order: 2;
     }
     
     .user-info {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .info-group {
+        min-width: auto;
     }
     
     .bmr-results {
         border-left: none;
         border-top: 1px solid rgba(255, 255, 255, 0.3);
         padding-left: 0;
-        padding-top: 12px;
+        padding-top: 10px;
         margin-left: 0;
-        margin-top: 8px;
+        margin-top: 10px;
         justify-content: center;
+        flex-wrap: wrap;
     }
 }
 
@@ -133,27 +150,61 @@ body {
         padding: 8px;
     }
 
-    /* Date Header 모바일 */
+    /* Date Header 모바일 개선 */
     .header-middle {
-        padding: 12px;
+        padding: 8px 12px;
+        gap: 8px;
     }
     
     .user-info {
         flex-direction: column;
         gap: 8px;
         width: 100%;
+        align-items: center;
     }
     
     .info-group {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .info-input {
+        width: 55px;
+        font-size: 13px;
+        padding: 3px 5px;
+    }
+    
+    .height-input {
+        width: 65px;
+    }
+    
+    .gender-group {
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .gender-label {
+        font-size: 13px;
+        gap: 1px;
     }
     
     .bmr-results {
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         border-top: none;
         padding-top: 8px;
         margin-top: 8px;
+        text-align: center;
+    }
+    
+    .bmr-inline {
+        font-size: 13px;
+    }
+    
+    .bmr-inline strong {
+        font-size: 14px;
     }
     
     .bmr-separator {
@@ -497,6 +548,7 @@ body {
     padding: 12px 20px;
     border-radius: 8px;
     margin: 0 20px;
+    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
 }
 
 .header-right {
@@ -509,12 +561,14 @@ body {
     gap: 16px;
     align-items: center;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .info-group {
     display: flex;
     align-items: center;
     gap: 4px;
+    flex-shrink: 0;
 }
 
 .info-input {
@@ -547,6 +601,7 @@ body {
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .gender-label {
@@ -555,6 +610,7 @@ body {
     gap: 2px;
     font-size: 14px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .gender-group input[type="radio"] {
@@ -569,6 +625,7 @@ body {
     border-left: 1px solid rgba(255, 255, 255, 0.3);
     padding-left: 16px;
     margin-left: 8px;
+    flex-shrink: 0;
 }
 
 .bmr-inline {
@@ -1138,4 +1195,69 @@ canvas {
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #e5e7eb;
+}
+
+/* 추가 반응형 개선 - 매우 작은 화면 (360px 이하) */
+@media (max-width: 360px) {
+    .header-middle {
+        padding: 6px 8px;
+        gap: 6px;
+    }
+    
+    .user-info {
+        gap: 6px;
+    }
+    
+    .info-input {
+        width: 45px;
+        font-size: 12px;
+        padding: 2px 4px;
+    }
+    
+    .height-input {
+        width: 55px;
+    }
+    
+    .gender-label {
+        font-size: 12px;
+    }
+    
+    .bmr-inline {
+        font-size: 12px;
+    }
+    
+    .bmr-inline strong {
+        font-size: 13px;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* 태블릿 세로 모드 최적화 */
+@media (max-width: 768px) and (orientation: portrait) {
+    .header-middle {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+    }
+    
+    .user-info {
+        order: 1;
+        width: 100%;
+        justify-content: space-around;
+        gap: 8px;
+    }
+    
+    .bmr-results {
+        order: 2;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        border-left: none;
+        padding-top: 12px;
+        padding-left: 0;
+        margin-top: 12px;
+        margin-left: 0;
+        width: 100%;
+    }
 }
