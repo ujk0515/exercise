@@ -67,6 +67,47 @@
             </div>
         </div>
 
+        <!-- 일일 요약 카드 추가 -->
+    <div class="summary-card">
+        <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            📊 일일 요약
+        </h2>
+
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-value" id="totalWorkoutCal">0</div>
+                <div class="summary-label">소모 칼로리</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="totalFoodCal">960</div>
+                <div class="summary-label">섭취 칼로리</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="calorieBalance">+960</div>
+                <div class="summary-label">칼로리 수지</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="balanceStatus">🔺 잉여</div>
+                <div class="summary-label">상태</div>
+            </div>
+        </div>
+
+        <div class="grid grid-3">
+            <button id="downloadData" class="btn"
+                style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                📥 엑셀 다운로드
+            </button>
+            <button id="saveToSupabase" class="btn"
+                style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                💾 Supabase 저장
+            </button>
+            <button id="resetAll" class="btn"
+                style="background: rgba(255,100,100,0.8); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                🔄 전체 초기화
+            </button>
+        </div>
+    </div>
+
     <!-- 웨이트 & 운동기록 & 유산소 운동 & 데이터 불러오기 (4분할) -->
     <div class="grid grid-4">
         <!-- 웨이트 운동 -->
