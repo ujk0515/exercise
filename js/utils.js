@@ -90,8 +90,8 @@ const DateUtils = {
 
 // 사이클 MET 값 (강도별)
 const CYCLE_MET = {
-    1: 3.5, 2: 4.0, 3: 4.5, 4: 5.0, 5: 5.5,
-    6: 6.0, 7: 7.0, 8: 8.0, 9: 9.0, 10: 10.0
+    1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
+    6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
 };
 
 // 칼로리 계산 유틸리티
@@ -190,7 +190,7 @@ const CalorieCalculator = {
         const baseMET = CYCLE_MET[intensity] || 5.5;
         
         // RPM 보정값 계산 (60 RPM을 기준으로 함)
-        const rpmBonus = Math.max(0, (rpm - 60) / 20 * 0.5);
+        const rpmBonus = Math.max(0, (rpm - 60) / 40 * 0.3);
         const finalMET = baseMET + rpmBonus;
         
         const hours = duration / 60;
@@ -347,4 +347,5 @@ const KoreanDateUtils = {
         const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
         return koreanTime.toISOString().split('T')[0];
     }
+
 };
