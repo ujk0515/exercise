@@ -1,3 +1,6 @@
+// Gemma API 키
+const GEMMA_API_KEY = 'AIzaSyDE-edho0DTkfMbsGF9XoiOQgCPkVJInzU'; // 여기에 개인 Gemma API 키를 입력하세요.
+
 // Supabase 설정
 const SUPABASE_CONFIG = {
     URL: 'https://zrbasozrsrszftrqvbcb.supabase.co',
@@ -5,50 +8,69 @@ const SUPABASE_CONFIG = {
     USER_ID: '550e8400-e29b-41d4-a716-446655440000'
 };
 
-// 운동 데이터베이스 (MET 기반)
+// 운동 데이터베이스 (MET 기반) - 현실적으로 조정됨
 const EXERCISE_DATABASE = {
     back: {
         name: '등',
         exercises: {
-            'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 6.5 },
-            'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 6.0 },
-            'high_row_cable': { name: '하이로우 (케이블)', met: 6.8 },
-            'high_row_machine': { name: '하이로우 (머신)', met: 6.5 },
-            'seated_row': { name: '시티드 로우', met: 6.5 },
-            'one_arm_seated_row': { name: '원암 시티드 로우', met: 7.0 },
-            'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 5.5 }
+            'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 4.8 },
+            'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 4.5 },
+            'high_row_cable': { name: '하이로우 (케이블)', met: 5.0 },
+            'high_row_machine': { name: '하이로우 (머신)', met: 4.8 },
+            'seated_row': { name: '시티드 로우', met: 4.8 },
+            'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2 },
+            'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0 },
+            'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5 },
+            'tbar_row': { name: 'T바 로우', met: 5.5 }
         }
     },
     chest: {
         name: '가슴',
         exercises: {
-            'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 8.0 },
-            'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 7.5 },
-            'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 7.0 },
-            'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 7.5 },
-            'cable_chest_press': { name: '케이블 체스트 프레스', met: 6.5 },
-            'pec_deck_fly': { name: '펙덱 플라이', met: 5.8 }
+            'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 6.0 },
+            'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 5.8 },
+            'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 5.5 },
+            'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 6.2 },
+            'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 6.0 },
+            'cable_chest_press': { name: '케이블 체스트 프레스', met: 4.8 },
+            'seated_chest_press': { name: '시티드 체스트 프레스', met: 4.5 },
+            'pec_deck_fly': { name: '펙덱 플라이', met: 4.2 }
         }
     },
     shoulder: {
         name: '어깨',
         exercises: {
-            'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 6.8 },
-            'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 7.2 },
-            'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 5.5 },
-            'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 6.5 },
-            'cable_face_pull': { name: '케이블 페이스 풀', met: 5.8 },
-            'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 5.5 }
+            'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0 },
+            'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5 },
+            'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0 },
+            'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8 },
+            'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2 },
+            'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5 },
+            'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 4.0 }
+        }
+    },
+    legs: {
+        name: '하체',
+        exercises: {
+            'leg_press': { name: '레그프레스', met: 5.5 },
+            'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0 },
+            'seated_leg_press': { name: '시티드 레그프레스', met: 5.2 },
+            'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8 },
+            'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0 },
+            'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0 },
+            'leg_extension': { name: '레그 익스텐션', met: 4.5 },
+            'leg_curl': { name: '레그 컬', met: 4.5 },
+            'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 3.5, bodyweight: true }
         }
     }
 };
 
-// 무게 강도별 MET 보정값 (체중 대비)
+// 무게 강도별 MET 보정값 (체중 대비) - 현실적으로 조정됨
 const WEIGHT_INTENSITY_BONUS = {
-    light: 0,      // 체중의 0-30%
-    moderate: 0.5, // 체중의 31-50%  
-    heavy: 1.0,    // 체중의 51-70%
-    veryHeavy: 1.5 // 체중의 71%+
+    light: 0,        // 체중의 0-30%
+    moderate: 0.2,   // 체중의 31-50% (기존 0.5에서 감소)
+    heavy: 0.4,      // 체중의 51-70% (기존 1.0에서 감소)
+    veryHeavy: 0.6   // 체중의 71%+ (기존 1.5에서 감소)
 };
 
 // 런닝머신 MET 값 (속도별)
@@ -62,22 +84,17 @@ const TREADMILL_MET = {
 // 경사 보정값 (각도별)
 const INCLINE_BONUS = {
     1: 0.2, 2: 0.4, 3: 0.6, 4: 0.8, 5: 1.0,
-    6: 1.2, 7: 1.4, 8: 1.6, 9: 1.8, 10: 2.0
+    6: 1.2, 7: 1.4, 8: 1.6, 9: 1.8, 10: 2.0,
+    11: 2.2, 12: 2.4
 };
 
 // 고정 칼로리 값
 const MEAL_CALORIES = {
     breakfast: 180,
-    lunch: 420,
+    lunch: {
+        galbi: 480,
+        kakdugi: 475,
+        egg: 510
+    },
     defaultDinner: 360
-};
-
-// 기본 설정값
-const DEFAULT_VALUES = {
-    userWeight: 87,
-    reps: 10,
-    sets: 3,
-    incline: 1,
-    speed: 6.0,
-    duration: 30
 };

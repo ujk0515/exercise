@@ -159,6 +159,12 @@ class DataLoaderManager {
 
         // 요약 컨테이너 표시
         DOM.show(DOM.get('summaryContainer'));
+
+        // AI 분석 버튼 활성화
+        const aiBtn = DOM.get('generateAiAnalysisBtn');
+        if (aiBtn) {
+            aiBtn.disabled = false;
+        }
     }
 
     // 연간 통계 계산 및 표시
@@ -635,6 +641,16 @@ class DataLoaderManager {
         DOM.hide(DOM.get('deleteDataBtn'));
         DOM.hide(DOM.get('summaryContainer'));
         DataLoaderManager.generateCalendar();
+
+        // AI 분석 버튼 비활성화 및 초기화
+        const aiBtn = DOM.get('generateAiAnalysisBtn');
+        if (aiBtn) {
+            aiBtn.disabled = true;
+        }
+        const aiResult = DOM.get('aiAnalysisResult');
+        if (aiResult) {
+            DOM.setHTML(aiResult, '월간/연간 데이터를 불러온 후, 버튼을 눌러 AI 분석을 받아보세요.');
+        }
     }
 
     // 이전달 이동

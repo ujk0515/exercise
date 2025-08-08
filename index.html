@@ -108,8 +108,125 @@
         </div>
     </div>
 
-    <!-- 웨이트 & 운동기록 & 유산소 운동 & 데이터 불러오기 (4분할) -->
-    <div class="grid grid-4">
+    <!-- 데이터 불러오기, 웨이트, 운동기록, 유산소, AI 평가 (5분할) -->
+    <div class="grid grid-5">
+        <!-- 데이터 불러오기 -->
+        <div class="card">
+            <div class="card-content">
+                <h2 class="section-title">📥 데이터 불러오기</h2>
+
+                <div class="data-loader-container">
+                    <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
+                    <div id="summaryContainer" class="summary-container hidden">
+                        <!-- 월간 요약 (왼쪽) -->
+                        <div class="monthly-summary">
+                            <div class="monthly-summary-header">
+                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
+                            </div>
+
+                            <div class="monthly-stats-grid">
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="totalWorkoutDays">0</div>
+                                    <div class="stat-label">총 운동일수</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgBurnCalories">0</div>
+                                    <div class="stat-label">평균 소모칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgFoodCalories">0</div>
+                                    <div class="stat-label">평균 섭취칼로리</div>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <div class="stat-value" id="avgCalorieBalance">0</div>
+                                    <div class="stat-label">평균 칼로리수지</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 연간 요약 (우측) -->
+                        <div class="yearly-summary">
+                            <div class="yearly-summary-header">
+                                📈 <span id="summaryYear">2025년</span> 연간 요약
+                            </div>
+
+                            <div class="yearly-stats-grid">
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyWorkoutDays">0</div>
+                                    <div class="stat-label">총 운동일수</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
+                                    <div class="stat-label">평균 소모칼로리</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
+                                    <div class="stat-label">평균 섭취칼로리</div>
+                                </div>
+                                <div class="yearly-stat-item">
+                                    <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
+                                    <div class="stat-label">평균 칼로리수지</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 월별 데이터 불러오기 버튼 -->
+                    <div id="loadMonthBtn" class="load-month-btn">
+                        📥 현재 월 데이터 불러오기
+                    </div>
+
+                    <!-- 성공 팝업 -->
+                    <div id="successPopup" class="success-popup hidden">
+                        ✅ 데이터를 모두 불러왔습니다!
+                    </div>
+
+                    <!-- 캘린더 -->
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
+                            <div id="calendarHeader">📅 운동 기록 캘린더</div>
+                            <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- 캘린더는 JavaScript로 동적 생성 -->
+                        </div>
+
+                        <!-- 범례 수정 -->
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-green"></div>
+                                <span>운동함</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-red"></div>
+                                <span>운동 안함</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-blue"></div>
+                                <span>오늘</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 선택된 날짜 데이터 미리보기 -->
+                    <div id="dataPreview" class="selected-data-preview hidden">
+                        <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
+                        <div id="previewContent"></div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
+                                📥 이 날짜 데이터를 현재 화면에 적용
+                            </div>
+                            <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
+                                🗑️ 이 날짜 데이터를 완전히 삭제
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 웨이트 운동 -->
         <div class="card">
             <div class="card-content">
@@ -328,119 +445,15 @@
             </div>
         </div>
 
-        <!-- 데이터 불러오기 -->
+        <!-- AI 종합 평가 -->
         <div class="card">
             <div class="card-content">
-                <h2 class="section-title">📥 데이터 불러오기</h2>
-
-                <div class="data-loader-container">
-                    <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
-                    <div id="summaryContainer" class="summary-container hidden">
-                        <!-- 월간 요약 (왼쪽) -->
-                        <div class="monthly-summary">
-                            <div class="monthly-summary-header">
-                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
-                            </div>
-
-                            <div class="monthly-stats-grid">
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="totalWorkoutDays">0</div>
-                                    <div class="stat-label">총 운동일수</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgBurnCalories">0</div>
-                                    <div class="stat-label">평균 소모칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgFoodCalories">0</div>
-                                    <div class="stat-label">평균 섭취칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgCalorieBalance">0</div>
-                                    <div class="stat-label">평균 칼로리수지</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 연간 요약 (우측) -->
-                        <div class="yearly-summary">
-                            <div class="yearly-summary-header">
-                                📈 <span id="summaryYear">2025년</span> 연간 요약
-                            </div>
-
-                            <div class="yearly-stats-grid">
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyWorkoutDays">0</div>
-                                    <div class="stat-label">총 운동일수</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
-                                    <div class="stat-label">평균 소모칼로리</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
-                                    <div class="stat-label">평균 섭취칼로리</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
-                                    <div class="stat-label">평균 칼로리수지</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- 월별 데이터 불러오기 버튼 -->
-                    <div id="loadMonthBtn" class="load-month-btn">
-                        📥 현재 월 데이터 불러오기
-                    </div>
-
-                    <!-- 성공 팝업 -->
-                    <div id="successPopup" class="success-popup hidden">
-                        ✅ 데이터를 모두 불러왔습니다!
-                    </div>
-
-                    <!-- 캘린더 -->
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
-                            <div id="calendarHeader">📅 운동 기록 캘린더</div>
-                            <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid">
-                            <!-- 캘린더는 JavaScript로 동적 생성 -->
-                        </div>
-
-                        <!-- 범례 수정 -->
-                        <div class="calendar-legend">
-                            <div class="legend-item">
-                                <div class="legend-color legend-green"></div>
-                                <span>운동함</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color legend-red"></div>
-                                <span>운동 안함</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color legend-blue"></div>
-                                <span>오늘</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 선택된 날짜 데이터 미리보기 -->
-                    <div id="dataPreview" class="selected-data-preview hidden">
-                        <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
-                        <div id="previewContent"></div>
-                        <div style="display: flex; gap: 8px; margin-top: 12px;">
-                            <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
-                                📥 이 날짜 데이터를 현재 화면에 적용
-                            </div>
-                            <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
-                                🗑️ 이 날짜 데이터를 완전히 삭제
-                            </div>
-                        </div>
-                    </div>
+                <h2 class="section-title">🤖 AI 종합 평가</h2>
+                <button id="generateAiAnalysisBtn" class="btn btn-primary btn-full" disabled>
+                    AI 분석 생성
+                </button>
+                <div id="aiAnalysisResult" class="empty-state" style="margin-top: 16px;">
+                    월간/연간 데이터를 불러온 후, 버튼을 눌러 AI 분석을 받아보세요.
                 </div>
             </div>
         </div>
@@ -683,108 +696,8 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
-    <!-- 인라인 상수 정의 -->
-    <script>
-        // Supabase 설정
-        const SUPABASE_CONFIG = {
-            URL: 'https://zrbasozrsrszftrqvbcb.supabase.co',
-            ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyYmFzb3pyc3JzemZ0cnF2YmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyNjk3NDUsImV4cCI6MjA2NTg0NTc0NX0.ab4BgFlJKjyMTCLTxrom5guw7EGzPWThhsjdzcvrGxg',
-            USER_ID: '550e8400-e29b-41d4-a716-446655440000'
-        };
-
-        // 운동 데이터베이스 (MET 기반) - 현실적으로 조정됨
-        const EXERCISE_DATABASE = {
-            back: {
-                name: '등',
-                exercises: {
-                    'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 4.8 },
-                    'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 4.5 },
-                    'high_row_cable': { name: '하이로우 (케이블)', met: 5.0 },
-                    'high_row_machine': { name: '하이로우 (머신)', met: 4.8 },
-                    'seated_row': { name: '시티드 로우', met: 4.8 },
-                    'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2 },
-                    'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0 },
-                    'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5 },
-                    'tbar_row': { name: 'T바 로우', met: 5.5 }
-                }
-            },
-            chest: {
-                name: '가슴',
-                exercises: {
-                    'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 6.0 },
-                    'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 5.8 },
-                    'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 5.5 },
-                    'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 6.2 },
-                    'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 6.0 },
-                    'cable_chest_press': { name: '케이블 체스트 프레스', met: 4.8 },
-                    'seated_chest_press': { name: '시티드 체스트 프레스', met: 4.5 },
-                    'pec_deck_fly': { name: '펙덱 플라이', met: 4.2 }
-                }
-            },
-            shoulder: {
-                name: '어깨',
-                exercises: {
-                    'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0 },
-                    'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5 },
-                    'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0 },
-                    'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8 },
-                    'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2 },
-                    'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5 },
-                    'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 4.0 }
-                }
-            },
-            legs: {
-                name: '하체',
-                exercises: {
-                    'leg_press': { name: '레그프레스', met: 5.5 },
-                    'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0 },
-                    'seated_leg_press': { name: '시티드 레그프레스', met: 5.2 },
-                    'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8 },
-                    'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0 },
-                    'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0 },
-                    'leg_extension': { name: '레그 익스텐션', met: 4.5 },
-                    'leg_curl': { name: '레그 컬', met: 4.5 },
-                    'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 3.5, bodyweight: true }
-                }
-            }
-        };
-
-        // 무게 강도별 MET 보정값 (체중 대비) - 현실적으로 조정됨
-        const WEIGHT_INTENSITY_BONUS = {
-            light: 0,        // 체중의 0-30%
-            moderate: 0.2,   // 체중의 31-50% (기존 0.5에서 감소)
-            heavy: 0.4,      // 체중의 51-70% (기존 1.0에서 감소)
-            veryHeavy: 0.6   // 체중의 71%+ (기존 1.5에서 감소)
-        };
-
-        // 런닝머신 MET 값 (속도별)
-        const TREADMILL_MET = {
-            1.0: 2.0, 1.5: 2.2, 2.0: 2.5, 2.5: 2.8, 3.0: 3.0, 3.5: 3.3,
-            4.0: 3.5, 4.5: 3.8, 5.0: 4.0, 5.5: 4.3, 6.0: 4.5, 6.5: 5.0,
-            7.0: 5.5, 7.5: 6.0, 8.0: 8.0, 8.5: 8.5, 9.0: 9.0, 9.5: 9.5,
-            10.0: 10.0, 10.5: 10.5, 11.0: 11.0, 11.5: 11.5, 12.0: 12.0
-        };
-
-        // 경사 보정값 (각도별)
-        const INCLINE_BONUS = {
-            1: 0.2, 2: 0.4, 3: 0.6, 4: 0.8, 5: 1.0,
-            6: 1.2, 7: 1.4, 8: 1.6, 9: 1.8, 10: 2.0,
-            11: 2.2, 12: 2.4
-        };
-
-        // 고정 칼로리 값
-        const MEAL_CALORIES = {
-            breakfast: 180,
-            lunch: {
-                galbi: 480,
-                kakdugi: 475,
-                egg: 510
-            },
-            defaultDinner: 360
-        };
-    </script>
-
     <!-- 애플리케이션 스크립트 -->
+    <script src="js/config/constants.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/workout.js"></script>

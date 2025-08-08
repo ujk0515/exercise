@@ -1,3 +1,82 @@
+// AI 분석 관리 클래스 (고도화, 균형잡힌 코칭 스타일)
+class AIManager {
+    static async getAnalysis() {
+        if (!GEMMA_API_KEY) {
+            NotificationUtils.alert('Gemma API 키가 constants.js 파일에 설정되지 않았습니다.');
+            return null;
+        }
+
+        // 1. 분석 대상 데이터 추출
+        const analysisData = this.getAnalysisData();
+        if (!analysisData) {
+            NotificationUtils.alert('분석할 데이터가 없습니다. 먼저 월간 데이터를 불러와주세요.');
+            return null;
+        }
+
+        // 2. 프롬프트 생성
+        const prompt = this.createPrompt(analysisData);
+
+        // 3. API 호출
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMMA_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`API 요청 실패: ${errorBody.error.message}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error('AI 분석 API 호출 오류:', error);
+            NotificationUtils.alert(`AI 분석 중 오류가 발생했습니다: ${error.message}`);
+            return null;
+        }
+    }
+
+    static getAnalysisData() {
+        const { workouts, cardio, meals } = AppState.monthlyData;
+        if (workouts.length === 0 && cardio.length === 0 && meals.length === 0) {
+            return null;
+        }
+
+        // 분석 대상 날짜 추출
+        const dates = [...new Set([
+            ...workouts.map(w => w.workout_date),
+            ...cardio.map(c => c.workout_date),
+            ...meals.map(m => m.meal_date)
+        ])].sort();
+
+        // 데이터 요약
+        const totalWorkoutDays = new Set([...workouts.map(w => w.workout_date), ...cardio.map(c => c.workout_date)]).size;
+        const totalVolume = workouts.reduce((sum, w) => sum + (w.total_weight * w.reps * w.sets), 0);
+        const dinnerMeals = meals.filter(m => m.meal_type === 'dinner');
+        const avgDinnerCalories = dinnerMeals.length > 0 ? dinnerMeals.reduce((sum, m) => sum + m.total_calories, 0) / dinnerMeals.length : 0;
+
+        return {
+            dates: dates,
+            summary: `- 총 운동 횟수: ${totalWorkoutDays}회\n- 웨이트 총 볼륨: ${Math.round(totalVolume).toLocaleString()} kg\n- 저녁 식사 평균 칼로리: ${avgDinnerCalories.toFixed(0)} kcal`
+        };
+    }
+
+    static createPrompt(analysisData) {
+        return `당신은 사용자의 데이터를 분석하고 동기를 부여하는 친절하고 전문적인 피트니스 코치입니다.\n\n다음은 사용자가 선택한 특정 날짜들의 운동 및 식사 기록입니다. 이 데이터를 바탕으로, 아래 형식에 맞춰 사용자의 상태를 분석하고 조언해주세요.\n\n1. **종합 평가 (2~3 문장):** 데이터에 기반한 전반적인 상태를 긍정적으로 요약하고 격려해주세요.\n2. **잘하고 있는 점 (1~2개):** 구체적인 데이터를 근거로 칭찬할 점을 찾아주세요.\n3. **개선 제안 (1~2개):** 가장 개선이 필요한 부분에 대해 구체적이고 실천 가능한 조언을 제시해주세요.\n\n전체적으로 내용은 너무 길지 않게, 핵심만 전달하되 따뜻한 코칭 스타일을 유지해주세요.\n\n---데이터---\n\n[분석 대상 날짜]\n- ${analysisData.dates.join(', ')}\n\n[위 날짜들의 상세 기록 요약]\n${analysisData.summary}\n\n---분석 시작---`;
+    }
+}
+
+
 // 메인 애플리케이션 관리 클래스
 class FitnessApp {
     // 애플리케이션 초기화
@@ -347,6 +426,40 @@ class FitnessApp {
                 }
             });
         }
+
+        // AI 분석 버튼
+        const aiBtn = DOM.get('generateAiAnalysisBtn');
+        if (aiBtn) {
+            aiBtn.addEventListener('click', FitnessApp.requestAiAnalysis);
+        }
+    }
+
+    // AI 분석 요청 핸들러 (신규)
+    static async requestAiAnalysis() {
+        const aiBtn = DOM.get('generateAiAnalysisBtn');
+        const aiResultDiv = DOM.get('aiAnalysisResult');
+
+        if (!aiBtn || !aiResultDiv) return;
+
+        aiBtn.disabled = true;
+        aiBtn.textContent = '🤖 분석 중...';
+        DOM.removeClass(aiResultDiv, 'empty-state');
+        aiResultDiv.innerHTML = 'AI가 월간/연간 데이터를 분석하고 있습니다. 잠시만 기다려주세요...';
+
+        const analysis = await AIManager.getAnalysis();
+
+        if (analysis) {
+            let formattedAnalysis = analysis.replace(/\n/g, '<br>');
+            formattedAnalysis = formattedAnalysis.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedAnalysis = formattedAnalysis.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            aiResultDiv.innerHTML = formattedAnalysis;
+        } else {
+            aiResultDiv.innerHTML = 'AI 분석에 실패했습니다. API 키를 확인하거나 나중에 다시 시도해주세요.';
+            DOM.addClass(aiResultDiv, 'empty-state');
+        }
+
+        aiBtn.disabled = false;
+        aiBtn.textContent = 'AI 분석 생성';
     }
 
     // 전체 데이터 Supabase에 저장
