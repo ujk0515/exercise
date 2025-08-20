@@ -990,3 +990,101 @@ canvas {
     max-width: 100% !important;
     height: auto !important;
 }
+
+/* Floating Action Button */
+.fab-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+.fab-container .fab-main-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 28px;
+    line-height: 56px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab-container .fab-main-btn span {
+    transition: transform 0.3s ease;
+}
+
+.fab-container.active .fab-main-btn {
+    transform: rotate(45deg);
+}
+
+.fab-options {
+    position: absolute;
+    bottom: 64px; /* Above the main button */
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.fab-container.active .fab-options {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.fab-options .fab-btn {
+    width: 130px; /* Fixed width */
+    height: auto;
+    border-radius: 24px; /* Pill shape */
+    background: #f8fafc;
+    color: #4338ca;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.fab-icon {
+    font-size: 20px;
+}
+
+.fab-text {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.fab-options .fab-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    .summary-actions {
+        display: none !important; /* 다른 규칙보다 우선 적용 */
+    }
+
+    .fab-container {
+        display: block !important; /* 다른 규칙보다 우선 적용 */
+    }
+}

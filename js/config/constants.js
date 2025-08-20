@@ -1,5 +1,5 @@
 // Gemma API 키
-const GEMMA_API_KEY = 'AIzaSyDE-edho0DTkfMbsGF9XoiOQgCPkVJInzU'; // 여기에 개인 Gemma API 키를 입력하세요.
+const GEMMA_API_KEY = 'AIzaSyDE-edho0DTkfMbsGF9XoiOQgCPkVJInzU';
 
 // Supabase 설정
 const SUPABASE_CONFIG = {
@@ -90,7 +90,7 @@ const INCLINE_BONUS = {
 
 // 고정 칼로리 값
 const MEAL_CALORIES = {
-    breakfast: 180,
+    breakfast: 200,
     lunch: {
         galbi: 480,
         kakdugi: 475,

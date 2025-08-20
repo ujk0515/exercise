@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div class="grid grid-3">
+        <div class="grid grid-3 summary-actions">
             <button id="downloadData" class="btn"
                 style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
                 📥 엑셀 다운로드
@@ -475,9 +475,8 @@
                     </div>
 
                     <div id="defaultBreakfast">
-                        <div class="meal-item">• 단백질 쉐이크 1잔</div>
-                        <div class="meal-item">• 에사비 콤부차 1잔</div>
-                        <div class="meal-calories" style="color: #d97706;">180kcal</div>
+                        <div class="meal-item">• 바나나 2개</div>
+                        <div class="meal-calories" style="color: #d97706;">200kcal</div>
                     </div>
 
                     <div id="customBreakfast" class="hidden">
@@ -689,6 +688,27 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- 플로팅 액션 버튼 -->
+    <div class="fab-container">
+        <div class="fab-options">
+            <button id="fab-reset" class="fab-btn" title="전체 초기화">
+                <span class="fab-icon">🔄</span>
+                <span class="fab-text">초기화</span>
+            </button>
+            <button id="fab-save" class="fab-btn" title="Supabase 저장">
+                <span class="fab-icon">💾</span>
+                <span class="fab-text">저장</span>
+            </button>
+            <button id="fab-download" class="fab-btn" title="엑셀 다운로드">
+                <span class="fab-icon">📥</span>
+                <span class="fab-text">다운로드</span>
+            </button>
+        </div>
+        <button id="fab-main" class="fab-main-btn">
+            <span>+</span>
+        </button>
     </div>
 
     <!-- 외부 라이브러리 -->

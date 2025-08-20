@@ -152,6 +152,48 @@ class FitnessApp {
         FitnessApp.setupDataLoaderEventListeners();
         FitnessApp.setupUtilityEventListeners();
         FitnessApp.setupUserInfoEventListeners(); // 새로 추가
+        FitnessApp.setupFabEventListeners(); // FAB 리스너 추가
+    }
+
+    // 플로팅 액션 버튼 관련 이벤트 리스너 (수정됨)
+    static setupFabEventListeners() {
+        const fabContainer = document.querySelector('.fab-container');
+        const fabMainBtn = DOM.get('fab-main');
+        const fabDownloadBtn = DOM.get('fab-download');
+        const fabSaveBtn = DOM.get('fab-save');
+        const fabResetBtn = DOM.get('fab-reset');
+
+        if (!fabContainer || !fabMainBtn) return; // 요소가 없으면 중단
+
+        // 메인 버튼 클릭 시 옵션 토글
+        fabMainBtn.addEventListener('click', () => {
+            fabContainer.classList.toggle('active');
+        });
+
+        // 각 옵션 버튼을 기존 기능에 연결
+        if (fabDownloadBtn) {
+            fabDownloadBtn.addEventListener('click', () => DOM.get('downloadData').click());
+        }
+        if (fabSaveBtn) {
+            fabSaveBtn.addEventListener('click', () => DOM.get('saveToSupabase').click());
+        }
+        if (fabResetBtn) {
+            fabResetBtn.addEventListener('click', () => DOM.get('resetAll').click());
+        }
+
+        // 버튼 외 다른 곳 클릭 시 닫기
+        document.addEventListener('click', (event) => {
+            if (fabContainer.classList.contains('active') && !fabContainer.contains(event.target)) {
+                fabContainer.classList.remove('active');
+            }
+        });
+
+        // 스크롤 시 닫기
+        window.addEventListener('scroll', () => {
+            if (fabContainer.classList.contains('active')) {
+                fabContainer.classList.remove('active');
+            }
+        }, { passive: true });
     }
 
     // 사용자 정보 관련 이벤트 리스너 (새로 추가)
