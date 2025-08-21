@@ -2,730 +2,927 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>운동 기록 일지</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <title>QA 통합 유틸리티</title>
+
+  <!-- 🔥 수파베이스 CDN 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="assets/css/common.css">
+  <link rel="stylesheet" href="assets/css/csv.css">
+  <link rel="stylesheet" href="assets/css/groovy.css">
+  <link rel="stylesheet" href="assets/css/report.css">
+  <link rel="stylesheet" href="assets/css/mapping.css">
+  <link rel="stylesheet" href="assets/css/tcmerger.css">
+  <link rel="stylesheet" href="assets/css/smart.css">
+  <link rel="stylesheet" href="assets/css/objectspy.css">
+
+  <!-- External Libraries -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+  <!-- External Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+  <script src="assets/js/katalon-object-generator.js"></script>
+  <script src="assets/js/object-spy-controller.js"></script>
+  <style>
+    button.tab-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background-color: #e9ecef;
+      color: #6c757d;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- 헤더 -->
-        <div class="card">
-            <div class="card-header">
-                <div class="date-header">
-                    <div>
-                        <h1 class="card-title">🏋️‍♂️ 운동 기록 일지</h1>
-                        <p>체계적인 운동 및 식단 관리 시스템</p>
-                    </div>
-                    <div class="header-middle">
-                        <div class="user-info">
-                            <div class="info-group">
-                                <span>👤</span>
-                                <input type="number" id="userAge" class="info-input" placeholder="25" min="10" max="100"
-                                    value="25">
-                                <span>세</span>
-                            </div>
+  <header>
+    <button class="tab-button" data-tab="csv" disabled>📊 CSV 파싱</button>
+    <button class="tab-button active" data-tab="groovy">⚙️ Groovy 변환</button>
+    <button class="tab-button" data-tab="report">📈 결과 리포트</button>
+    <button class="tab-button" data-tab="mapping" disabled>🔄 테스트케이스 매핑</button>
+    <button class="tab-button" data-tab="tcmerger" disabled>📦 TC 병합/분리</button>
+    <button class="tab-button" data-tab="smart">🧠 스마트 매핑</button>
+    <button class="tab-button" data-tab="object-spy">🔍 Object Spy</button>
+  </header>
 
-                            <div class="info-group">
-                                <span>📏</span>
-                                <input type="number" id="userHeight" class="info-input height-input" placeholder="175"
-                                    min="100" max="250" value="175">
-                                <span>cm</span>
-                            </div>
-
-                            <div class="info-group">
-                                <span>⚖️</span>
-                                <input type="number" id="userWeightHeader" class="info-input" placeholder="87" min="30"
-                                    max="200" value="87">
-                                <span>kg</span>
-                            </div>
-
-                            <div class="gender-group">
-                                <span>⚧</span>
-                                <label class="gender-label">
-                                    <input type="radio" name="userGender" value="male" checked>
-                                    남성
-                                </label>
-                                <label class="gender-label">
-                                    <input type="radio" name="userGender" value="female">
-                                    여성
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="bmr-results">
-                            <span class="bmr-inline">📊 BMR: <strong id="bmrValue">1,847</strong> kcal</span>
-                            <span class="bmr-separator">|</span>
-                            <span class="bmr-inline">🔥 TDEE: <strong id="tdeeValue">2,355</strong> kcal</span>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="date" id="selectedDate" class="date-input">
-                    </div>
-                </div>
-            </div>
+  <main>
+    <!-- CSV 파싱 탭 -->
+    <div id="csv" class="tab-content">
+      <div class="container">
+        <div class="csv-header">
+          <h2>🔪 WebUI.comment 기반 메타데이터 파서</h2>
+          <p>CSV 파일을 업로드하여 WebUI.comment 데이터를 자동으로 파싱하고 분석합니다</p>
         </div>
 
-        <!-- 일일 요약 카드 추가 -->
-    <div class="summary-card">
-        <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-            📊 일일 요약
-        </h2>
-
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="summary-value" id="totalWorkoutCal">0</div>
-                <div class="summary-label">소모 칼로리</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-value" id="totalFoodCal">960</div>
-                <div class="summary-label">섭취 칼로리</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-value" id="calorieBalance">+960</div>
-                <div class="summary-label">칼로리 수지</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-value" id="balanceStatus">🔺 잉여</div>
-                <div class="summary-label">상태</div>
-            </div>
+        <div class="file-upload-section">
+          <div class="file-input-wrapper">
+            <input type="file" id="csvFile" accept=".csv">
+            <label for="csvFile" class="file-input-label">
+              📁 CSV 파일 선택
+            </label>
+          </div>
+          <p style="color: #6b7280; margin: 15px 0 0 0;">CSV 파일을 선택하면 자동으로 파싱이 시작됩니다</p>
         </div>
 
-        <div class="grid grid-3 summary-actions">
-            <button id="downloadData" class="btn"
-                style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                📥 엑셀 다운로드
-            </button>
-            <button id="saveToSupabase" class="btn"
-                style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                💾 Supabase 저장
-            </button>
-            <button id="resetAll" class="btn"
-                style="background: rgba(255,100,100,0.8); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                🔄 전체 초기화
-            </button>
+        <div class="action-buttons">
+          <button id="downloadBtn" class="action-btn download-btn">⬇️ 엑셀 다운로드</button>
+          <button id="exampleDownloadBtn" class="action-btn example-btn">📥 예시파일 다운로드</button>
         </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+        <table id="resultTable" class="display" style="display:none;"></table>
+      </div>
     </div>
 
-    <!-- 데이터 불러오기, 웨이트, 운동기록, 유산소, AI 평가 (5분할) -->
-    <div class="grid grid-5">
-        <!-- 데이터 불러오기 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">📥 데이터 불러오기</h2>
-
-                <div class="data-loader-container">
-                    <!-- 월간/연간 요약 섹션 (데이터 불러온 후 표시) -->
-                    <div id="summaryContainer" class="summary-container hidden">
-                        <!-- 월간 요약 (왼쪽) -->
-                        <div class="monthly-summary">
-                            <div class="monthly-summary-header">
-                                📊 <span id="summaryMonth">2025년 6월</span> 월간 요약
-                            </div>
-
-                            <div class="monthly-stats-grid">
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="totalWorkoutDays">0</div>
-                                    <div class="stat-label">총 운동일수</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgBurnCalories">0</div>
-                                    <div class="stat-label">평균 소모칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgFoodCalories">0</div>
-                                    <div class="stat-label">평균 섭취칼로리</div>
-                                </div>
-                                <div class="monthly-stat-item">
-                                    <div class="stat-value" id="avgCalorieBalance">0</div>
-                                    <div class="stat-label">평균 칼로리수지</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 연간 요약 (우측) -->
-                        <div class="yearly-summary">
-                            <div class="yearly-summary-header">
-                                📈 <span id="summaryYear">2025년</span> 연간 요약
-                            </div>
-
-                            <div class="yearly-stats-grid">
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyWorkoutDays">0</div>
-                                    <div class="stat-label">총 운동일수</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgBurnCalories">0</div>
-                                    <div class="stat-label">평균 소모칼로리</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgFoodCalories">0</div>
-                                    <div class="stat-label">평균 섭취칼로리</div>
-                                </div>
-                                <div class="yearly-stat-item">
-                                    <div class="stat-value" id="yearlyAvgCalorieBalance">0</div>
-                                    <div class="stat-label">평균 칼로리수지</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- 월별 데이터 불러오기 버튼 -->
-                    <div id="loadMonthBtn" class="load-month-btn">
-                        📥 현재 월 데이터 불러오기
-                    </div>
-
-                    <!-- 성공 팝업 -->
-                    <div id="successPopup" class="success-popup hidden">
-                        ✅ 데이터를 모두 불러왔습니다!
-                    </div>
-
-                    <!-- 캘린더 -->
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <button id="prevMonthBtn" class="calendar-nav-btn">◀ 이전달</button>
-                            <div id="calendarHeader">📅 운동 기록 캘린더</div>
-                            <button id="nextMonthBtn" class="calendar-nav-btn">다음달 ▶</button>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid">
-                            <!-- 캘린더는 JavaScript로 동적 생성 -->
-                        </div>
-
-                        <!-- 범례 수정 -->
-                        <div class="calendar-legend">
-                            <div class="legend-item">
-                                <div class="legend-color legend-green"></div>
-                                <span>운동함</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color legend-red"></div>
-                                <span>운동 안함</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color legend-blue"></div>
-                                <span>오늘</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 선택된 날짜 데이터 미리보기 -->
-                    <div id="dataPreview" class="selected-data-preview hidden">
-                        <div class="preview-date-title" id="previewDateTitle">날짜를 선택하세요</div>
-                        <div id="previewContent"></div>
-                        <div style="display: flex; gap: 8px; margin-top: 12px;">
-                            <div id="applyDataBtn" class="apply-data-btn hidden" style="flex: 1;">
-                                📥 이 날짜 데이터를 현재 화면에 적용
-                            </div>
-                            <div id="deleteDataBtn" class="delete-data-btn hidden" style="flex: 1;">
-                                🗑️ 이 날짜 데이터를 완전히 삭제
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Groovy 변환기 탭 -->
+    <div id="groovy" class="tab-content active">
+      <div class="container">
+        <div class="groovy-header">
+          <h2>📄 Excel ➔ Katalon Test Case 변환기</h2>
+          <p>Excel 파일을 Katalon 테스트 케이스(.tc) 및 Groovy 스크립트로 변환합니다</p>
         </div>
 
-        <!-- 웨이트 운동 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">🏋️‍♂️ 웨이트 운동</h2>
+        <div class="conversion-section">
+          <div class="file-input-wrapper">
+            <input type="file" id="excelFile" accept=".xlsx">
+            <label for="excelFile" class="file-input-label">
+              📊 Excel 파일 선택
+            </label>
+          </div>
+          <p style="color: #6b7280; margin: 15px 0 0 0; text-align: center;">Excel 형식의 테스트 케이스를 업로드하세요</p>
 
-                <!-- 체중 입력 -->
-                <div class="form-group">
-                    <label class="form-label">체중 (kg)</label>
-                    <input type="number" id="userWeight" class="form-input" min="30" max="200" value="87">
-                </div>
-
-                <!-- 카테고리 선택 -->
-                <div class="grid grid-3 form-group">
-                    <div class="category-btn active" data-category="back">
-                        <div class="category-icon">🔙</div>
-                        <div>등</div>
-                    </div>
-                    <div class="category-btn" data-category="chest">
-                        <div class="category-icon">🫸</div>
-                        <div>가슴</div>
-                    </div>
-                    <div class="category-btn" data-category="shoulder">
-                        <div class="category-icon">🤷‍♂️</div>
-                        <div>어깨</div>
-                    </div>
-                    <div class="category-btn" data-category="legs">
-                        <div class="category-icon">🦵</div>
-                        <div>하체</div>
-                    </div>
-                </div>
-
-                <!-- 운동 선택 -->
-                <div class="form-group">
-                    <label class="form-label">운동 종목</label>
-                    <select id="exerciseSelect" class="form-select">
-                        <option value="">운동을 선택하세요</option>
-                    </select>
-                </div>
-
-                <!-- 무게 조합 -->
-                <div class="form-group">
-                    <label class="form-label">무게 조합</label>
-                    <div class="grid grid-6">
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">1kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="1" min="0" max="10"
-                                value="0">
-                        </div>
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">2.5kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="2.5" min="0" max="10"
-                                value="0">
-                        </div>
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">5kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="5" min="0" max="10"
-                                value="0">
-                        </div>
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">10kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="10" min="0" max="10"
-                                value="0">
-                        </div>
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">15kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="15" min="0" max="10"
-                                value="0">
-                        </div>
-                        <div>
-                            <div style="text-align: center; font-size: 12px; margin-bottom: 4px;">20kg</div>
-                            <input type="number" class="form-input weight-input" data-weight="20" min="0" max="10"
-                                value="0">
-                        </div>
-                    </div>
-                    <div class="weight-total">총 무게: <span id="totalWeight">0</span>kg</div>
-                </div>
-
-                <!-- 횟수, 세트 -->
-                <div class="grid grid-2 form-group">
-                    <div>
-                        <label class="form-label">횟수</label>
-                        <input type="number" id="reps" class="form-input" min="1" max="50" value="10">
-                    </div>
-                    <div>
-                        <label class="form-label">세트</label>
-                        <input type="number" id="sets" class="form-input" min="1" max="10" value="3">
-                    </div>
-                </div>
-
-                <button id="addWorkout" class="btn btn-primary btn-full" disabled>
-                    ➕ 운동 추가
-                </button>
-            </div>
+          <div class="zip-buttons">
+            <button onclick="generateAllZip('tc')" class="zip-btn">📦 전체 .tc ZIP 다운로드</button>
+            <button onclick="generateAllZip('groovy')" class="zip-btn">📦 전체 .groovy ZIP 다운로드</button>
+          </div>
         </div>
 
-        <!-- 운동 기록 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">📋 운동 기록</h2>
-
-                <div class="workout-summary-section">
-                    <div class="workout-summary-grid">
-                        <div class="summary-stat">
-                            <div class="stat-number" id="totalWorkoutSets">0</div>
-                            <div class="stat-label">총 세트</div>
-                        </div>
-                        <div class="summary-stat">
-                            <div class="stat-number" id="totalWorkoutCalories">0</div>
-                            <div class="stat-label">총 소모칼로리</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 웨이트 운동 기록 -->
-                <div class="records-section">
-                    <div class="records-title">🏋️‍♂️ 웨이트 운동 기록</div>
-                    <div id="workoutRecords">
-                        <div class="empty-state">아직 웨이트 운동 기록이 없습니다</div>
-                    </div>
-                </div>
-
-                <!-- 유산소 운동 기록 -->
-                <div class="records-section">
-                    <div class="records-title">🏃‍♂️ 유산소 운동 기록</div>
-                    <div id="cardioRecords">
-                        <div class="empty-state">아직 유산소 운동 기록이 없습니다</div>
-                    </div>
-                </div>
+        <div class="preview-section">
+          <div id="preview">
+            <div style="text-align: center; color: #6b7280; padding: 50px 0;">
+              <h3>🔄 변환 미리보기</h3>
+              <p>Excel 파일을 선택하면 변환 결과가 여기에 표시됩니다</p>
             </div>
+          </div>
         </div>
-
-        <!-- 유산소 운동 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
-
-                <!-- 운동 종류 선택 탭 추가 -->
-                <div class="grid grid-2 form-group">
-                    <div class="category-btn active" data-cardio-type="treadmill">
-                        <div class="category-icon">🏃‍♂️</div>
-                        <div>런닝머신</div>
-                    </div>
-                    <div class="category-btn" data-cardio-type="cycle">
-                        <div class="category-icon">🚴‍♂️</div>
-                        <div>사이클</div>
-                    </div>
-                </div>
-
-                <!-- 런닝머신 폼 (기존) -->
-                <div id="treadmillForm">
-                    <h3 style="margin-bottom: 12px;">런닝머신</h3>
-                    <div class="grid grid-3 form-group">
-                        <div>
-                            <label class="form-label">각도 (도)</label>
-                            <select id="incline" class="form-select">
-                                <option value="1">1도</option>
-                                <option value="2">2도</option>
-                                <option value="3">3도</option>
-                                <option value="4">4도</option>
-                                <option value="5">5도</option>
-                                <option value="6">6도</option>
-                                <option value="7">7도</option>
-                                <option value="8">8도</option>
-                                <option value="9">9도</option>
-                                <option value="10">10도</option>
-                                <option value="11">11도</option>
-                                <option value="12">12도</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">속도 (km/h)</label>
-                            <input type="number" id="speed" class="form-input" min="0.1" max="12.0" step="0.1"
-                                value="6.0">
-                        </div>
-                        <div>
-                            <label class="form-label">시간 (분)</label>
-                            <input type="number" id="duration" class="form-input" min="1" max="120" value="30">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 사이클 폼 (새로 추가) -->
-                <div id="cycleForm" class="hidden">
-                    <h3 style="margin-bottom: 12px;">사이클</h3>
-                    <div class="grid grid-3 form-group">
-                        <div>
-                            <label class="form-label">강도 (1-10)</label>
-                            <select id="cycleIntensity" class="form-select">
-                                <option value="1">1단계</option>
-                                <option value="2">2단계</option>
-                                <option value="3">3단계</option>
-                                <option value="4">4단계</option>
-                                <option value="5" selected>5단계</option>
-                                <option value="6">6단계</option>
-                                <option value="7">7단계</option>
-                                <option value="8">8단계</option>
-                                <option value="9">9단계</option>
-                                <option value="10">10단계</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">평균 RPM</label>
-                            <input type="number" id="cycleRPM" class="form-input" min="30" max="150" value="80"
-                                step="1">
-                        </div>
-                        <div>
-                            <label class="form-label">시간 (분)</label>
-                            <input type="number" id="cycleDuration" class="form-input" min="1" max="120" value="30">
-                        </div>
-                    </div>
-                </div>
-
-                <button id="addCardio" class="btn btn-success btn-full">
-                    ➕ 유산소 추가
-                </button>
-            </div>
-        </div>
-
-        <!-- AI 종합 평가 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">🤖 AI 종합 평가</h2>
-                <button id="generateAiAnalysisBtn" class="btn btn-primary btn-full" disabled>
-                    AI 분석 생성
-                </button>
-                <div id="aiAnalysisResult" class="empty-state" style="margin-top: 16px;">
-                    월간/연간 데이터를 불러온 후, 버튼을 눌러 AI 분석을 받아보세요.
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- 식사 기록 -->
-    <div class="card">
-        <div class="card-content">
-            <h2 class="section-title">🍽️ 식사 기록</h2>
+    <!-- 결과 리포트 탭 -->
+    <div id="report" class="tab-content">
+      <div class="container">
+        <div class="report-header">
+          <h2>🧾 HTML 결과값 Report 뷰어</h2>
+          <p>HTML 테스트 결과 파일을 업로드하여 시각적으로 분석합니다</p>
+        </div>
 
-            <div class="grid grid-3">
-                <!-- 아침 -->
-                <div class="meal-card meal-breakfast">
-                    <div class="meal-title">🌅 아침</div>
+        <div class="file-upload-section" style="margin-bottom: 30px;">
+          <div class="file-input-wrapper">
+            <input type="file" id="reportFileInput" accept=".html">
+            <label for="reportFileInput" class="file-input-label">
+              📄 HTML 결과 파일 선택
+            </label>
+          </div>
+          <p style="color: #6b7280; margin: 15px 0 0 0;">테스트 결과 HTML 파일을 업로드하세요</p>
+        </div>
 
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="useDefaultBreakfast" checked>
-                        <label for="useDefaultBreakfast" style="font-size: 14px;">기본 아침 메뉴 사용</label>
-                    </div>
+        <div class="report-viewer">
+          <iframe id="reportPreview" class="report-preview"></iframe>
+          <div id="reportResult" class="report-result">
+            <h2>📋 파싱된 데이터가 이 영역에 표시됩니다</h2>
+            <p style="text-align: center; color: #9ca3af;">HTML 파일을 업로드하면 분석 결과와 차트가 여기에 나타납니다</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                    <div id="defaultBreakfast">
-                        <div class="meal-item">• 바나나 2개</div>
-                        <div class="meal-calories" style="color: #d97706;">200kcal</div>
-                    </div>
+    <!-- 🔥 테스트케이스 매핑 탭 (수파베이스 연동) -->
+    <div id="mapping" class="tab-content">
+      <div class="mapping-container">
+        <div class="panel left-panel">
+          <div class="panel-header">
+            <span>📝 테스트케이스 입력</span>
+            <button class="reset-btn" onclick="resetInput()">🔄 초기화</button>
+          </div>
+          <div class="panel-content">
+            <div class="input-section">
+              <label class="input-label">테스트케이스 전체 내용</label>
+              <textarea id="testcaseInput" class="input-box" placeholder="테스트케이스 전체 내용을 입력하세요...
 
-                    <div id="customBreakfast" class="hidden">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 아침 입력</div>
+예시:
+Summary: 로그인 기능 테스트
+Precondition: 
+0. 브라우저를 열고 로그인 페이지로 이동
+1. 유효한 사용자 계정이 존재함
+2. 네트워크 연결이 정상임
+Steps:
+1. 아이디 입력 필드에 테스트 계정 입력
+2. 비밀번호 입력 필드에 비밀번호 입력
+3. 로그인 버튼 클릭
+Expected Result: 로그인 성공 후 메인 페이지로 이동"></textarea>
+            </div>
+            <button class="extract-btn" onclick="extractTestcaseData()">📊 데이터 추출</button>
+          </div>
+        </div>
+        <div class="panel center-panel">
+          <div class="panel-header">
+            <span>🔍 파싱 결과</span>
+            <button class="reset-btn" onclick="resetParsing()">🔄 초기화</button>
+          </div>
+          <div class="panel-content">
+            <div class="parsed-section">
+              <div class="section-header">📋 Summary</div>
+              <div class="section-content" id="summaryResult">
+                <span class="placeholder-text">추출된 Summary가 여기에 표시됩니다</span>
+              </div>
+            </div>
+            <div class="parsed-section">
+              <div class="section-header">⚙️ Precondition</div>
+              <div class="section-content" id="preconditionResult">
+                <span class="placeholder-text">추출된 Precondition이 여기에 표시됩니다</span>
+              </div>
+            </div>
+            <div class="parsed-section steps-section">
+              <div class="section-header">🔢 Steps</div>
+              <div class="section-content" id="stepsResult">
+                <span class="placeholder-text">추출된 Steps가 여기에 표시됩니다</span>
+              </div>
+            </div>
+            <div class="parsed-section">
+              <div class="section-header">✅ Expected Result</div>
+              <div class="section-content" id="expectedResult">
+                <span class="placeholder-text">추출된 Expected Result가 여기에 표시됩니다</span>
+              </div>
+            </div>
+            <button class="convert-btn" id="convertBtn" onclick="generateMappingScript()" disabled>⚡ 스크립트 전환</button>
+          </div>
+        </div>
+        <div class="panel right-panel">
+          <div class="panel-header">
+            <span>🛠️ 카탈론 매핑 스크립트</span>
+            <button class="reset-btn" onclick="resetScript()">🔄 초기화</button>
+          </div>
+          <div class="panel-content">
+            <div class="script-section">
+              <div class="script-header">
+                <div class="mapping-indicator no-mapping" id="mappingIndicator"></div>
+                📋 통합 매핑 스크립트
+                <button class="copy-btn" onclick="copyScript()">📋 복사</button>
+              </div>
+              <div class="script-content" id="scriptResult">
+                <span class="placeholder-text">// 수파베이스 연동 카탈론 매핑 스크립트가 여기에 생성됩니다
+                  //
+                  // === Precondition Scripts ===
+                  // Precondition 매핑 스크립트가 여기에 표시됩니다
+                  //
+                  // === Summary Scripts ===
+                  // Summary 매핑 스크립트가 여기에 표시됩니다
+                  //
+                  // === Steps Scripts ===
+                  // Steps 매핑 스크립트가 여기에 표시됩니다
+                  //
+                  // === Expected Result Scripts ===
+                  // Expected Result 매핑 스크립트가 여기에 표시됩니다</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                        <div class="custom-food-form">
-                            <input type="text" id="newBreakfastName" class="form-input" placeholder="음식명"
-                                style="font-size: 12px;">
-                            <input type="number" id="newBreakfastCalories" class="form-input" placeholder="칼로리"
-                                style="font-size: 12px;">
-                            <button id="addCustomBreakfast" class="btn btn-primary"
-                                style="font-size: 12px; padding: 6px 12px;">
-                                ➕ 음식 추가
-                            </button>
+    <!-- TC 병합/분리 탭 -->
+    <div id="tcmerger" class="tab-content">
+      <div class="container">
+        <div class="tcmerger-header">
+          <h2>📦 Test Case Excel/CSV 병합 / 분리 도구</h2>
+          <p>CSV/Excel 파일의 테스트 케이스 단계를 병합하거나 분리합니다</p>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 10px;">
+          <button class="tcmerger-tab-btn active" data-tcmerger-tab="merge" onclick="switchTCMergerTab('merge')">📦 병합
+            기능</button>
+          <button class="tcmerger-tab-btn" data-tcmerger-tab="split" onclick="switchTCMergerTab('split')">🔍 분리
+            기능</button>
+        </div>
+
+        <div id="mergeTab" class="tcmerger-tab-content active">
+          <div class="tab-description">
+            <h3>📦 병합 기능</h3>
+            <p><strong>CSV 파일</strong>의 개별 Step 컬럼들을 <strong>Steps</strong>로 병합합니다.</p>
+            <p>• 입력: Steps (Step), Step 1, Step 2, Step 3, Step 4, Step 5, Step 6</p>
+            <p>• 출력: Steps (자동 번호 매기기 포함)</p>
+          </div>
+
+          <div class="file-upload-section">
+            <h4>📁 CSV 파일 업로드</h4>
+            <div class="file-input-wrapper">
+              <input type="file" id="mergeFileInput" accept=".csv">
+              <label for="mergeFileInput" class="file-input-label">
+                📁 CSV 파일 선택
+              </label>
+            </div>
+            <p style="color: #6c757d; margin-top: 10px;">CSV 파일만 지원됩니다</p>
+          </div>
+
+          <div id="mergeFileInfo" class="file-info"></div>
+          <div id="mergeCleaningInfo" class="file-info cleaning-info">
+            🧹 HTML 태그 정리 완료! 태그들이 적절히 변환/제거되었습니다.
+          </div>
+
+          <div class="action-buttons">
+            <button class="action-btn download-btn" onclick="executeMerge()">📦 병합 실행</button>
+            <button class="action-btn example-btn" onclick="downloadMergeResult()">⬇ 병합 결과 다운로드</button>
+          </div>
+
+          <div id="mergeResult">
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <p>CSV 파일을 업로드하고 병합을 실행해주세요</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="splitTab" class="tcmerger-tab-content">
+          <div class="tab-description">
+            <h3>🔍 분리 기능</h3>
+            <p><strong>Excel 파일</strong>의 Steps를 개별 Step 컬럼들로 분리합니다.</p>
+            <p>• 입력: Steps</p>
+            <p>• 출력: Steps (Step), Step 1, Step 2, Step 3, Step 4, Step 5, Step 6</p>
+          </div>
+
+          <div class="file-upload-section">
+            <h4>📁 Excel 파일 업로드</h4>
+            <div class="file-input-wrapper">
+              <input type="file" id="splitFileInput" accept=".xlsx">
+              <label for="splitFileInput" class="file-input-label">
+                📊 Excel 파일 선택
+              </label>
+            </div>
+            <p style="color: #6c757d; margin-top: 10px;">Excel 파일(.xlsx)만 지원됩니다</p>
+          </div>
+
+          <div id="splitFileInfo" class="file-info"></div>
+          <div id="splitCleaningInfo" class="file-info cleaning-info">
+            🧹 HTML 태그 정리 완료! 태그들이 적절히 변환/제거되었습니다.
+          </div>
+
+          <div class="action-buttons">
+            <button class="action-btn download-btn" onclick="executeSplit()">🔍 분리 실행</button>
+            <button class="action-btn example-btn" onclick="downloadSplitResult()">⬇ 분리 결과 다운로드</button>
+          </div>
+
+          <div id="splitResult">
+            <div class="empty-state">
+              <div class="icon">🔍</div>
+              <p>Excel 파일을 업로드하고 분리를 실행해주세요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 스마트 매핑 탭 -->
+    <div id="smart" class="tab-content">
+      <div class="smart-container">
+        <!-- 헤더 유지 -->
+        <div class="smart-header">
+          <h2>🧠 AI 기반 스마트 테스트 매핑</h2>
+          <p>Gemini AI가 인간처럼 생각하여 테스트케이스를 분석하고 최적의 Katalon 스크립트를 생성합니다</p>
+        </div>
+
+        <!-- 8단계 진행바로 수정 -->
+        <div id="smartProgress" class="smart-progress-container" style="display: none;">
+          <div class="progress-steps">
+            <div class="step" id="step1">1. Summary 이해</div>
+            <div class="step" id="step2">2. TC 조건 파악</div>
+            <div class="step" id="step3">3. 환경 구성 검증</div>
+            <div class="step" id="step4">4. 스텝 동작 매핑</div>
+            <div class="step" id="step5">5. 설계도 작성</div>
+            <div class="step" id="step6">6. 코드 생성</div>
+            <div class="step" id="step7">7. 조건 충돌 검증</div>
+            <div class="step" id="step8">8. 결과 수렴 검증</div>
+          </div>
+          <div class="progress-details" id="progressDetails"></div>
+        </div>
+
+        <!-- 좌우 2단 레이아웃 -->
+        <div class="smart-main-content">
+          <!-- 좌측: TC 입력 + 품질 평가 (세로 2분할) -->
+          <div class="smart-input-section">
+
+            <!-- 상단: TC 입력 영역 (기존 높이의 50%) -->
+            <div class="smart-input-top">
+              <div class="input-header">
+                <h3>📝 테스트케이스 입력</h3>
+                <div class="header-controls"></div>
+                <button id="smartResetBtn" class="smart-reset-btn">🔄 초기화</button>
+                <select id="aiModelSelect" class="ai-model-dropdown">
+                  <option value="gemma-3-27b-it">Gemma-3-27b-it</option>
+                  <option value="gemini-2.0-flash">Gemini-2.0-flash</option>
+                </select>
+              </div>
+              <textarea id="smartTestcaseInput" class="smart-input-box" placeholder="..."></textarea>
+              <button class="smart-generate-btn" onclick="startSmartMapping()">🧠 스마트 분석 시작</button>
+            </div>
+
+            <!-- 하단: 스크립트 품질 평가 영역 (새로 추가) -->
+            <div class="smart-quality-section">
+              <h3>📊 스크립트 품질 평가</h3>
+              <div class="quality-content">
+                <div id="smartScriptScore" class="script-score-display" style="display: none;">
+                  <div id="scoreCircleLarge" class="score-circle-large score-waiting">
+                    <span id="scoreValueLarge">?</span>
+                  </div>
+                  <div id="scoreDetailsLarge" class="score-details-large">분석을 시작하면 AI가 생성된 스크립트의 품질을 평가합니다</div>
+                </div>
+                <div id="qualityPlaceholder" class="quality-placeholder">
+                  스크립트가 생성되면 AI 품질 평가가 여기에 표시됩니다
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 우측: 결과 영역 (기존 유지) -->
+          <div id="smartResult" class="smart-result-container" style="display: none;">
+            <h3>🎯 생성된 Katalon 스크립트</h3>
+
+            <div class="script-actions">
+              <button onclick="copySmartScript()">📋 복사</button>
+              <button onclick="downloadSmartScript()">⬇️ 다운로드</button>
+              <button class="improve-script-btn" onclick="improveSmartScript()">🛠️ AI 검토 반영</button>
+            </div>
+            <pre id="smartGeneratedScript"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Object Spy 탭 -->
+    <div id="object-spy" class="tab-content">
+        <div class="spy-container">
+            <!-- 좌측 패널: 기본 정보 + Selector 정보 -->
+            <div class="spy-left-panel">
+                <div class="panel-header">기본 정보 & Selector</div>
+                
+                <!-- 기본 정보 -->
+                <div class="input-section">
+                    <div class="section-title">기본 정보</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Object Name <span class="required">*</span></label>
+                        <div class="help-text">
+                            카탈론에서 사용할 오브젝트 이름 (영문, 숫자, 언더스코어만)
                         </div>
+                        <input type="text" class="input-field" id="objectName" placeholder="btn_login">
+                    </div>
 
-                        <div id="customBreakfastList" class="custom-food-list hidden">
-                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                            <div id="customBreakfastItems"></div>
-                            <div
-                                style="font-size: 14px; font-weight: 600; color: #d97706; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                총 칼로리: <span id="customBreakfastTotalCalories">0</span>kcal
+                    <div class="input-group">
+                        <label class="input-label">Selection Method <span class="required">*</span></label>
+                        <div class="help-text">
+                            카탈론이 엘리먼트를 찾을 때 우선 사용할 방법
+                        </div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="xpathRadio" name="selectorMethod" value="XPATH" checked>
+                                <label for="xpathRadio">XPath</label>
                             </div>
-                        </div>
-
-                        <div id="emptyCustomBreakfast" class="empty-state">
-                            커스텀 음식을 추가해주세요
+                            <div class="radio-option">
+                                <input type="radio" id="cssRadio" name="selectorMethod" value="CSS">
+                                <label for="cssRadio">CSS</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="basicRadio" name="selectorMethod" value="BASIC">
+                                <label for="basicRadio">BASIC</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 점심 -->
-                <div class="meal-card meal-lunch">
-                    <div class="meal-title">☀️ 점심</div>
-
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="useDefaultLunch" checked
-                            onchange="MealManager.toggleLunchMenu(); SummaryManager.updateSummary();">
-                        <label for="useDefaultLunch" style="font-size: 14px;">기본 점심 메뉴 사용</label>
-                    </div>
-
-                    <div id="defaultLunch">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">파이어트 볶음밥 선택</div>
-
-                        <div style="margin-bottom: 12px;">
-                            <label
-                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="galbi" checked
-                                    onchange="MealManager.changeLunchType()">
-                                <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
-                            </label>
-                            <label
-                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="kakdugi"
-                                    onchange="MealManager.changeLunchType()">
-                                <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
-                            </label>
-                            <label
-                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="egg"
-                                    onchange="MealManager.changeLunchType()">
-                                <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
-                            </label>
+                <!-- Selector 정보 -->
+                <div class="input-section">
+                    <div class="section-title">Selector 정보</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">XPath <span class="required">*</span></label>
+                        <div class="help-text">
+                            개발자도구(F12) → Elements → 우클릭 → Copy → Copy full XPath
                         </div>
-
-                        <div
-                            style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                            선택된 칼로리: <span id="selectedLunchCalories">480</span>kcal
+                        <input type="text" class="input-field" id="xpathInput" placeholder="//button[@id='login']">
+                        <div class="example-box">
+                            예시: //html/body/main/div/div[2]/form/div/div[2]/button
                         </div>
                     </div>
 
-                    <div id="customLunch" class="hidden">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 점심 입력</div>
-
-                        <div class="custom-food-form">
-                            <input type="text" id="newLunchName" class="form-input" placeholder="음식명"
-                                style="font-size: 12px;">
-                            <input type="number" id="newLunchCalories" class="form-input" placeholder="칼로리"
-                                style="font-size: 12px;">
-                            <button id="addCustomLunch" class="btn btn-primary"
-                                style="font-size: 12px; padding: 6px 12px;">
-                                ➕ 음식 추가
-                            </button>
+                    <div class="input-group">
+                        <label class="input-label">CSS Selector</label>
+                        <div class="help-text">
+                            개발자도구(F12) → Elements → 우클릭 → Copy → Copy selector
                         </div>
-
-                        <div id="customLunchList" class="custom-food-list hidden">
-                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                            <div id="customLunchItems"></div>
-                            <div
-                                style="font-size: 14px; font-weight: 600; color: #2563eb; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                총 칼로리: <span id="customLunchTotalCalories">0</span>kcal
-                            </div>
+                        <input type="text" class="input-field" id="cssSelector" placeholder="#login">
+                        <div class="example-box">
+                            예시: button.MuiButton-root.MuiButton-text
                         </div>
+                    </div>
 
-                        <div id="emptyCustomLunch" class="empty-state">
-                            커스텀 음식을 추가해주세요
+                    <div class="input-group">
+                        <label class="input-label">BASIC Selector</label>
+                        <div class="help-text">
+                            카스텀 기본 selector (복합 조건 등)
+                        </div>
+                        <input type="text" class="input-field" id="basicSelector" placeholder="//button[contains(@class, 'login')]">
+                    </div>
+                </div>
+
+                <!-- XPath 변형들 -->
+                <div class="input-section">
+                    <div class="section-title">XPath 변형들</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">XPath Attributes</label>
+                        <div class="help-text">
+                            속성 기반 XPath (type, id, class 등)
+                        </div>
+                        <input type="text" class="input-field" id="xpathAttributes" placeholder="//button[@type='submit']">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">XPath Position</label>
+                        <div class="help-text">
+                            위치 기반 XPath (상대적 위치)
+                        </div>
+                        <input type="text" class="input-field" id="xpathPosition" placeholder="//div[2]/button">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">XPath Neighbor</label>
+                        <div class="help-text">
+                            주변 엘리먼트 기반 XPath
+                        </div>
+                        <input type="text" class="input-field" id="xpathNeighbor" placeholder="(.//*[text()='Username'])[1]/following::input[1]">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">XPath Custom</label>
+                        <div class="help-text">
+                            복합 조건 XPath (text, class 조합)
+                        </div>
+                        <input type="text" class="input-field" id="xpathCustom" placeholder="//button[text()='로그인' and @class='btn-primary']">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 우측 패널: 엘리먼트 속성 + Smart Locator -->
+            <div class="spy-right-panel">
+                <div class="panel-header">엘리먼트 속성 & Locator</div>
+                
+                <!-- 엘리먼트 속성들 -->
+                <div class="input-section">
+                    <div class="section-title">엘리먼트 속성들</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Tag Name</label>
+                        <div class="help-text">
+                            HTML 태그 이름 (button, input, div, a, span)
+                        </div>
+                        <input type="text" class="input-field" id="tagName" placeholder="button">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Class</label>
+                        <div class="help-text">
+                            엘리먼트의 class 속성 전체 값 (개발자도구에서 복사)
+                        </div>
+                        <input type="text" class="input-field" id="className" placeholder="MuiButton-root MuiButton-contained">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">ID</label>
+                        <div class="help-text">
+                            엘리먼트의 id 속성 값
+                        </div>
+                        <input type="text" class="input-field" id="idValue" placeholder="login-button">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Type</label>
+                        <div class="help-text">
+                            input/button의 type 속성 (text, password, submit, button)
+                        </div>
+                        <input type="text" class="input-field" id="typeValue" placeholder="submit">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Name</label>
+                        <div class="help-text">
+                            폼 엘리먼트의 name 속성
+                        </div>
+                        <input type="text" class="input-field" id="nameValue" placeholder="username">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Text</label>
+                        <div class="help-text">
+                            엘리먼트가 포함하는 텍스트 (버튼 텍스트, 링크 텍스트 등)
+                        </div>
+                        <input type="text" class="input-field" id="textValue" placeholder="로그인">
+                    </div>
+                </div>
+
+                <!-- Smart Locator -->
+                <div class="input-section">
+                    <div class="section-title">Smart Locator</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Smart Locator</label>
+                        <div class="help-text">
+                            카탈론의 지능형 locator (텍스트나 역할 기반)
+                        </div>
+                        <input type="text" class="input-field" id="smartLocator" placeholder='internal:role=button[name="로그인"i]'>
+                        <div class="example-box">
+                            예시: internal:text="회원가입"s, internal:role=button[name="로그인"i]
                         </div>
                     </div>
                 </div>
 
-                <!-- 저녁 -->
-                <div class="meal-card meal-dinner">
-                    <div class="meal-title">🌙 저녁</div>
-
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="useDefaultDinner" checked>
-                        <label for="useDefaultDinner" style="font-size: 14px;">기본 저녁 메뉴 사용</label>
-                    </div>
-
-                    <div id="defaultDinner">
-                        <div class="meal-item">• 쌀밥 150g</div>
-                        <div class="meal-item">• 작은 소시지 4개</div>
-                        <div class="meal-calories" style="color: #7c3aed;">360kcal</div>
-                    </div>
-
-                    <div id="customDinner" class="hidden">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">커스텀 저녁 입력</div>
-
-                        <div class="custom-food-form">
-                            <input type="text" id="newFoodName" class="form-input" placeholder="음식명"
-                                style="font-size: 12px;">
-                            <input type="number" id="newFoodCalories" class="form-input" placeholder="칼로리"
-                                style="font-size: 12px;">
-                            <button id="addCustomFood" class="btn btn-primary"
-                                style="font-size: 12px; padding: 6px 12px;">
-                                ➕ 음식 추가
-                            </button>
+                <!-- 기타 속성들 -->
+                <div class="input-section">
+                    <div class="section-title">기타 속성들</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">추가 속성 (JSON)</label>
+                        <div class="help-text">
+                            추가 속성들을 JSON 형태로 입력
                         </div>
-
-                        <div id="customFoodList" class="custom-food-list hidden">
-                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">추가된 음식:</div>
-                            <div id="customFoodItems"></div>
-                            <div
-                                style="font-size: 14px; font-weight: 600; color: #7c3aed; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                총 칼로리: <span id="customTotalCalories">0</span>kcal
-                            </div>
-                        </div>
-
-                        <div id="emptyCustomFood" class="empty-state">
-                            커스텀 음식을 추가해주세요
-                        </div>
+                        <textarea class="input-field textarea-field" id="otherAttributes" placeholder='{"placeholder": "아이디를 입력하세요", "maxlength": "50"}'></textarea>
                     </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateObjectFile()">Object Repository 파일 생성</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">전체 초기화</button>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- 통계 및 그래프 섹션 (기존 식사 기록 카드 아래에 추가) -->
-    <div class="card">
-        <div class="card-content">
-            <h2 class="section-title">📊 통계 및 그래프</h2>
+  </main>
 
-            <!-- 차트 탭 버튼 -->
-            <div class="grid grid-4 form-group">
-                <div class="category-btn active" data-chart="balance">
-                    <div class="category-icon">📈</div>
-                    <div>칼로리 추이</div>
-                </div>
-                <div class="category-btn" data-chart="composition">
-                    <div class="category-icon">📊</div>
-                    <div>오늘 구성</div>
-                </div>
-                <div class="category-btn" data-chart="workout">
-                    <div class="category-icon">🏋️‍♂️</div>
-                    <div>운동별 비교</div>
-                </div>
-                <div class="category-btn" data-chart="trend">
-                    <div class="category-icon">📅</div>
-                    <div>월간 트렌드</div>
-                </div>
-            </div>
+  <!-- 수파베이스 설정 -->
+  <script>
+    const { createClient } = supabase;
+    const testClient = createClient(
+      'https://sposmjzjicgpxmpbzomn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwb3NtanpqaWNncHhtcGJ6b21uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTYxNzIsImV4cCI6MjA2NjM3MjE3Mn0.UjTxOh7tVc6F_kw_5rCOlntnWfrljzhp0ntmeKLuW3c'
+    );
 
-            <!-- 차트 컨테이너들 -->
-            <div id="chartContainer">
-                <!-- 칼로리 추이 차트 -->
-                <div id="calorieBalanceChart" class="chart-section">
-                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
-                        차트를 로딩 중입니다...
-                    </div>
-                </div>
+    window.getSupabaseClient = () => testClient;
+    window.isSupabaseConnected = () => true;
+    window.findMappingInSupabase = async function (keyword) {
+      const { data, error } = await testClient
+        .from('katalon_mapping_complete')
+        .select('*')
+        .contains('keywords', [keyword.toLowerCase()]);
 
-                <!-- 오늘 구성 차트 -->
-                <div id="dailyCompositionChart" class="chart-section hidden">
-                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
-                        차트를 로딩 중입니다...
-                    </div>
-                </div>
+      if (error || !data || data.length === 0) {
+        return { found: false, keyword: keyword };
+      }
 
-                <!-- 운동별 비교 차트 -->
-                <div id="workoutComparisonChart" class="chart-section hidden">
-                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
-                        차트를 로딩 중입니다...
-                    </div>
-                </div>
+      return {
+        found: true,
+        mapping: data[0],
+        source: 'complete',
+        action: data[0].action
+      };
+    };
 
-                <!-- 월간 트렌드 차트 -->
-                <div id="monthlyTrendChart" class="chart-section hidden">
-                    <div style="text-align: center; padding: 40px; color: #9ca3af;">
-                        차트를 로딩 중입니다...
-                    </div>
-                </div>
-            </div>
+    console.log('수파베이스 함수 등록 완료');
+  </script>
 
-            <!-- 차트 새로고침 버튼 -->
-            <div style="text-align: center; margin-top: 16px;">
-                <button id="refreshCharts" class="btn btn-primary">
-                    🔄 차트 새로고침
-                </button>
-            </div>
+<!-- 기존 라이브러리들 -->
+<script src="libs/common_utils_zip.js"></script>
+<script src="libs/csv_parser_zip.js"></script>
+<script src="libs/groovy_converter_zip.js"></script>
+<script src="libs/report_viewer_zip.js"></script>
+<script src="libs/script.js"></script>
+<script src="libs/gemini-keywords.js"></script>
+
+<!-- 테스트케이스 매핑 모듈들 -->
+<script src="libs/testcase_mapping/testcase_parser.js"></script>
+<script src="libs/testcase_mapping/katalon_mapper.js"></script>
+<script src="libs/testcase_mapping/testcase_ui_controller.js"></script>
+<script src="libs/testcase_mapping/testcase_mapper_supabase.js"></script>
+
+<!-- 통합 프롬프트 파일 -->
+<script src="libs/prompts/gemma_master_prompt.js"></script>
+
+<!-- AI 엔진들 -->
+<script src="libs/ai_engine_Gemma-3-27b-it.js"></script>
+<script src="libs/ai_engine_gemini-2.0-flash.js"></script>
+
+  <!-- 애플리케이션 메인 스크립트들 -->
+  <script src="assets/js/ui-utils.js"></script>
+  <script src="assets/js/file-handlers.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <script>
+    // 탭 전환 기능
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        if (button.disabled) {
+          return;
+        }
+
+        const tabId = button.getAttribute('data-tab');
+        const targetTab = document.getElementById(tabId);
+
+        if (targetTab) {
+          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+          button.classList.add('active');
+          targetTab.classList.add('active');
+        } else {
+          console.warn(`탭을 찾을 수 없습니다: ${tabId}`);
+        }
+      });
+    });
+
+    // 파일 선택 시 레이블 업데이트
+    document.getElementById('csvFile').addEventListener('change', function () {
+      const label = this.nextElementSibling;
+      if (this.files.length > 0) {
+        label.innerHTML = `${this.files[0].name}`;
+        label.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+      }
+    });
+
+    document.getElementById('excelFile').addEventListener('change', function () {
+      const label = this.nextElementSibling;
+      if (this.files.length > 0) {
+        label.innerHTML = `${this.files[0].name}`;
+        label.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+      }
+    });
+
+    document.getElementById('reportFileInput').addEventListener('change', function () {
+      const label = this.nextElementSibling;
+      if (this.files.length > 0) {
+        label.innerHTML = `${this.files[0].name}`;
+        label.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+      }
+    });
+
+    // TC Merger 내부 탭 전환
+    function switchTCMergerTab(tab) {
+      document.querySelectorAll('.tcmerger-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tcmerger-tab-content').forEach(content => content.classList.remove('active'));
+
+      const targetBtn = document.querySelector(`[data-tcmerger-tab="${tab}"]`);
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+      }
+
+      const targetTab = document.getElementById(tab + 'Tab');
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+    }
+
+    // 에러/성공 메시지 함수들
+    function showError(message) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.innerHTML = `
+        <div style="display: flex; align-items: center;">
+          <span style="margin-right: 10px;">⚠️</span>
+          <span>${message}</span>
         </div>
-    </div>
+      `;
+      errorDiv.style.display = 'block';
 
-    <!-- 플로팅 액션 버튼 -->
-    <div class="fab-container">
-        <div class="fab-options">
-            <button id="fab-reset" class="fab-btn" title="전체 초기화">
-                <span class="fab-icon">🔄</span>
-                <span class="fab-text">초기화</span>
-            </button>
-            <button id="fab-save" class="fab-btn" title="Supabase 저장">
-                <span class="fab-icon">💾</span>
-                <span class="fab-text">저장</span>
-            </button>
-            <button id="fab-download" class="fab-btn" title="엑셀 다운로드">
-                <span class="fab-icon">📥</span>
-                <span class="fab-text">다운로드</span>
-            </button>
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    function showSuccess(message) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.innerHTML = `
+        <div style="display: flex; align-items: center; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #065f46; border-left-color: #10b981;">
+          <span style="margin-right: 10px;">✅</span>
+          <span>${message}</span>
         </div>
-        <button id="fab-main" class="fab-main-btn">
-            <span>+</span>
-        </button>
-    </div>
+      `;
+      errorDiv.style.display = 'block';
 
-    <!-- 외부 라이브러리 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 3000);
+    }
 
-    <!-- 애플리케이션 스크립트 -->
-    <script src="js/config/constants.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/workout.js"></script>
-    <script src="js/meal.js"></script>
-    <script src="js/data-loader.js"></script>
-    <script src="js/excel.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/main.js"></script>
+    function showLoading(buttonElement, originalText) {
+      buttonElement.innerHTML = `<span class="loading"></span>${originalText}`;
+      buttonElement.disabled = true;
+    }
+
+    function hideLoading(buttonElement, originalText) {
+      buttonElement.innerHTML = originalText;
+      buttonElement.disabled = false;
+    }
+
+    // 스마트 매핑 함수들
+    async function startSmartMapping() {
+      const selectedModel = document.getElementById('aiModelSelect').value;
+
+      if (selectedModel === 'gemma-3-27b-it') {
+        if (typeof GemmaEngine === 'undefined') {
+          alert('AI 엔진이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
+          return;
+        }
+
+        if (!window.gemmaEngine) {
+          console.log('Gemma 엔진 생성 중...');
+          window.gemmaEngine = new GemmaEngine();
+        }
+        await startSmartMappingGemma();
+
+      } else if (selectedModel === 'gemini-2.0-flash') {
+        if (typeof GeminiFlashEngine === 'undefined') {
+          alert('AI 엔진이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
+          return;
+        }
+
+        if (!window.geminiFlashEngine) {
+          console.log('Gemini Flash 엔진 생성 중...');
+          window.geminiFlashEngine = new GeminiFlashEngine();
+        }
+        await startSmartMappingGemini();
+      }
+    }
+
+    function improveSmartScript() {
+      const selectedModel = document.getElementById('aiModelSelect').value;
+
+      if (selectedModel === 'gemma-3-27b-it') {
+        if (window.gemmaEngine) {
+          window.gemmaEngine.improveAndReEvaluateScript();
+        } else {
+          alert('Gemma AI 엔진을 찾을 수 없습니다.');
+        }
+      } else if (selectedModel === 'gemini-2.0-flash') {
+        if (window.geminiFlashEngine) {
+          window.geminiFlashEngine.improveAndReEvaluateScript();
+        } else {
+          alert('Gemini Flash AI 엔진을 찾을 수 없습니다.');
+        }
+      } else {
+        alert('지원되지 않는 AI 모델입니다.');
+      }
+    }
+
+    function resetSmartMapping() {
+      console.log('스마트 매핑 전체 초기화 시작');
+
+      if (!confirm('스마트 매핑을 초기화하시겠습니까?\n모든 입력 내용과 결과가 삭제됩니다.')) {
+        return;
+      }
+
+      try {
+        const testcaseInput = document.getElementById('smartTestcaseInput');
+        if (testcaseInput) {
+          testcaseInput.value = '';
+        }
+
+        const modelSelect = document.getElementById('aiModelSelect');
+        if (modelSelect) {
+          modelSelect.value = 'gemma-3-27b-it';
+        }
+
+        const progressContainer = document.getElementById('smartProgress');
+        if (progressContainer) {
+          progressContainer.style.display = 'none';
+        }
+
+        for (let i = 1; i <= 8; i++) {
+          const step = document.getElementById(`step${i}`);
+          if (step) {
+            step.className = 'step';
+          }
+        }
+
+        const progressDetails = document.getElementById('progressDetails');
+        if (progressDetails) {
+          progressDetails.innerHTML = '';
+        }
+
+        const resultContainer = document.getElementById('smartResult');
+        if (resultContainer) {
+          resultContainer.style.display = 'none';
+        }
+
+        const scriptElement = document.getElementById('smartGeneratedScript');
+        if (scriptElement) {
+          scriptElement.textContent = '';
+        }
+
+        const scoreDisplay = document.getElementById('smartScriptScore');
+        const placeholder = document.getElementById('qualityPlaceholder');
+
+        if (scoreDisplay && placeholder) {
+          scoreDisplay.style.display = 'none';
+          placeholder.style.display = 'block';
+        }
+
+        const generateBtn = document.querySelector('.smart-generate-btn');
+        if (generateBtn) {
+          generateBtn.disabled = false;
+          generateBtn.innerHTML = '🧠 스마트 분석 시작';
+        }
+
+        window.smartGeneratedScript = null;
+        if (window.gemmaEngine) {
+          window.gemmaEngine.lastEvaluation = null;
+        }
+        if (window.geminiFlashEngine) {
+          window.geminiFlashEngine.lastEvaluation = null;
+        }
+
+        console.log('스마트 매핑 초기화 완료');
+
+        const resetBtn = document.getElementById('smartResetBtn');
+        if (resetBtn) {
+          const originalText = resetBtn.innerHTML;
+          resetBtn.innerHTML = '초기화됨';
+          resetBtn.disabled = true;
+
+          setTimeout(() => {
+            resetBtn.innerHTML = originalText;
+            resetBtn.disabled = false;
+          }, 1500);
+        }
+
+      } catch (error) {
+        console.error('초기화 실패:', error);
+        alert('초기화 중 오류가 발생했습니다: ' + error.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const resetBtn = document.getElementById('smartResetBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', resetSmartMapping);
+        console.log('스마트 매핑 초기화 버튼 이벤트 등록 완료');
+      }
+    });
+
+    window.resetSmartMapping = resetSmartMapping;
+  </script>
 </body>
 
 </html>

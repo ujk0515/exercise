@@ -1,0 +1,231 @@
+/* ========================================
+   Object Spy 전용 스타일
+   assets/css/objectspy.css
+   ======================================== */
+
+/* Object Spy 컨테이너 */
+.spy-container {
+    display: flex;
+    height: calc(100vh - 80px);
+    background: #f8fafc;
+}
+
+.spy-left-panel {
+    width: 50%;
+    background: white;
+    padding: 25px;
+    overflow-y: auto;
+    border-right: 1px solid #e2e8f0;
+}
+
+.spy-right-panel {
+    width: 50%;
+    background: white;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.panel-header {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 입력 섹션 */
+.input-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+}
+
+.help-text {
+    font-size: 0.8em;
+    color: #6b7280;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: #f8fafc;
+    border-left: 2px solid #667eea;
+    border-radius: 3px;
+    line-height: 1.3;
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9em;
+    transition: border-color 0.2s ease;
+    background: white;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* 라디오 버튼 그룹 */
+.radio-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    font-size: 0.9em;
+}
+
+.radio-option:hover {
+    background-color: #f0f2ff;
+}
+
+.radio-option input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* 텍스트 영역 */
+.textarea-field {
+    min-height: 80px;
+    resize: vertical;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+}
+
+/* 필수 표시 */
+.required {
+    color: #e74c3c;
+}
+
+/* 예시 박스 */
+.example-box {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8em;
+    color: #475569;
+    line-height: 1.3;
+}
+
+/* 액션 버튼들 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .spy-container {
+        flex-direction: column;
+    }
+    
+    .spy-left-panel,
+    .spy-right-panel {
+        width: 100%;
+        height: 50%;
+    }
+    
+    .radio-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* 스크롤바 스타일링 */
+.spy-left-panel::-webkit-scrollbar,
+.spy-right-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.spy-left-panel::-webkit-scrollbar-track,
+.spy-right-panel::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.spy-left-panel::-webkit-scrollbar-thumb,
+.spy-right-panel::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.spy-left-panel::-webkit-scrollbar-thumb:hover,
+.spy-right-panel::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
