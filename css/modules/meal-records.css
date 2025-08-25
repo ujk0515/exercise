@@ -1,0 +1,66 @@
+/* Meals */
+.meal-card {
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.meal-breakfast {
+    background: #fef3c7;
+}
+
+.meal-lunch {
+    background: #dbeafe;
+}
+
+.meal-dinner {
+    background: #f3e8ff;
+}
+
+.meal-title {
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.meal-item {
+    font-size: 14px;
+    color: #4b5563;
+    margin-bottom: 4px;
+}
+
+.meal-calories {
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.custom-food-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.custom-food-list {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+.custom-food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #4b5563;
+    margin-bottom: 4px;
+}

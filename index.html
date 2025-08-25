@@ -5,13 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>운동 기록 일지</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/modules/base.css">
+    <link rel="stylesheet" href="css/modules/header-pc.css">
+    <link rel="stylesheet" href="css/modules/header-mobile.css" media="screen and (max-width: 768px)">
+    <link rel="stylesheet" href="css/modules/daily-summary.css">
+    <link rel="stylesheet" href="css/modules/data-loader.css">
+    <link rel="stylesheet" href="css/modules/weight-training.css">
+    <link rel="stylesheet" href="css/modules/workout-records.css">
+    <link rel="stylesheet" href="css/modules/cardio-training.css">
+    <link rel="stylesheet" href="css/modules/meal-records.css">
+    <link rel="stylesheet" href="css/modules/stats-graphs.css">
 </head>
 
 <body>
     <div class="container">
         <!-- 헤더 -->
-        <div class="card">
+        <div class="card fixed-header">
             <div class="card-header">
                 <div class="date-header">
                     <div>
@@ -19,45 +28,51 @@
                         <p>체계적인 운동 및 식단 관리 시스템</p>
                     </div>
                     <div class="header-middle">
-                        <div class="user-info">
-                            <div class="info-group">
-                                <span>👤</span>
-                                <input type="number" id="userAge" class="info-input" placeholder="25" min="10" max="100"
-                                    value="25">
-                                <span>세</span>
+                        <div class="user-info-collapsible-wrapper">
+                            <div class="accordion-header">
+                                <span class="accordion-title">BMR 계산</span>
+                                <button id="userInfoToggleButton" class="user-info-toggle-button">▼</button>
+                            </div>
+                            <div class="user-info">
+                                <div class="info-group">
+                                    <span>👤</span>
+                                    <input type="number" id="userAge" class="info-input" placeholder="25" min="10" max="100"
+                                        value="25">
+                                    <span>세</span>
+                                </div>
+
+                                <div class="info-group">
+                                    <span>📏</span>
+                                    <input type="number" id="userHeight" class="info-input height-input" placeholder="175"
+                                        min="100" max="250" value="175">
+                                    <span>cm</span>
+                                </div>
+
+                                <div class="info-group">
+                                    <span>⚖️</span>
+                                    <input type="number" id="userWeightHeader" class="info-input" placeholder="87" min="30"
+                                        max="200" value="87">
+                                    <span>kg</span>
+                                </div>
+
+                                <div class="gender-group">
+                                    <span>⚧</span>
+                                    <label class="gender-label">
+                                        <input type="radio" name="userGender" value="male" checked>
+                                        남성
+                                    </label>
+                                    <label class="gender-label">
+                                        <input type="radio" name="userGender" value="female">
+                                        여성
+                                    </label>
+                                </div>
                             </div>
 
-                            <div class="info-group">
-                                <span>📏</span>
-                                <input type="number" id="userHeight" class="info-input height-input" placeholder="175"
-                                    min="100" max="250" value="175">
-                                <span>cm</span>
+                            <div class="bmr-results">
+                                <span class="bmr-inline">📊 BMR: <strong id="bmrValue">1,847</strong> kcal</span>
+                                <span class="bmr-separator">|</span>
+                                <span class="bmr-inline">🔥 TDEE: <strong id="tdeeValue">2,355</strong> kcal</span>
                             </div>
-
-                            <div class="info-group">
-                                <span>⚖️</span>
-                                <input type="number" id="userWeightHeader" class="info-input" placeholder="87" min="30"
-                                    max="200" value="87">
-                                <span>kg</span>
-                            </div>
-
-                            <div class="gender-group">
-                                <span>⚧</span>
-                                <label class="gender-label">
-                                    <input type="radio" name="userGender" value="male" checked>
-                                    남성
-                                </label>
-                                <label class="gender-label">
-                                    <input type="radio" name="userGender" value="female">
-                                    여성
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="bmr-results">
-                            <span class="bmr-inline">📊 BMR: <strong id="bmrValue">1,847</strong> kcal</span>
-                            <span class="bmr-separator">|</span>
-                            <span class="bmr-inline">🔥 TDEE: <strong id="tdeeValue">2,355</strong> kcal</span>
                         </div>
                     </div>
                     <div>
@@ -108,8 +123,8 @@
         </div>
     </div>
 
-    <!-- 데이터 불러오기, 웨이트, 운동기록, 유산소, AI 평가 (5분할) -->
-    <div class="grid grid-5">
+    <!-- 데이터 불러오기, 웨이트, 운동기록, 유산소 (4분할) -->
+    <div class="grid grid-4">
         <!-- 데이터 불러오기 -->
         <div class="card">
             <div class="card-content">
@@ -445,18 +460,7 @@
             </div>
         </div>
 
-        <!-- AI 종합 평가 -->
-        <div class="card">
-            <div class="card-content">
-                <h2 class="section-title">🤖 AI 종합 평가</h2>
-                <button id="generateAiAnalysisBtn" class="btn btn-primary btn-full" disabled>
-                    AI 분석 생성
-                </button>
-                <div id="aiAnalysisResult" class="empty-state" style="margin-top: 16px;">
-                    월간/연간 데이터를 불러온 후, 버튼을 눌러 AI 분석을 받아보세요.
-                </div>
-            </div>
-        </div>
+        
     </div>
 
     <!-- 식사 기록 -->

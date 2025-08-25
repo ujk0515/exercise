@@ -1,0 +1,38 @@
+/* Category Buttons */
+.category-btn {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.category-btn.active {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+    color: #4338ca;
+}
+
+.category-btn:hover {
+    background: #f3f4f6;
+}
+
+.category-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+
+/* Weight Input */
+.weight-input {
+    text-align: center;
+    font-size: 12px;
+}
+
+.weight-total {
+    text-align: center;
+    font-weight: 600;
+    color: #6366f1;
+    margin-top: 8px;
+}

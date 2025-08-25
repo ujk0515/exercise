@@ -1,0 +1,33 @@
+/* Charts */
+.chart-section {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    min-height: 300px;
+}
+
+#chartContainer {
+    margin-top: 16px;
+}
+
+.category-btn[data-chart] {
+    transition: all 0.3s ease;
+}
+
+.category-btn[data-chart]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.category-btn[data-chart].active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-color: #6366f1;
+}
+
+canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}

@@ -1,6 +1,3 @@
-// Gemma API 키
-const GEMMA_API_KEY = 'AIzaSyDE-edho0DTkfMbsGF9XoiOQgCPkVJInzU';
-
 // Supabase 설정
 const SUPABASE_CONFIG = {
     URL: 'https://zrbasozrsrszftrqvbcb.supabase.co',

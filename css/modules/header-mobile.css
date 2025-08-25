@@ -1,0 +1,194 @@
+/* Header Mobile Styles */
+/* Styles for max-width: 768px */
+@media (max-width: 768px) {
+    .date-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .header-middle {
+        order: 1;
+        margin: 0;
+        width: 100%;
+        padding: 10px 16px;
+        gap: 12px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* User Info and BMR Accordion for Mobile */
+    .user-info-collapsible-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .accordion-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+        opacity: 0.9;
+    }
+
+    .user-info-collapsible-wrapper .user-info {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.2s ease-out;
+    }
+
+    .user-info-collapsible-wrapper.expanded .user-info {
+        max-height: 300px;
+        padding: 15px 0 10px 0;
+        gap: 10px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .user-info-collapsible-wrapper .bmr-results {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.2s ease-out;
+        width: 100%;
+        border-left: none;
+        border-top: none;
+        padding: 0;
+        margin: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0;
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    .user-info-collapsible-wrapper.expanded .bmr-results {
+        max-height: 200px;
+        padding: 10px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        margin-top: 10px;
+        gap: 10px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .user-info-toggle-button {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .user-info-collapsible-wrapper.expanded .user-info-toggle-button {
+        transform: rotate(180deg);
+    }
+}
+
+/* Styles for max-width: 480px */
+@media (max-width: 480px) {
+    .header-middle {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .user-info-collapsible-wrapper .user-info {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        align-items: center;
+    }
+
+    /* .info-group {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    } */
+
+    .info-input {
+        width: 55px;
+        font-size: 13px;
+        padding: 3px 5px;
+    }
+
+    .height-input {
+        width: 65px;
+    }
+
+    .gender-group {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .gender-label {
+        font-size: 13px;
+        gap: 1px;
+    }
+
+    .user-info-collapsible-wrapper .bmr-results {
+        flex-direction: column;
+        gap: 6px;
+        border-top: none;
+        text-align: center;
+    }
+
+    .bmr-inline {
+        font-size: 13px;
+    }
+
+    .bmr-inline strong {
+        font-size: 14px;
+    }
+
+    .bmr-separator {
+        display: none;
+    }
+
+    .user-info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .info-group-vertical {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .gender-group-vertical {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+}
