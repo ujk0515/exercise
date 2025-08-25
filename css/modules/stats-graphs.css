@@ -31,3 +31,96 @@ canvas {
     max-width: 100% !important;
     height: auto !important;
 }
+
+/* css/modules/stats-graphs.css에 추가할 스타일들 */
+
+/* 차트 통계 그리드 */
+.chart-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.chart-stat-item {
+    text-align: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.chart-stat-item .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.chart-stat-item .stat-value.surplus {
+    color: #dc2626; /* 잉여는 빨간색 */
+}
+
+.chart-stat-item .stat-value.deficit {
+    color: #16a34a; /* 적자는 초록색 */
+}
+
+.chart-stat-item .stat-label {
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* 차트 가이드 */
+.chart-guide {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.guide-title {
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.guide-text {
+    font-size: 13px;
+    color: #1e40af;
+    line-height: 1.5;
+}
+
+.guide-text strong {
+    font-weight: 600;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .chart-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .chart-stat-item {
+        padding: 8px;
+    }
+    
+    .chart-stat-item .stat-value {
+        font-size: 16px;
+    }
+    
+    .guide-text {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

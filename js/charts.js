@@ -1,6 +1,6 @@
 // 차트 관리 클래스
 class ChartManager {
-    // 일별 칼로리 수지 선그래프
+    // 일별 칼로리 수지 선그래프 (개선된 버전 - Area Fill + 상세 툴팁)
     static renderCalorieBalanceChart() {
         const chartContainer = DOM.get('calorieBalanceChart');
         if (!chartContainer) return;
@@ -16,12 +16,38 @@ class ChartManager {
         }));
 
         chartContainer.innerHTML = `
-            <div style="width: 100%; height: 300px;">
+            <div style="width: 100%; height: 350px;">
                 <canvas id="calorieBalanceCanvas"></canvas>
+            </div>
+            <div class="chart-stats-grid">
+                <div class="chart-stat-item">
+                    <div class="stat-value deficit">${ChartManager.calculateDeficitDays(chartData)}일</div>
+                    <div class="stat-label">적자 기간</div>
+                </div>
+                <div class="chart-stat-item">
+                    <div class="stat-value surplus">${ChartManager.calculateSurplusDays(chartData)}일</div>
+                    <div class="stat-label">잉여 기간</div>
+                </div>
+                <div class="chart-stat-item">
+                    <div class="stat-value">${ChartManager.calculateAverageBalance(chartData)}kcal</div>
+                    <div class="stat-label">평균 수지</div>
+                </div>
+                <div class="chart-stat-item">
+                    <div class="stat-value deficit">${ChartManager.calculateMaxDeficit(chartData)}kcal</div>
+                    <div class="stat-label">최대 적자</div>
+                </div>
+            </div>
+            <div class="chart-guide">
+                <div class="guide-title">💡 차트 사용법</div>
+                <div class="guide-text">
+                    • <strong>마우스를 차트 위에 올려보세요!</strong> 정확한 일별 수치가 표시됩니다<br>
+                    • <strong>초록 영역:</strong> 섭취 < 소모 (다이어트 성공 구간 ✅)<br>
+                    • <strong>빨간 영역:</strong> 섭취 > 소모 (체중 증가 위험 구간 ⚠️)
+                </div>
             </div>
         `;
 
-        // Chart.js로 선그래프 생성
+        // Chart.js로 개선된 차트 생성
         const ctx = DOM.get('calorieBalanceCanvas').getContext('2d');
         new Chart(ctx, {
             type: 'line',
@@ -29,26 +55,30 @@ class ChartManager {
                 labels: chartData.map(d => d.date),
                 datasets: [
                     {
-                        label: '칼로리 수지',
-                        data: chartData.map(d => d.칼로리수지),
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        label: '소모 칼로리',
+                        data: chartData.map(d => d.소모칼로리),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
-                        fill: true
+                        fill: false,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     },
                     {
                         label: '섭취 칼로리',
                         data: chartData.map(d => d.섭취칼로리),
-                        borderColor: '#ef4444',
-                        backgroundColor: 'transparent',
-                        tension: 0.4
-                    },
-                    {
-                        label: '소모 칼로리',
-                        data: chartData.map(d => d.소모칼로리),
-                        borderColor: '#10b981',
-                        backgroundColor: 'transparent',
-                        tension: 0.4
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }
                 ]
             },
@@ -57,27 +87,121 @@ class ChartManager {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        display: false // 별도 범례 사용
                     },
                     title: {
                         display: true,
-                        text: '최근 7일 칼로리 추이'
+                        text: '최근 7일 칼로리 추이',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        color: '#1e293b'
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            title: function(context) {
+                                return `📅 ${context[0].label}`;
+                            },
+                            label: function(context) {
+                                const dataIndex = context.dataIndex;
+                                const consumedCalories = chartData[dataIndex].섭취칼로리;
+                                const burnedCalories = chartData[dataIndex].소모칼로리;
+                                const balance = consumedCalories - burnedCalories;
+                                
+                                if (context.datasetIndex === 0) {
+                                    return `🔥 소모: ${burnedCalories.toLocaleString()}kcal`;
+                                } else {
+                                    return [
+                                        `🍽️ 섭취: ${consumedCalories.toLocaleString()}kcal`,
+                                        `⚖️ 수지: ${balance > 0 ? '+' : ''}${balance.toLocaleString()}kcal ${balance > 0 ? '⚠️' : '✅'}`
+                                    ];
+                                }
+                            }
+                        }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: false,
-                        grid: {
-                            color: 'rgba(0,0,0,0.1)'
-                        }
-                    },
                     x: {
                         grid: {
                             display: false
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            callback: function(value) {
+                                return value.toLocaleString() + 'kcal';
+                            }
                         }
                     }
+                },
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
                 }
-            }
+            },
+            plugins: [{
+                // 커스텀 플러그인: 두 선 사이 영역을 조건부 색칠
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const chartArea = chart.chartArea;
+                    
+                    if (!chartArea) return;
+                    
+                    ctx.save();
+                    
+                    // 데이터 포인트들 가져오기
+                    const consumedData = chart.data.datasets[1].data;
+                    const burnedData = chart.data.datasets[0].data;
+                    
+                    for (let i = 0; i < consumedData.length - 1; i++) {
+                        const currentBalance = consumedData[i] - burnedData[i];
+                        const nextBalance = consumedData[i + 1] - burnedData[i + 1];
+                        
+                        // x 좌표 계산
+                        const x1 = chart.scales.x.getPixelForValue(i);
+                        const x2 = chart.scales.x.getPixelForValue(i + 1);
+                        
+                        // y 좌표 계산
+                        const burnedY1 = chart.scales.y.getPixelForValue(burnedData[i]);
+                        const consumedY1 = chart.scales.y.getPixelForValue(consumedData[i]);
+                        const burnedY2 = chart.scales.y.getPixelForValue(burnedData[i + 1]);
+                        const consumedY2 = chart.scales.y.getPixelForValue(consumedData[i + 1]);
+                        
+                        // 현재 구간의 평균 수지로 색상 결정
+                        const avgBalance = (currentBalance + nextBalance) / 2;
+                        const fillColor = avgBalance > 0 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)';
+                        
+                        // 영역 그리기
+                        ctx.fillStyle = fillColor;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, burnedY1);
+                        ctx.lineTo(x1, consumedY1);
+                        ctx.lineTo(x2, consumedY2);
+                        ctx.lineTo(x2, burnedY2);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    
+                    ctx.restore();
+                }
+            }]
         });
     }
 
@@ -417,7 +541,7 @@ class ChartManager {
         ChartManager.renderMonthlyTrendChart();
     }
 
-// 차트 업데이트 (데이터 변경시 호출)
+    // 차트 업데이트 (데이터 변경시 호출)
     static updateCharts() {
         // 약간의 지연을 두고 차트 업데이트 (DOM 업데이트 완료 후)
         setTimeout(() => {
@@ -425,7 +549,7 @@ class ChartManager {
         }, 100);
     }
 
-    // 차트 전환 함수 (새로 추가)
+    // 차트 전환 함수
     static switchChart(chartType) {
         // 모든 탭 버튼 비활성화
         DOM.getAll('[data-chart]').forEach(btn => {
@@ -485,6 +609,26 @@ class ChartManager {
                 break;
         }
     }
+
+    // 보조 함수들 (새로 추가)
+    static calculateDeficitDays(chartData) {
+        return chartData.filter(d => d.칼로리수지 < 0).length;
+    }
+
+    static calculateSurplusDays(chartData) {
+        return chartData.filter(d => d.칼로리수지 > 0).length;
+    }
+
+    static calculateAverageBalance(chartData) {
+        const total = chartData.reduce((sum, d) => sum + d.칼로리수지, 0);
+        const avg = total / chartData.length;
+        return (avg > 0 ? '+' : '') + Math.round(avg);
+    }
+
+    static calculateMaxDeficit(chartData) {
+        const deficits = chartData.map(d => d.칼로리수지).filter(balance => balance < 0);
+        return deficits.length > 0 ? Math.min(...deficits) : 0;
+    }
 }
 
 // 날짜 유틸리티 확장
@@ -494,4 +638,3 @@ DateUtils.formatShortDate = (date) => {
     }
     return `${date.getMonth() + 1}/${date.getDate()}`;
 };
-
