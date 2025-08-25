@@ -1,9 +1,11 @@
 /* Header PC Styles */
-.card.fixed-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-radius: 0 0 12px 12px;
+@media (min-width: 769px) {
+    .card.fixed-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-radius: 0 0 12px 12px;
+    }
 }
 
 .card-header {
