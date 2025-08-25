@@ -404,25 +404,41 @@ class ChartManager {
             <div style="width: 100%; height: 300px;">
                 <canvas id="monthlyTrendCanvas"></canvas>
             </div>
+            <div class="chart-guide">
+                <div class="guide-title">💡 차트 해석</div>
+                <div class="guide-text">
+                    • 초록 영역: 섭취 &lt; 소모 (일일 적자) — 체중 유지/감량 유리<br>
+                    • 빨강 영역: 섭취 &gt; 소모 (일일 잉여) — 체중 증가 우려<br>
+                    • 마우스 오버 시 섭취·소모·수지 수치(정확한 차이)를 표시합니다
+                </div>
+            </div>
         `;
 
-        const ctx = DOM.get('monthlyTrendCanvas').getContext('2d');
+        const canvas = DOM.get('monthlyTrendCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        // Prepare arrays for chart and tooltips
+        const labels = sortedDates.map(date => DateUtils.formatShortDate(date));
+        const balanceData = sortedDates.map(date => dailyStats[date].balance);
+        const workoutData = sortedDates.map(date => dailyStats[date].workoutCalories);
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: sortedDates.map(date => DateUtils.formatShortDate(date)),
+                labels: labels,
                 datasets: [
                     {
                         label: '칼로리 수지',
-                        data: sortedDates.map(date => dailyStats[date].balance),
+                        data: balanceData,
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
                         tension: 0.4,
-                        fill: true
+                        fill: false // plugin will draw conditional fills
                     },
                     {
                         label: '운동 칼로리',
-                        data: sortedDates.map(date => dailyStats[date].workoutCalories),
+                        data: workoutData,
                         borderColor: '#10b981',
                         backgroundColor: 'transparent',
                         tension: 0.4
@@ -439,6 +455,29 @@ class ChartManager {
                     title: {
                         display: true,
                         text: '이번 달 운동 트렌드'
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        callbacks: {
+                            title: function(context) {
+                                return `📅 ${context[0].label}`;
+                            },
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const dateKey = sortedDates[idx];
+                                const stats = dailyStats[dateKey] || {};
+                                const consumed = stats.foodCalories || 0;
+                                const burned = (AppState.userWeight * 24) + (stats.workoutCalories || 0);
+                                const balance = stats.balance || (consumed - burned);
+
+                                if (context.dataset.label === '칼로리 수지') {
+                                    return [`⚖️ 수지: ${balance > 0 ? '+' : ''}${balance} kcal`, `🍽️ 섭취: ${consumed} kcal`, `🔥 소모: ${burned} kcal`];
+                                }
+                                return `${context.dataset.label}: ${context.parsed.y} kcal`;
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -454,7 +493,54 @@ class ChartManager {
                         }
                     }
                 }
-            }
+            },
+            plugins: [{
+                // Conditional fill under '칼로리 수지' line per-segment (red for surplus, green for deficit)
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const chartArea = chart.chartArea;
+                    if (!chartArea) return;
+
+                    ctx.save();
+
+                    const balance = chart.data.datasets[0].data;
+                    const xScale = chart.scales.x;
+                    const yScale = chart.scales.y;
+
+                    if (!xScale || !yScale || !Array.isArray(balance) || balance.length < 2) {
+                        ctx.restore();
+                        return;
+                    }
+
+                    const zeroY = yScale.getPixelForValue(0);
+
+                    for (let i = 0; i < balance.length - 1; i++) {
+                        const a = balance[i];
+                        const b = balance[i + 1];
+                        if (!isFinite(a) || !isFinite(b)) continue;
+
+                        const x1 = xScale.getPixelForValue(chart.data.labels[i]);
+                        const x2 = xScale.getPixelForValue(chart.data.labels[i + 1]);
+
+                        const y1 = yScale.getPixelForValue(a);
+                        const y2 = yScale.getPixelForValue(b);
+
+                        const avg = (a + b) / 2;
+                        const fillColor = avg > 0 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
+
+                        ctx.fillStyle = fillColor;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, zeroY);
+                        ctx.lineTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.lineTo(x2, zeroY);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+
+                    ctx.restore();
+                }
+            }]
         });
     }
 
