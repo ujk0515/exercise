@@ -5,59 +5,59 @@ const SUPABASE_CONFIG = {
     USER_ID: '550e8400-e29b-41d4-a716-446655440000'
 };
 
-// 운동 데이터베이스 (MET 기반) - 현실적으로 조정됨
+// 운동 데이터베이스 (MET 기반) - 바벨/덤벨/머신 타입 정리
 const EXERCISE_DATABASE = {
     back: {
         name: '등',
         exercises: {
-            'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 4.8 },
-            'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 4.5 },
-            'high_row_cable': { name: '하이로우 (케이블)', met: 5.0 },
-            'high_row_machine': { name: '하이로우 (머신)', met: 4.8 },
-            'seated_row': { name: '시티드 로우', met: 4.8 },
-            'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2 },
-            'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0 },
-            'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5 },
-            'tbar_row': { name: 'T바 로우', met: 5.5 }
+            'lat_pulldown_wide': { name: '랫풀다운 (와이드 그립)', met: 4.8, type: 'machine' },
+            'lat_pulldown_narrow': { name: '랫풀다운 (네로우 그립)', met: 4.5, type: 'machine' },
+            'high_row_cable': { name: '하이로우 (케이블)', met: 5.0, type: 'machine' },
+            'high_row_machine': { name: '하이로우 (머신)', met: 4.8, type: 'machine' },
+            'seated_row': { name: '시티드 로우', met: 4.8, type: 'machine' },
+            'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2, type: 'machine' },
+            'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0, type: 'machine' },
+            'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5, type: 'machine' },
+            'tbar_row': { name: 'T바 로우', met: 5.5, type: 'barbell' }
         }
     },
     chest: {
         name: '가슴',
         exercises: {
-            'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 6.0 },
-            'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 5.8 },
-            'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 5.5 },
-            'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 6.2 },
-            'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 6.0 },
-            'cable_chest_press': { name: '케이블 체스트 프레스', met: 4.8 },
-            'seated_chest_press': { name: '시티드 체스트 프레스', met: 4.5 },
-            'pec_deck_fly': { name: '펙덱 플라이', met: 4.2 }
+            'flat_bench_barbell': { name: '플랫 벤치 바벨 체스트 프레스', met: 6.0, type: 'barbell' },
+            'flat_bench_dumbbell': { name: '플랫 벤치 덤벨 체스트 프레스', met: 5.8, type: 'dumbbell' },
+            'incline_smith': { name: '인클라인 스미스 머신 체스트 프레스', met: 5.5, type: 'machine' },
+            'incline_barbell': { name: '인클라인 바벨 체스트 프레스', met: 6.2, type: 'barbell' },
+            'incline_dumbbell': { name: '인클라인 덤벨 체스트 프레스', met: 6.0, type: 'dumbbell' },
+            'cable_chest_press': { name: '케이블 체스트 프레스', met: 4.8, type: 'machine' },
+            'seated_chest_press': { name: '시티드 체스트 프레스', met: 4.5, type: 'machine' },
+            'pec_deck_fly': { name: '펙덱 플라이', met: 4.2, type: 'machine' }
         }
     },
     shoulder: {
         name: '어깨',
         exercises: {
-            'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0 },
-            'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5 },
-            'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0 },
-            'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8 },
-            'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2 },
-            'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5 },
-            'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 4.0 }
+            'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0, type: 'machine' },
+            'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5, type: 'dumbbell' },
+            'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0, type: 'dumbbell' },
+            'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8, type: 'barbell' },
+            'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2, type: 'machine' },
+            'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5, type: 'machine' },
+            'reverse_pec_deck_shoulder': { name: '리버스 펙덱 플라이 (어깨)', met: 4.0, type: 'machine' }
         }
     },
     legs: {
         name: '하체',
         exercises: {
-            'leg_press': { name: '레그프레스', met: 5.5 },
-            'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0 },
-            'seated_leg_press': { name: '시티드 레그프레스', met: 5.2 },
-            'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8 },
-            'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0 },
-            'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0 },
-            'leg_extension': { name: '레그 익스텐션', met: 4.5 },
-            'leg_curl': { name: '레그 컬', met: 4.5 },
-            'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 3.5, bodyweight: true }
+            'leg_press': { name: '레그프레스', met: 5.5, type: 'machine' },
+            'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0, type: 'machine' },
+            'seated_leg_press': { name: '시티드 레그프레스', met: 5.2, type: 'machine' },
+            'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8, type: 'machine' },
+            'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0, type: 'machine' },
+            'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0, type: 'machine' },
+            'leg_extension': { name: '레그 익스텐션', met: 4.5, type: 'machine' },
+            'leg_curl': { name: '레그 컬', met: 4.5, type: 'machine' },
+            'split_squat': { name: '스플릿 스쿼트(맨몸)', met: 3.5, bodyweight: true, type: 'bodyweight' }
         }
     }
 };

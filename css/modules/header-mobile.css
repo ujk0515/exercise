@@ -125,11 +125,11 @@
         align-items: center;
     }
 
-    /* .info-group {
+    .info-group {
         justify-content: center;
         flex-wrap: wrap;
         gap: 4px;
-    } */
+    }
 
     .info-input {
         width: 55px;
