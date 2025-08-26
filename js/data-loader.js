@@ -49,7 +49,7 @@ class DataLoaderManager {
                 }
 
                 dayElement.addEventListener('click', function () {
-                    if (this.classList.contains('has-data') || this.classList.contains('no-workout')) {
+                    if (this.classList.contains('legend-green') || this.classList.contains('legend-yellow')) {
                         DataLoaderManager.selectCalendarDate(this.dataset.date);
                     }
                 });
@@ -238,46 +238,25 @@ class DataLoaderManager {
 
     // 캘린더에 데이터 반영
     static updateCalendarWithData() {
-        // 운동 데이터만 체크 (식사 데이터 제외)
         const workoutDateSet = new Set([
             ...AppState.monthlyData.workouts.map(w => w.workout_date),
             ...AppState.monthlyData.cardio.map(c => c.workout_date)
         ]);
-
-        // 전체 데이터 (클릭 가능성 체크용)
-        const allDataDateSet = new Set([
-            ...AppState.monthlyData.workouts.map(w => w.workout_date),
-            ...AppState.monthlyData.cardio.map(c => c.workout_date),
-            ...AppState.monthlyData.meals.map(m => m.meal_date)
-        ]);
-
-        const koreanToday = KoreanDateUtils.getKoreanToday();
+        const mealDateSet = new Set(AppState.monthlyData.meals.map(m => m.meal_date));
 
         DOM.getAll('.calendar-day').forEach(day => {
             if (day.dataset.date) {
                 const dateString = day.dataset.date;
-                const isBeforeToday = dateString < koreanToday;
+                
+                // Reset classes
+                day.classList.remove('legend-green', 'legend-yellow', 'legend-red', 'disabled');
 
                 if (workoutDateSet.has(dateString)) {
-                    // 운동 기록이 있는 날짜 - 초록색
-                    DOM.removeClass(day, 'disabled');
-                    DOM.removeClass(day, 'no-workout');
-                    DOM.addClass(day, 'has-data');
-                } else if (allDataDateSet.has(dateString) && isBeforeToday) {
-                    // 운동 기록은 없지만 식사 기록이 있는 과거 날짜 - 빨간색
-                    DOM.removeClass(day, 'disabled');
-                    DOM.removeClass(day, 'has-data');
-                    DOM.addClass(day, 'no-workout');
-                } else if (isBeforeToday) {
-                    // 아무 데이터도 없는 과거 날짜 - 빨간색
-                    DOM.removeClass(day, 'disabled');
-                    DOM.removeClass(day, 'has-data');
-                    DOM.addClass(day, 'no-workout');
+                    day.classList.add('legend-green');
+                } else if (mealDateSet.has(dateString)) {
+                    day.classList.add('legend-yellow');
                 } else {
-                    // 오늘 이후 날짜는 disabled 상태 유지
-                    DOM.addClass(day, 'disabled');
-                    DOM.removeClass(day, 'has-data');
-                    DOM.removeClass(day, 'no-workout');
+                    day.classList.add('legend-red');
                 }
             }
         });

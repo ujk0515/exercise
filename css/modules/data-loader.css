@@ -80,17 +80,6 @@
     border-color: #059669;
 }
 
-.calendar-day.no-workout {
-    background: #fee2e2;
-    border-color: #fca5a5;
-    color: #dc2626;
-    font-weight: 600;
-}
-
-.calendar-day.no-workout:hover {
-    background: #fecaca;
-}
-
 .calendar-legend {
     display: flex;
     justify-content: center;
@@ -123,14 +112,19 @@
     border-color: #10b981;
 }
 
+.legend-yellow {
+    background: #fef9c3;
+    border-color: #facc15;
+}
+
 .legend-red {
     background: #fee2e2;
     border-color: #fca5a5;
 }
 
 .legend-blue {
-    background: #3b82f6;
-    border-color: #2563eb;
+    background: #dbeafe;
+    border-color: #60a5fa;
 }
 
 .load-month-btn {
