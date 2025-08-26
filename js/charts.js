@@ -223,7 +223,7 @@ class ChartManager {
 
         const workoutCal = ArrayUtils.sum(AppState.workouts, 'calories');
         const cardioCal = ArrayUtils.sum(AppState.cardioWorkouts, 'calories');
-        const bmrCal = CalorieCalculator.calculateBMR();
+        const bmrCal = CalorieCalculator.calculateTDEE();
 
         chartContainer.innerHTML = `
             <div style="width: 100%; height: 300px;">
@@ -567,7 +567,7 @@ class ChartManager {
 
                 const workoutCal = ArrayUtils.sum(AppState.workouts, 'calories');
                 const cardioCal = ArrayUtils.sum(AppState.cardioWorkouts, 'calories');
-                const bmrCal = CalorieCalculator.calculateBMR();
+                const bmrCal = CalorieCalculator.calculateTDEE();
 
                 data.push({
                     date: date,

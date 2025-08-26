@@ -260,7 +260,7 @@ class SummaryManager {
         const totalWorkoutCalories = workoutCalories + cardioCalories;
 
         // 기초대사량 계산
-        const basalMetabolicRate = CalorieCalculator.calculateBMR();
+        const basalMetabolicRate = CalorieCalculator.calculateTDEE();
         const totalDailyCalorieBurn = basalMetabolicRate + totalWorkoutCalories;
 
         // 식사 칼로리 계산 - 안전한 접근

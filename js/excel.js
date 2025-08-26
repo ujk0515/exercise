@@ -167,7 +167,7 @@ class ExcelManager {
         allData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
 
         // 3. 일일 요약 섹션
-        const basalMetabolicRate = CalorieCalculator.calculateBMR();
+        const basalMetabolicRate = CalorieCalculator.calculateTDEE();
         const totalWorkoutCalories = ArrayUtils.sum(AppState.workouts, 'calories') + ArrayUtils.sum(AppState.cardioWorkouts, 'calories');
         const totalDailyCalorieBurn = basalMetabolicRate + totalWorkoutCalories;
         const totalFoodCalories = breakfastCal + lunchCal + dinnerCal;

@@ -19,7 +19,7 @@ const AppState = {
     currentCalendarMonth: new Date().getMonth(),
     selectedLunchType: 'galbi',
     // 새로 추가된 사용자 정보
-    userAge: 25,
+    userAge: 37,
     userHeight: 175,
     userGender: 'male'
 };
@@ -159,8 +159,7 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    // 기초대사량 계산 (기존 방식 유지)
-    calculateBMR: () => Math.round(AppState.userWeight * 24 * 1.3),
+    
 
     // 미플린 공식 기반 BMR 계산 (새로 추가)
     calculateMifflinBMR: () => {
