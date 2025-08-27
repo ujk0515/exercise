@@ -192,8 +192,8 @@ class SupabaseManager {
             const mealResult = await this.saveMeals(selectedDate, useDefaultBreakfast, useDefaultLunch, useDefaultDinner, customBreakfastItems, customLunchItems, customDinnerItems);
             if (!mealResult.success) throw mealResult.error;
 
-            NotificationUtils.alert(
-                `${selectedDate} 데이터가 성공적으로 저장되었습니다!\n웨이트: ${workouts.length}개, 유산소: ${cardioWorkouts.length}개`
+            NotificationUtils.showSuccessPopup(
+                `✅ ${selectedDate} 데이터가 성공적으로 저장되었습니다!`
             );
 
         } catch (error) {

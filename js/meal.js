@@ -224,12 +224,18 @@ class MealManager {
         SummaryManager.updateSummary();
     }
 
-    // 점심 타입 변경 함수 (새로 추가)
+    // 점심 타입 변경 함수 (안정성 강화)
     static changeLunchType() {
-        const selectedType = document.querySelector('input[name="lunchType"]:checked').value;
-        AppState.selectedLunchType = selectedType;
+        const selectedRadio = document.querySelector('input[name="lunchType"]:checked');
         
-        const calories = MEAL_CALORIES.lunch[selectedType];
+        if (selectedRadio) {
+            AppState.selectedLunchType = selectedRadio.value;
+        } else {
+            // 만약 선택된 라디오 버튼이 없다면, 기본값으로 되돌림
+            AppState.selectedLunchType = 'galbi'; 
+        }
+        
+        const calories = MEAL_CALORIES.lunch[AppState.selectedLunchType] || 0;
         DOM.setText('selectedLunchCalories', calories);
         
         SummaryManager.updateSummary();

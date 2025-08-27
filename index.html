@@ -18,6 +18,8 @@
 </head>
 
 <body>
+    <!-- 전역 성공 팝업 -->
+    <div id="successPopup" class="success-popup hidden"></div>
     <div class="container">
         <!-- 헤더 -->
         <div class="card fixed-header">
@@ -190,11 +192,6 @@
                     <!-- 월별 데이터 불러오기 버튼 -->
                     <div id="loadMonthBtn" class="load-month-btn">
                         📥 현재 월 데이터 불러오기
-                    </div>
-
-                    <!-- 성공 팝업 -->
-                    <div id="successPopup" class="success-popup hidden">
-                        ✅ 데이터를 모두 불러왔습니다!
                     </div>
 
                     <!-- 캘린더 -->
@@ -532,20 +529,17 @@
                         <div style="margin-bottom: 12px;">
                             <label
                                 style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="galbi" checked
-                                    onchange="MealManager.changeLunchType()">
+                                <input type="radio" name="lunchType" value="galbi" checked>
                                 <span style="font-size: 13px;">숯불갈비맛 - 480kcal (단백질 30g)</span>
                             </label>
                             <label
                                 style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="kakdugi"
-                                    onchange="MealManager.changeLunchType()">
+                                <input type="radio" name="lunchType" value="kakdugi">
                                 <span style="font-size: 13px;">매콤깍두기 - 475kcal (단백질 30g)</span>
                             </label>
                             <label
                                 style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-                                <input type="radio" name="lunchType" value="egg"
-                                    onchange="MealManager.changeLunchType()">
+                                <input type="radio" name="lunchType" value="egg">
                                 <span style="font-size: 13px;">간장계란 - 510kcal (단백질 30g)</span>
                             </label>
                         </div>

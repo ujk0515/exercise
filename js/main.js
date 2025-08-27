@@ -281,6 +281,15 @@ class FitnessApp {
             });
         }
 
+        // 점심 라디오 버튼 이벤트 리스너 (모바일 안정성)
+        DOM.getAll('input[name="lunchType"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (typeof MealManager !== 'undefined') {
+                    MealManager.changeLunchType();
+                }
+            });
+        });
+
         // 저녁 메뉴 토글
         const useDefaultDinner = DOM.get('useDefaultDinner');
         if (useDefaultDinner) {
@@ -404,14 +413,14 @@ class FitnessApp {
     }
 
     // 전체 데이터 Supabase에 저장
-    static saveAllDataToSupabase() {
+    static async saveAllDataToSupabase() {
         const selectedDate = DOM.getValue('selectedDate');
         const useDefaultBreakfast = DOM.get('useDefaultBreakfast')?.checked || false;
         const useDefaultLunch = DOM.get('useDefaultLunch')?.checked || false;
         const useDefaultDinner = DOM.get('useDefaultDinner')?.checked || false;
 
         if (typeof supabaseManager !== 'undefined') {
-            supabaseManager.saveAllData(
+            await supabaseManager.saveAllData(
                 selectedDate,
                 AppState.workouts,
                 AppState.cardioWorkouts,
@@ -424,8 +433,8 @@ class FitnessApp {
                 AppState.userWeight
             );
 
-            // 간단한 새로고침
-            setTimeout(() => { window.location.reload(); }, 1000);
+            // 팝업이 표시될 시간을 주고 새로고침
+            setTimeout(() => { window.location.reload(); }, 2000);
         } else {
             console.error('supabaseManager가 정의되지 않았습니다.');
         }
