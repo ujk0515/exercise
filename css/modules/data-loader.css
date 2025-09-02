@@ -244,17 +244,18 @@
 
 /* Monthly & Yearly Summary */
 .summary-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
 }
 
 .monthly-summary,
 .yearly-summary {
     color: white;
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 12px;
+    margin-bottom: 8px; 
 }
 
 .monthly-summary {
@@ -267,24 +268,24 @@
 
 .monthly-summary-header,
 .yearly-summary-header {
-    font-size: 14px;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     text-align: center;
 }
 
 .monthly-stats-grid,
 .yearly-stats-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
 }
 
 .monthly-stat-item,
 .yearly-stat-item {
     background: rgba(255, 255, 255, 0.2);
-    padding: 8px;
-    border-radius: 6px;
+    padding: 12px 8px;
+    border-radius: 8px;
     text-align: center;
 }
 
@@ -295,6 +296,36 @@
 }
 
 .stat-label {
-    font-size: 12px;
+    font-size: 11px;
     opacity: 0.9;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .monthly-stats-grid,
+    .yearly-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .summary-container {
+        gap: 20px;
+    }
+    
+    .monthly-summary,
+    .yearly-summary {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .monthly-stats-grid,
+    .yearly-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .summary-container {
+        gap: 16px;
+    }
 }

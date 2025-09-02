@@ -31,14 +31,26 @@ const DOM = {
     getAll: (selector) => document.querySelectorAll(selector),
 
     // 클래스 조작
-    addClass: (element, className) => element.classList.add(className),
-    removeClass: (element, className) => element.classList.remove(className),
-    toggleClass: (element, className) => element.classList.toggle(className),
-    hasClass: (element, className) => element.classList.contains(className),
+    addClass: (element, className) => {
+        if (element) element.classList.add(className);
+    },
+    removeClass: (element, className) => {
+        if (element) element.classList.remove(className);
+    },
+    toggleClass: (element, className) => {
+        if (element) element.classList.toggle(className);
+    },
+    hasClass: (element, className) => {
+        return element ? element.classList.contains(className) : false;
+    },
 
     // 스타일 조작
-    show: (element) => element.classList.remove('hidden'),
-    hide: (element) => element.classList.add('hidden'),
+    show: (element) => {
+        if (element) element.classList.remove('hidden');
+    },
+    hide: (element) => {
+        if (element) element.classList.add('hidden');
+    },
 
     // 값 설정/가져오기
     setValue: (id, value) => {
@@ -159,7 +171,7 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    
+
 
     // 미플린 공식 기반 BMR 계산 (새로 추가)
     calculateMifflinBMR: () => {
@@ -187,11 +199,11 @@ const CalorieCalculator = {
     // 사이클 칼로리 계산 (RPM 포함)
     calculateCycle: (intensity, rpm, duration) => {
         const baseMET = CYCLE_MET[intensity] || 5.5;
-        
+
         // RPM 보정값 계산 (60 RPM을 기준으로 함)
         const rpmBonus = Math.max(0, (rpm - 60) / 40 * 0.3);
         const finalMET = baseMET + rpmBonus;
-        
+
         const hours = duration / 60;
         return Math.round(finalMET * AppState.userWeight * hours);
     }
@@ -204,7 +216,7 @@ const UserInfoManager = {
         AppState.userAge = parseInt(DOM.getValue('userAge')) || 25;
         AppState.userHeight = parseInt(DOM.getValue('userHeight')) || 175;
         AppState.userWeight = parseInt(DOM.getValue('userWeight')) || 87;
-        
+
         const genderElement = document.querySelector('input[name="userGender"]:checked');
         AppState.userGender = genderElement ? genderElement.value : 'male';
     },
@@ -212,10 +224,10 @@ const UserInfoManager = {
     // BMR/TDEE 표시 업데이트
     updateBMRDisplay: () => {
         UserInfoManager.updateUserInfo();
-        
+
         const bmr = CalorieCalculator.calculateMifflinBMR();
         const tdee = CalorieCalculator.calculateTDEE();
-        
+
         DOM.setText('bmrValue', bmr.toLocaleString());
         DOM.setText('tdeeValue', tdee.toLocaleString());
     }
