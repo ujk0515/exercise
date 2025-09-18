@@ -53,7 +53,7 @@ class SupabaseManager {
         }
     }
 
-    // 유산소 운동 저장
+    // 유산소 운동 저장 (사이드스텝 처리 추가)
     async saveCardio(cardioWorkouts, selectedDate) {
         if (cardioWorkouts.length === 0) return { success: true };
 

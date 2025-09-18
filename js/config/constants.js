@@ -85,6 +85,15 @@ const INCLINE_BONUS = {
     11: 2.2, 12: 2.4
 };
 
+// 사이클 MET 값 (강도별)
+const CYCLE_MET = {
+    1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
+    6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
+};
+
+// 사이드스텝 MET 값 (스텝박스 고정)
+const SIDESTEP_MET = 6.0;
+
 // 고정 칼로리 값
 const MEAL_CALORIES = {
     breakfast: 200,

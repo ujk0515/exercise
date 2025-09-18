@@ -370,13 +370,13 @@
                 </div>
             </div>
 
-            <!-- 유산소 운동 -->
+            <!-- 유산소 운동 (사이드스텝 탭 및 폼 추가) -->
             <div class="card">
                 <div class="card-content">
                     <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
 
-                    <!-- 운동 종류 선택 탭 추가 -->
-                    <div class="grid grid-2 form-group">
+                    <!-- 운동 종류 선택 탭 수정 (3분할로 변경) -->
+                    <div class="grid grid-3 form-group">
                         <div class="category-btn active" data-cardio-type="treadmill">
                             <div class="category-icon">🏃‍♂️</div>
                             <div>런닝머신</div>
@@ -384,6 +384,10 @@
                         <div class="category-btn" data-cardio-type="cycle">
                             <div class="category-icon">🚴‍♂️</div>
                             <div>사이클</div>
+                        </div>
+                        <div class="category-btn" data-cardio-type="sidestep">
+                            <div class="category-icon">👟</div>
+                            <div>사이드스텝</div>
                         </div>
                     </div>
 
@@ -420,7 +424,7 @@
                         </div>
                     </div>
 
-                    <!-- 사이클 폼 (새로 추가) -->
+                    <!-- 사이클 폼 (기존) -->
                     <div id="cycleForm" class="hidden">
                         <h3 style="margin-bottom: 12px;">사이클</h3>
                         <div class="grid grid-3 form-group">
@@ -448,6 +452,15 @@
                                 <label class="form-label">시간 (분)</label>
                                 <input type="number" id="cycleDuration" class="form-input" min="1" max="120" value="30">
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 사이드스텝 폼 (스텝박스 고정) -->
+                    <div id="sidestepForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">스텝박스 사이드스텝</h3>
+                        <div class="form-group">
+                            <label class="form-label">시간 (분)</label>
+                            <input type="number" id="sidestepDuration" class="form-input" min="1" max="120" value="30">
                         </div>
                     </div>
 

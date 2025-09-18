@@ -136,7 +136,7 @@ class WorkoutManager {
 
 // 유산소 운동 관리 클래스
 class CardioManager {
-    // 유산소 운동 추가
+    // 유산소 운동 추가 (사이드스텝 로직 추가)
     static addCardio() {
         let cardio;
 
@@ -155,7 +155,7 @@ class CardioManager {
                 incline, speed, duration, calories
             };
             DOM.setValue('duration', 30);
-        } else {
+        } else if (AppState.selectedCardioType === 'cycle') {
             const intensity = parseInt(DOM.getValue('cycleIntensity'));
             const rpm = parseInt(DOM.getValue('cycleRPM'));
             const duration = parseInt(DOM.getValue('cycleDuration'));
@@ -171,6 +171,20 @@ class CardioManager {
             };
             DOM.setValue('cycleDuration', 30);
             DOM.setValue('cycleRPM', 80);
+        } else if (AppState.selectedCardioType === 'sidestep') {
+            const duration = parseInt(DOM.getValue('sidestepDuration'));
+            
+            if (!duration) return;
+            
+            const calories = CalorieCalculator.calculateSidestep(duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '스텝박스 사이드스텝',
+                duration,
+                calories
+            };
+            DOM.setValue('sidestepDuration', 30);
         }
 
         AppState.cardioWorkouts.push(cardio);
@@ -181,7 +195,7 @@ class CardioManager {
         }
     }
 
-    // 유산소 운동 종류 변경
+    // 유산소 운동 종류 변경 (사이드스텝 포함)
     static changeCardioType(type) {
         DOM.getAll('[data-cardio-type]').forEach(btn => DOM.removeClass(btn, 'active'));
         const selectedBtn = document.querySelector(`[data-cardio-type="${type}"]`);
@@ -193,17 +207,24 @@ class CardioManager {
 
         const treadmillForm = DOM.get('treadmillForm');
         const cycleForm = DOM.get('cycleForm');
+        const sidestepForm = DOM.get('sidestepForm');
 
         if (type === 'treadmill') {
             if (treadmillForm) DOM.show(treadmillForm);
             if (cycleForm) DOM.hide(cycleForm);
-        } else {
+            if (sidestepForm) DOM.hide(sidestepForm);
+        } else if (type === 'cycle') {
             if (treadmillForm) DOM.hide(treadmillForm);
             if (cycleForm) DOM.show(cycleForm);
+            if (sidestepForm) DOM.hide(sidestepForm);
+        } else if (type === 'sidestep') {
+            if (treadmillForm) DOM.hide(treadmillForm);
+            if (cycleForm) DOM.hide(cycleForm);
+            if (sidestepForm) DOM.show(sidestepForm);
         }
     }
 
-    // 유산소 운동 기록 렌더링
+    // 유산소 운동 기록 렌더링 (사이드스텝 표시 포함)
     static renderCardio() {
         const container = DOM.get('cardioRecords');
         if (!container) return;
@@ -220,13 +241,20 @@ class CardioManager {
         AppState.cardioWorkouts.forEach(cardio => {
             const div = document.createElement('div');
             div.className = 'cardio-item';
+            
+            let detailsText = '';
+            if (cardio.type === '런닝머신') {
+                detailsText = `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`;
+            } else if (cardio.type === '사이클') {
+                detailsText = `강도 ${cardio.intensity}단계, ${cardio.rpm || 80}RPM, ${cardio.duration}분`;
+            } else if (cardio.type === '스텝박스 사이드스텝') {
+                detailsText = `${cardio.duration}분`;
+            }
+            
             div.innerHTML = `
                 <div>
                     <div style="font-weight: 600;">${cardio.type}</div>
-                    <div class="workout-details">${cardio.type === '런닝머신'
-                    ? `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`
-                    : `강도 ${cardio.intensity}단계, ${cardio.rpm || 80}RPM, ${cardio.duration}분`
-                }</div>
+                    <div class="workout-details">${detailsText}</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="calories">${cardio.calories}kcal</span>

@@ -73,8 +73,8 @@ class FitnessApp {
         FitnessApp.setupDataLoaderEventListeners();
         FitnessApp.setupUtilityEventListeners();
         FitnessApp.setupUserInfoEventListeners(); // 새로 추가
-                    FitnessApp.setupFabEventListeners(); // FAB 리스너 추가
-            FitnessApp.setupBMRAccordionEventListeners(); // New call
+        FitnessApp.setupFabEventListeners(); // FAB 리스너 추가
+        FitnessApp.setupBMRAccordionEventListeners(); // New call
     }
 
     static setupBMRAccordionEventListeners() {
@@ -235,9 +235,9 @@ class FitnessApp {
         }
     }
 
-    // 유산소 운동 관련 이벤트 리스너
+    // 유산소 운동 관련 이벤트 리스너 (사이드스텝 추가)
     static setupCardioEventListeners() {
-        // 유산소 종류 선택
+        // 유산소 종류 선택 (사이드스텝 포함)
         DOM.getAll('[data-cardio-type]').forEach(btn => {
             btn.addEventListener('click', function () {
                 if (typeof CardioManager !== 'undefined') {
