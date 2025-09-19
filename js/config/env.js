@@ -9,7 +9,12 @@ class EnvironmentManager {
         return window.location.protocol === 'file:' ||
                window.location.hostname === 'localhost' ||
                window.location.hostname === '127.0.0.1' ||
-               window.location.port !== '';
+               (window.location.port !== '' && !window.location.hostname.includes('.netlify.app'));
+    }
+
+    // Netlify 환경 감지
+    isNetlifyEnvironment() {
+        return window.location.hostname.includes('.netlify.app');
     }
 
     // Edge Function에서 환경변수 가져오기
@@ -25,8 +30,20 @@ class EnvironmentManager {
             return this.config;
         }
 
+        // Netlify에서는 Edge Function이 없으므로 기본값 사용
+        if (this.isNetlifyEnvironment()) {
+            console.log('Netlify 환경 감지 - 기본값 사용 (Edge Function 미지원)');
+            this.config = {
+                SUPABASE_URL: 'https://zrbasozrsrszftrqvbcb.supabase.co',
+                SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyYmFzb3pyc3JzemZ0cnF2YmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyNjk3NDUsImV4cCI6MjA2NTg0NTc0NX0.ab4BgFlJKjyMTCLTxrom5guw7EGzPWThhsjdzcvrGxg',
+                USER_ID: '550e8400-e29b-41d4-a716-446655440000'
+            };
+            return this.config;
+        }
+
         try {
-            // 프로덕션 환경에서만 Edge Function 엔드포인트 호출
+            // Supabase 호스팅 환경에서만 Edge Function 엔드포인트 호출
+            console.log('Supabase 환경 감지 - Edge Function 호출');
             const response = await fetch('/functions/v1/config');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
