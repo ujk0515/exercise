@@ -9,7 +9,7 @@ class ChartManager {
         const last7Days = ChartManager.getLast7DaysData();
         
         const chartData = last7Days.map(dayData => ({
-            date: ChartManager.formatShortDate(dayData.date),
+            date: DateUtils.formatShortDate(dayData.date),
             섭취칼로리: dayData.foodCalories,
             소모칼로리: dayData.burnCalories,
             칼로리수지: dayData.foodCalories - dayData.burnCalories
@@ -419,7 +419,7 @@ class ChartManager {
         const ctx = canvas.getContext('2d');
 
         // Prepare arrays for chart and tooltips
-        const labels = sortedDates.map(date => ChartManager.formatShortDate(date));
+        const labels = sortedDates.map(date => DateUtils.formatShortDate(date));
         const balanceData = sortedDates.map(date => dailyStats[date].balance);
         const workoutData = sortedDates.map(date => dailyStats[date].workoutCalories);
 
@@ -715,12 +715,12 @@ class ChartManager {
         const deficits = chartData.map(d => d.칼로리수지).filter(balance => balance < 0);
         return deficits.length > 0 ? Math.min(...deficits) : 0;
     }
-
-    // 날짜 포맷 함수 (utils.js의 DateUtils와 중복을 피하기 위해 따로 작성)
-    static formatShortDate(date) {
-        if (typeof date === 'string') {
-            date = new Date(date);
-        }
-        return `${date.getMonth() + 1}/${date.getDate()}`;
-    }
 }
+
+// 날짜 유틸리티 확장
+DateUtils.formatShortDate = (date) => {
+    if (typeof date === 'string') {
+        date = new Date(date);
+    }
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+};

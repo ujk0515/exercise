@@ -1,11 +1,272 @@
-// Supabase 관리 클래스
+// Supabase 관리 클래스 (기존 방식 유지 + 개별 저장 기능 추가)
 class SupabaseManager {
     constructor() {
+        // 🔄 기존 방식으로 되돌림 (Edge Function 사용 안함)
         this.client = window.supabase.createClient(
             SUPABASE_CONFIG.URL,
             SUPABASE_CONFIG.ANON_KEY
         );
     }
+
+    // === 새로 추가된 개별 저장 함수들 ===
+
+    // 웨이트 운동만 저장
+    async saveWorkoutsOnly() {
+        const selectedDate = DOM.getValue('selectedDate');
+        
+        try {
+            // 기존 웨이트 운동 데이터 삭제
+            const { error: deleteError } = await this.client
+                .from('workouts')
+                .delete()
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .eq('workout_date', selectedDate);
+
+            if (deleteError) throw deleteError;
+
+            // 새 데이터 삽입 (있는 경우에만)
+            if (AppState.workouts && AppState.workouts.length > 0) {
+                const workoutData = AppState.workouts.map(workout => ({
+                    user_id: SUPABASE_CONFIG.USER_ID,
+                    workout_date: selectedDate,
+                    category: workout.category,
+                    exercise_name: workout.exercise,
+                    total_weight: parseFloat(workout.totalWeight),
+                    reps: parseInt(workout.reps),
+                    sets: parseInt(workout.sets),
+                    calories: parseInt(workout.calories)
+                }));
+
+                const { error: insertError } = await this.client
+                    .from('workouts')
+                    .insert(workoutData);
+
+                if (insertError) throw insertError;
+            }
+
+            NotificationUtils.showSuccessPopup('웨이트 운동이 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('웨이트 운동 저장 오류:', error);
+            NotificationUtils.alert('웨이트 운동 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // 유산소 운동만 저장
+    async saveCardioOnly() {
+        const selectedDate = DOM.getValue('selectedDate');
+        
+        try {
+            // 기존 유산소 운동 데이터 삭제
+            const { error: deleteError } = await this.client
+                .from('cardio_workouts')
+                .delete()
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .eq('workout_date', selectedDate);
+
+            if (deleteError) throw deleteError;
+
+            // 새 데이터 삽입 (있는 경우에만)
+            if (AppState.cardioWorkouts && AppState.cardioWorkouts.length > 0) {
+                const cardioData = AppState.cardioWorkouts.map(cardio => ({
+                    user_id: SUPABASE_CONFIG.USER_ID,
+                    workout_date: selectedDate,
+                    exercise_type: cardio.type,
+                    incline: cardio.incline || null,
+                    speed: cardio.speed || null,
+                    intensity: cardio.intensity || null,
+                    rpm: cardio.rpm || null,
+                    duration: parseInt(cardio.duration),
+                    calories: parseInt(cardio.calories)
+                }));
+
+                const { error: insertError } = await this.client
+                    .from('cardio_workouts')
+                    .insert(cardioData);
+
+                if (insertError) throw insertError;
+            }
+
+            NotificationUtils.showSuccessPopup('유산소 운동이 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('유산소 운동 저장 오류:', error);
+            NotificationUtils.alert('유산소 운동 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // 아침 식사만 저장
+    async saveBreakfastOnly() {
+        const selectedDate = DOM.getValue('selectedDate');
+        const useDefault = DOM.get('useDefaultBreakfast').checked;
+        
+        const totalCalories = useDefault ? 
+            MEAL_CALORIES.breakfast : 
+            ArrayUtils.sum(AppState.customBreakfastItems, 'calories');
+        
+        const menuItems = useDefault ? 
+            '단백질 쉐이크 1잔, 에사비 콤부차 1잔' : 
+            AppState.customBreakfastItems.map(f => f.name).join(', ');
+
+        try {
+            // 기존 아침 데이터 삭제
+            const { error: deleteError } = await this.client
+                .from('meals')
+                .delete()
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .eq('meal_date', selectedDate)
+                .eq('meal_type', 'breakfast');
+
+            if (deleteError) throw deleteError;
+
+            // 새 데이터 삽입
+            const mealData = {
+                user_id: SUPABASE_CONFIG.USER_ID,
+                meal_date: selectedDate,
+                meal_type: 'breakfast',
+                is_custom: !useDefault,
+                total_calories: totalCalories,
+                menu_items: menuItems
+            };
+
+            const { error: insertError } = await this.client
+                .from('meals')
+                .insert([mealData]);
+
+            if (insertError) throw insertError;
+
+            NotificationUtils.showSuccessPopup('아침 식사가 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('아침 식사 저장 오류:', error);
+            NotificationUtils.alert('아침 식사 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // 점심 식사만 저장
+    async saveLunchOnly() {
+        const selectedDate = DOM.getValue('selectedDate');
+        const useDefault = DOM.get('useDefaultLunch').checked;
+        
+        const totalCalories = useDefault ? 
+            MEAL_CALORIES.lunch[AppState.selectedLunchType] : 
+            ArrayUtils.sum(AppState.customLunchItems, 'calories');
+        
+        const menuItems = useDefault ? 
+            `파이어트 볶음밥 ${AppState.selectedLunchType === 'galbi' ? '숯불갈비맛' : 
+                AppState.selectedLunchType === 'kakdugi' ? '매콤깍두기' : '간장계란'}` : 
+            AppState.customLunchItems.map(f => f.name).join(', ');
+
+        try {
+            // 기존 점심 데이터 삭제
+            const { error: deleteError } = await this.client
+                .from('meals')
+                .delete()
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .eq('meal_date', selectedDate)
+                .eq('meal_type', 'lunch');
+
+            if (deleteError) throw deleteError;
+
+            // 새 데이터 삽입
+            const mealData = {
+                user_id: SUPABASE_CONFIG.USER_ID,
+                meal_date: selectedDate,
+                meal_type: 'lunch',
+                is_custom: !useDefault,
+                total_calories: totalCalories,
+                menu_items: menuItems
+            };
+
+            const { error: insertError } = await this.client
+                .from('meals')
+                .insert([mealData]);
+
+            if (insertError) throw insertError;
+
+            NotificationUtils.showSuccessPopup('점심 식사가 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('점심 식사 저장 오류:', error);
+            NotificationUtils.alert('점심 식사 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // 저녁 식사만 저장
+    async saveDinnerOnly() {
+        const selectedDate = DOM.getValue('selectedDate');
+        const useDefault = DOM.get('useDefaultDinner').checked;
+        
+        const totalCalories = useDefault ? 
+            MEAL_CALORIES.defaultDinner : 
+            ArrayUtils.sum(AppState.customDinnerItems, 'calories');
+        
+        const menuItems = useDefault ? 
+            '쌀밥 150g, 작은 소시지 4개' : 
+            AppState.customDinnerItems.map(f => f.name).join(', ');
+
+        try {
+            // 기존 저녁 데이터 삭제
+            const { error: deleteError } = await this.client
+                .from('meals')
+                .delete()
+                .eq('user_id', SUPABASE_CONFIG.USER_ID)
+                .eq('meal_date', selectedDate)
+                .eq('meal_type', 'dinner');
+
+            if (deleteError) throw deleteError;
+
+            // 새 데이터 삽입
+            const mealData = {
+                user_id: SUPABASE_CONFIG.USER_ID,
+                meal_date: selectedDate,
+                meal_type: 'dinner',
+                is_custom: !useDefault,
+                total_calories: totalCalories,
+                menu_items: menuItems
+            };
+
+            const { error: insertError } = await this.client
+                .from('meals')
+                .insert([mealData]);
+
+            if (insertError) throw insertError;
+
+            NotificationUtils.showSuccessPopup('저녁 식사가 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('저녁 식사 저장 오류:', error);
+            NotificationUtils.alert('저녁 식사 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // 사용자 정보만 저장
+    async saveUserInfoOnly() {
+        try {
+            const { error } = await this.client
+                .from('users')
+                .upsert({
+                    id: SUPABASE_CONFIG.USER_ID,
+                    weight: AppState.userWeight
+                }, { onConflict: 'id' });
+
+            if (error) throw error;
+
+            NotificationUtils.showSuccessPopup('사용자 정보가 저장되었습니다!');
+            return { success: true };
+        } catch (error) {
+            console.error('사용자 정보 저장 오류:', error);
+            NotificationUtils.alert('사용자 정보 저장 실패: ' + error.message);
+            return { success: false, error };
+        }
+    }
+
+    // === 기존 함수들 (그대로 유지) ===
 
     // 사용자 데이터 저장/업데이트
     async saveUser(weight) {
@@ -53,7 +314,7 @@ class SupabaseManager {
         }
     }
 
-    // 유산소 운동 저장 (사이드스텝 처리 추가)
+    // 유산소 운동 저장
     async saveCardio(cardioWorkouts, selectedDate) {
         if (cardioWorkouts.length === 0) return { success: true };
 

@@ -321,3 +321,241 @@ body {
         display: block !important; /* 다른 규칙보다 우선 적용 */
     }
 }
+
+/* 개별 저장 버튼 스타일 - base.css에 추가 */
+
+/* 섹션 헤더 버튼 스타일 */
+.section-header-with-save {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-save-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: #10b981;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    min-width: 70px;
+}
+
+.section-save-btn:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.section-save-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 식사 섹션 내 작은 저장 버튼 */
+.meal-save-btn {
+    font-size: 9px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: #10b981;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    min-width: 45px;
+}
+
+.meal-save-btn:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.meal-save-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 저장 버튼 로딩 상태 */
+.save-btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.save-btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .section-header-with-save {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .section-save-btn {
+        align-self: flex-end;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .meal-save-btn {
+        font-size: 8px;
+        padding: 2px 5px;
+        min-width: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-header-with-save {
+        margin-bottom: 12px;
+    }
+    
+    .section-save-btn {
+        font-size: 9px;
+        padding: 3px 6px;
+        min-width: 60px;
+    }
+    
+    .meal-save-btn {
+        font-size: 7px;
+        padding: 2px 4px;
+        min-width: 35px;
+    }
+}
+
+/* 성공 메시지 애니메이션 개선 */
+.success-popup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    animation: slideInDown 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    max-width: 90vw;
+    word-wrap: break-word;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+/* 버튼 호버 효과 개선 */
+.section-save-btn, .meal-save-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.section-save-btn::before, .meal-save-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.section-save-btn:hover::before, .meal-save-btn:hover::before {
+    left: 100%;
+}
+
+/* 저장 상태 표시 */
+.save-status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 6px;
+    background: #10b981;
+    animation: pulse 2s infinite;
+}
+
+.save-status-indicator.saving {
+    background: #f59e0b;
+    animation: blink 1s infinite;
+}
+
+.save-status-indicator.error {
+    background: #ef4444;
+    animation: none;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.3;
+    }
+}

@@ -72,9 +72,9 @@ class FitnessApp {
         FitnessApp.setupMealEventListeners();
         FitnessApp.setupDataLoaderEventListeners();
         FitnessApp.setupUtilityEventListeners();
-        FitnessApp.setupUserInfoEventListeners(); // 새로 추가
-        FitnessApp.setupFabEventListeners(); // FAB 리스너 추가
-        FitnessApp.setupBMRAccordionEventListeners(); // New call
+        FitnessApp.setupUserInfoEventListeners();
+        FitnessApp.setupFabEventListeners();
+        FitnessApp.setupBMRAccordionEventListeners();
     }
 
     static setupBMRAccordionEventListeners() {
@@ -88,7 +88,7 @@ class FitnessApp {
         }
     }
 
-    // 플로팅 액션 버튼 관련 이벤트 리스너 (수정됨)
+    // 플로팅 액션 버튼 관련 이벤트 리스너
     static setupFabEventListeners() {
         const fabContainer = document.querySelector('.fab-container');
         const fabMainBtn = DOM.get('fab-main');
@@ -96,7 +96,7 @@ class FitnessApp {
         const fabSaveBtn = DOM.get('fab-save');
         const fabResetBtn = DOM.get('fab-reset');
 
-        if (!fabContainer || !fabMainBtn) return; // 요소가 없으면 중단
+        if (!fabContainer || !fabMainBtn) return;
 
         // 메인 버튼 클릭 시 옵션 토글
         fabMainBtn.addEventListener('click', () => {
@@ -129,7 +129,7 @@ class FitnessApp {
         }, { passive: true });
     }
 
-    // 사용자 정보 관련 이벤트 리스너 (새로 추가)
+    // 사용자 정보 관련 이벤트 리스너
     static setupUserInfoEventListeners() {
         // 나이 입력 변경
         const ageInput = DOM.get('userAge');
@@ -160,7 +160,7 @@ class FitnessApp {
         if (headerWeightInput) {
             headerWeightInput.addEventListener('input', function () {
                 AppState.userWeight = parseInt(this.value) || 87;
-                DOM.setValue('userWeight', this.value); // 웨이트 섹션 동기화
+                DOM.setValue('userWeight', this.value);
                 if (typeof UserInfoManager !== 'undefined') {
                     UserInfoManager.updateBMRDisplay();
                 }
@@ -182,7 +182,7 @@ class FitnessApp {
 
     // 웨이트 운동 관련 이벤트 리스너
     static setupWorkoutEventListeners() {
-        // 카테고리 선택 (웨이트 운동만)
+        // 카테고리 선택
         DOM.getAll('[data-category]').forEach(btn => {
             btn.addEventListener('click', function () {
                 const category = this.dataset.category;
@@ -194,7 +194,7 @@ class FitnessApp {
 
         // 무게 입력 변경
         DOM.getAll('.weight-input').forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 if (typeof WeightUtils !== 'undefined') {
                     WeightUtils.updateTotalWeight();
                 }
@@ -204,7 +204,7 @@ class FitnessApp {
         // 운동 선택 변경
         const exerciseSelect = DOM.get('exerciseSelect');
         if (exerciseSelect) {
-            exerciseSelect.addEventListener('change', function() {
+            exerciseSelect.addEventListener('change', function () {
                 if (typeof WorkoutManager !== 'undefined') {
                     WorkoutManager.updateAddWorkoutButton();
                 }
@@ -214,7 +214,7 @@ class FitnessApp {
         // 운동 추가
         const addWorkout = DOM.get('addWorkout');
         if (addWorkout) {
-            addWorkout.addEventListener('click', function() {
+            addWorkout.addEventListener('click', function () {
                 if (typeof WorkoutManager !== 'undefined') {
                     WorkoutManager.addWorkout();
                 }
@@ -226,7 +226,7 @@ class FitnessApp {
         if (weightInput) {
             weightInput.addEventListener('input', function () {
                 AppState.userWeight = parseInt(this.value) || 87;
-                DOM.setValue('userWeightHeader', this.value); // 헤더 동기화
+                DOM.setValue('userWeightHeader', this.value);
                 if (typeof UserInfoManager !== 'undefined') {
                     UserInfoManager.updateBMRDisplay();
                 }
@@ -235,9 +235,9 @@ class FitnessApp {
         }
     }
 
-    // 유산소 운동 관련 이벤트 리스너 (사이드스텝 추가)
+    // 유산소 운동 관련 이벤트 리스너
     static setupCardioEventListeners() {
-        // 유산소 종류 선택 (사이드스텝 포함)
+        // 유산소 종류 선택
         DOM.getAll('[data-cardio-type]').forEach(btn => {
             btn.addEventListener('click', function () {
                 if (typeof CardioManager !== 'undefined') {
@@ -249,7 +249,7 @@ class FitnessApp {
         // 유산소 추가
         const addCardio = DOM.get('addCardio');
         if (addCardio) {
-            addCardio.addEventListener('click', function() {
+            addCardio.addEventListener('click', function () {
                 if (typeof CardioManager !== 'undefined') {
                     CardioManager.addCardio();
                 }
@@ -281,7 +281,7 @@ class FitnessApp {
             });
         }
 
-        // 점심 라디오 버튼 이벤트 리스너 (모바일 안정성)
+        // 점심 라디오 버튼 이벤트 리스너
         DOM.getAll('input[name="lunchType"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 if (typeof MealManager !== 'undefined') {
@@ -335,7 +335,6 @@ class FitnessApp {
 
     // 데이터 불러오기 관련 이벤트 리스너
     static setupDataLoaderEventListeners() {
-        // DataLoaderManager가 정의되어 있는지 확인
         if (typeof DataLoaderManager === 'undefined') {
             console.error('DataLoaderManager가 정의되지 않았습니다. data-loader.js 파일을 확인하세요.');
             return;
@@ -370,26 +369,121 @@ class FitnessApp {
 
     // 유틸리티 관련 이벤트 리스너
     static setupUtilityEventListeners() {
-        // 데이터 다운로드
+        // 기존 전체 저장/다운로드/초기화 버튼들
         const downloadBtn = DOM.get('downloadData');
         if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
+            downloadBtn.addEventListener('click', function () {
                 if (typeof ExcelManager !== 'undefined') {
                     ExcelManager.downloadData();
                 }
             });
         }
 
-        // Supabase 저장
         const saveBtn = DOM.get('saveToSupabase');
         if (saveBtn) {
             saveBtn.addEventListener('click', FitnessApp.saveAllDataToSupabase);
         }
 
-        // 전체 초기화
         const resetBtn = DOM.get('resetAll');
         if (resetBtn) {
             resetBtn.addEventListener('click', FitnessApp.resetAllData);
+        }
+
+        // 새로 추가된 개별 저장 버튼들
+        
+        // 웨이트 운동 저장
+        const saveWorkoutsBtn = DOM.get('saveWorkoutsBtn');
+        if (saveWorkoutsBtn) {
+            saveWorkoutsBtn.addEventListener('click', async function () {
+                console.log('웨이트 저장 버튼 클릭!');
+                if (AppState.workouts.length === 0) {
+                    alert('저장할 웨이트 운동이 없습니다.');
+                    return;
+                }
+
+                this.textContent = '💾 저장 중...';
+                this.disabled = true;
+
+                try {
+                    await supabaseManager.saveWorkoutsOnly();
+                } finally {
+                    this.textContent = '💾 웨이트 저장';
+                    this.disabled = false;
+                }
+            });
+        }
+
+        // 유산소 운동 저장
+        const saveCardioBtn = DOM.get('saveCardioBtn');
+        if (saveCardioBtn) {
+            saveCardioBtn.addEventListener('click', async function () {
+                console.log('유산소 저장 버튼 클릭!');
+                if (AppState.cardioWorkouts.length === 0) {
+                    alert('저장할 유산소 운동이 없습니다.');
+                    return;
+                }
+
+                this.textContent = '💾 저장 중...';
+                this.disabled = true;
+
+                try {
+                    await supabaseManager.saveCardioOnly();
+                } finally {
+                    this.textContent = '💾 유산소 저장';
+                    this.disabled = false;
+                }
+            });
+        }
+
+        // 아침 식사 저장
+        const saveBreakfastBtn = DOM.get('saveBreakfastBtn');
+        if (saveBreakfastBtn) {
+            saveBreakfastBtn.addEventListener('click', async function () {
+                console.log('아침 저장 버튼 클릭!');
+                this.textContent = '💾 저장 중...';
+                this.disabled = true;
+
+                try {
+                    await supabaseManager.saveBreakfastOnly();
+                } finally {
+                    this.textContent = '💾 저장';
+                    this.disabled = false;
+                }
+            });
+        }
+
+        // 점심 식사 저장
+        const saveLunchBtn = DOM.get('saveLunchBtn');
+        if (saveLunchBtn) {
+            saveLunchBtn.addEventListener('click', async function () {
+                console.log('점심 저장 버튼 클릭!');
+                this.textContent = '💾 저장 중...';
+                this.disabled = true;
+
+                try {
+                    await supabaseManager.saveLunchOnly();
+                } finally {
+                    this.textContent = '💾 저장';
+                    this.disabled = false;
+                }
+            });
+        }
+
+        // 저녁 식사 저장
+        const saveDinnerBtn = DOM.get('saveDinnerBtn');
+        if (saveDinnerBtn) {
+            saveDinnerBtn.addEventListener('click', async function () {
+                console.log('저녁 저장 버튼 클릭!');
+                this.textContent = '💾 저장 중...';
+                this.disabled = true;
+
+                try {
+                    await supabaseManager.saveDinnerOnly();
+                } finally {
+                    this.textContent = '💾 저장';
+                    this.disabled = false;
+                }
+            });
         }
 
         // 차트 관련 이벤트 리스너
@@ -482,17 +576,17 @@ class FitnessApp {
         if (typeof WorkoutManager !== 'undefined') {
             WorkoutManager.renderWorkouts();
         }
-        
+
         if (typeof CardioManager !== 'undefined') {
             CardioManager.renderCardio();
         }
-        
+
         if (typeof MealManager !== 'undefined') {
             MealManager.renderCustomBreakfast();
             MealManager.renderCustomLunch();
             MealManager.renderCustomFoods();
         }
-        
+
         SummaryManager.updateSummary();
 
         NotificationUtils.alert('모든 데이터가 초기화되었습니다.');

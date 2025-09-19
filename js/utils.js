@@ -100,6 +100,12 @@ const DateUtils = {
     monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 };
 
+// 사이클 MET 값 (강도별)
+const CYCLE_MET = {
+    1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
+    6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
+};
+
 // 칼로리 계산 유틸리티
 const CalorieCalculator = {
     // 운동 칼로리 계산 - 현실적으로 수정됨
@@ -165,7 +171,9 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    // 미플린 공식 기반 BMR 계산
+
+
+    // 미플린 공식 기반 BMR 계산 (새로 추가)
     calculateMifflinBMR: () => {
         const weight = AppState.userWeight;
         const height = AppState.userHeight;
@@ -182,7 +190,7 @@ const CalorieCalculator = {
         return Math.round(bmr);
     },
 
-    // TDEE 계산
+    // TDEE 계산 (새로 추가)
     calculateTDEE: (activityLevel = 1.55) => {
         const bmr = CalorieCalculator.calculateMifflinBMR();
         return Math.round(bmr * activityLevel);
@@ -190,13 +198,7 @@ const CalorieCalculator = {
 
     // 사이클 칼로리 계산 (RPM 포함)
     calculateCycle: (intensity, rpm, duration) => {
-        // 사이클 MET 값 (강도별) - 로컬 정의
-        const CYCLE_MET_VALUES = {
-            1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
-            6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
-        };
-        
-        const baseMET = CYCLE_MET_VALUES[intensity] || 5.5;
+        const baseMET = CYCLE_MET[intensity] || 5.5;
 
         // RPM 보정값 계산 (60 RPM을 기준으로 함)
         const rpmBonus = Math.max(0, (rpm - 60) / 40 * 0.3);
@@ -204,17 +206,10 @@ const CalorieCalculator = {
 
         const hours = duration / 60;
         return Math.round(finalMET * AppState.userWeight * hours);
-    },
-
-    // 사이드스텝 칼로리 계산 (스텝박스 고정)
-    calculateSidestep: (duration) => {
-        const met = SIDESTEP_MET;
-        const hours = duration / 60;
-        return Math.round(met * AppState.userWeight * hours);
     }
 };
 
-// 사용자 정보 관리 유틸리티
+// 사용자 정보 관리 유틸리티 (새로 추가)
 const UserInfoManager = {
     // 사용자 정보 업데이트
     updateUserInfo: () => {
@@ -260,7 +255,6 @@ const FormUtils = {
         DOM.setValue('cycleIntensity', 5);
         DOM.setValue('cycleDuration', 30);
         DOM.setValue('cycleRPM', 80);
-        DOM.setValue('sidestepDuration', 10); // 10분으로 변경
     },
 
     // 커스텀 음식 폼 초기화
@@ -364,4 +358,5 @@ const KoreanDateUtils = {
         const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
         return koreanTime.toISOString().split('T')[0];
     }
+
 };

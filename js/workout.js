@@ -172,6 +172,7 @@ class CardioManager {
             DOM.setValue('cycleDuration', 30);
             DOM.setValue('cycleRPM', 80);
         } else if (AppState.selectedCardioType === 'sidestep') {
+            // 🔥 사이드스텝 로직 추가
             const duration = parseInt(DOM.getValue('sidestepDuration'));
             
             if (!duration) return;
@@ -207,20 +208,21 @@ class CardioManager {
 
         const treadmillForm = DOM.get('treadmillForm');
         const cycleForm = DOM.get('cycleForm');
-        const sidestepForm = DOM.get('sidestepForm');
+        const sidestepForm = DOM.get('sidestepForm'); // 🔥 사이드스텝 폼 추가
 
         if (type === 'treadmill') {
             if (treadmillForm) DOM.show(treadmillForm);
             if (cycleForm) DOM.hide(cycleForm);
-            if (sidestepForm) DOM.hide(sidestepForm);
+            if (sidestepForm) DOM.hide(sidestepForm); // 🔥 사이드스텝 숨기기
         } else if (type === 'cycle') {
             if (treadmillForm) DOM.hide(treadmillForm);
             if (cycleForm) DOM.show(cycleForm);
-            if (sidestepForm) DOM.hide(sidestepForm);
+            if (sidestepForm) DOM.hide(sidestepForm); // 🔥 사이드스텝 숨기기
         } else if (type === 'sidestep') {
+            // 🔥 사이드스텝 선택시 처리
             if (treadmillForm) DOM.hide(treadmillForm);
             if (cycleForm) DOM.hide(cycleForm);
-            if (sidestepForm) DOM.show(sidestepForm);
+            if (sidestepForm) DOM.show(sidestepForm); // 🔥 사이드스텝 보이기
         }
     }
 
@@ -242,6 +244,7 @@ class CardioManager {
             const div = document.createElement('div');
             div.className = 'cardio-item';
             
+            // 🔥 사이드스텝 표시 로직 추가
             let detailsText = '';
             if (cardio.type === '런닝머신') {
                 detailsText = `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`;

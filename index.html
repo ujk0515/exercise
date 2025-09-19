@@ -239,10 +239,15 @@
                 </div>
             </div>
 
-            <!-- 웨이트 운동 -->
+            <!-- 웨이트 운동 (개별 저장 버튼 추가) -->
             <div class="card">
                 <div class="card-content">
-                    <h2 class="section-title">🏋️‍♂️ 웨이트 운동</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">🏋️‍♂️ 웨이트 운동</h2>
+                        <button id="saveWorkoutsBtn" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">
+                            💾 웨이트 저장
+                        </button>
+                    </div>
 
                     <!-- 체중 입력 -->
                     <div class="form-group">
@@ -370,10 +375,15 @@
                 </div>
             </div>
 
-            <!-- 유산소 운동 (사이드스텝 탭 및 폼 추가) -->
+            <!-- 유산소 운동 (개별 저장 버튼 추가) -->
             <div class="card">
                 <div class="card-content">
-                    <h2 class="section-title">🏃‍♂️ 유산소 운동</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">🏃‍♂️ 유산소 운동</h2>
+                        <button id="saveCardioBtn" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">
+                            💾 유산소 저장
+                        </button>
+                    </div>
 
                     <!-- 운동 종류 선택 탭 수정 (3분할로 변경) -->
                     <div class="grid grid-3 form-group">
@@ -473,15 +483,20 @@
 
         </div>
 
-        <!-- 식사 기록 -->
+        <!-- 식사 기록 (개별 저장 버튼 추가) -->
         <div class="card">
             <div class="card-content">
                 <h2 class="section-title">🍽️ 식사 기록</h2>
 
                 <div class="grid grid-3">
-                    <!-- 아침 -->
+                    <!-- 아침 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-breakfast">
-                        <div class="meal-title">🌅 아침</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div class="meal-title">🌅 아침</div>
+                            <button id="saveBreakfastBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                                💾 저장
+                            </button>
+                        </div>
 
                         <div class="checkbox-container">
                             <input type="checkbox" id="useDefaultBreakfast" checked>
@@ -522,9 +537,14 @@
                         </div>
                     </div>
 
-                    <!-- 점심 -->
+                    <!-- 점심 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-lunch">
-                        <div class="meal-title">☀️ 점심</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div class="meal-title">☀️ 점심</div>
+                            <button id="saveLunchBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                                💾 저장
+                            </button>
+                        </div>
 
                         <div class="checkbox-container">
                             <input type="checkbox" id="useDefaultLunch" checked
@@ -588,9 +608,14 @@
                         </div>
                     </div>
 
-                    <!-- 저녁 -->
+                    <!-- 저녁 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-dinner">
-                        <div class="meal-title">🌙 저녁</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div class="meal-title">🌙 저녁</div>
+                            <button id="saveDinnerBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                                💾 저장
+                            </button>
+                        </div>
 
                         <div class="checkbox-container">
                             <input type="checkbox" id="useDefaultDinner" checked>
