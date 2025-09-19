@@ -1,11 +1,25 @@
 // Supabase 관리 클래스 (기존 방식 유지 + 개별 저장 기능 추가)
 class SupabaseManager {
     constructor() {
-        // 🔄 기존 방식으로 되돌림 (Edge Function 사용 안함)
-        this.client = window.supabase.createClient(
-            SUPABASE_CONFIG.URL,
-            SUPABASE_CONFIG.ANON_KEY
-        );
+        // URL과 키 검증
+        if (!SUPABASE_CONFIG.URL || !SUPABASE_CONFIG.ANON_KEY) {
+            console.error('Supabase 설정이 완료되지 않았습니다:', {
+                hasUrl: !!SUPABASE_CONFIG.URL,
+                hasKey: !!SUPABASE_CONFIG.ANON_KEY
+            });
+            throw new Error('Supabase 설정이 완료되지 않았습니다. 환경변수를 확인하세요.');
+        }
+
+        try {
+            this.client = window.supabase.createClient(
+                SUPABASE_CONFIG.URL,
+                SUPABASE_CONFIG.ANON_KEY
+            );
+            console.log('Supabase 클라이언트 생성 완료');
+        } catch (error) {
+            console.error('Supabase 클라이언트 생성 실패:', error);
+            throw error;
+        }
     }
 
     // === 새로 추가된 개별 저장 함수들 ===
@@ -620,5 +634,19 @@ class SupabaseManager {
     }
 }
 
-// 전역 Supabase 매니저 인스턴스
-const supabaseManager = new SupabaseManager();
+// 전역 Supabase 매니저 인스턴스 (지연 초기화)
+let supabaseManager = null;
+
+// Supabase 매니저 초기화 함수
+function initializeSupabaseManager() {
+    if (!supabaseManager) {
+        try {
+            supabaseManager = new SupabaseManager();
+            console.log('SupabaseManager 초기화 완료');
+        } catch (error) {
+            console.error('SupabaseManager 초기화 실패:', error);
+            throw error;
+        }
+    }
+    return supabaseManager;
+}

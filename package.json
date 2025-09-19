@@ -1,0 +1,14 @@
+{
+  "name": "exercise-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "supabase": "^2.40.7"
+  }
+}

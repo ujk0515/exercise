@@ -1,9 +1,19 @@
-// Supabase 설정
-const SUPABASE_CONFIG = {
-    URL: 'https://zrbasozrsrszftrqvbcb.supabase.co',
-    ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyYmFzb3pyc3JzemZ0cnF2YmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyNjk3NDUsImV4cCI6MjA2NTg0NTc0NX0.ab4BgFlJKjyMTCLTxrom5guw7EGzPWThhsjdzcvrGxg',
-    USER_ID: '550e8400-e29b-41d4-a716-446655440000'
-};
+// Supabase 설정 - 환경변수를 통해 동적으로 로드
+let SUPABASE_CONFIG = {};
+
+// 환경변수 초기화 함수
+async function initializeSupabaseConfig() {
+    await envManager.loadConfig();
+    const config = envManager.getConfig();
+
+    SUPABASE_CONFIG = {
+        URL: config.SUPABASE_URL,
+        ANON_KEY: config.SUPABASE_ANON_KEY,
+        USER_ID: config.USER_ID || '550e8400-e29b-41d4-a716-446655440000'
+    };
+
+    console.log('Supabase 설정 초기화 완료');
+}
 
 // 운동 데이터베이스 (MET 기반) - 바벨/덤벨/머신 타입 정리
 const EXERCISE_DATABASE = {

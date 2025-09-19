@@ -1,7 +1,13 @@
 // 메인 애플리케이션 관리 클래스
 class FitnessApp {
     // 애플리케이션 초기화
-    static init() {
+    static async init() {
+        // Supabase 환경변수 초기화
+        await initializeSupabaseConfig();
+
+        // Supabase 매니저 초기화
+        initializeSupabaseManager();
+
         // 오늘 날짜 설정
         DOM.setValue('selectedDate', DateUtils.today());
 
@@ -597,8 +603,8 @@ class FitnessApp {
 }
 
 // DOM이 로드되면 애플리케이션 초기화
-document.addEventListener('DOMContentLoaded', function () {
-    FitnessApp.init();
+document.addEventListener('DOMContentLoaded', async function () {
+    await FitnessApp.init();
 });
 
 // 전역 함수들 (HTML에서 직접 호출되는 함수들)
