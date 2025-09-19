@@ -97,13 +97,13 @@ const DateUtils = {
     },
 
     // 월 이름 배열
-    monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
-};
-
-// 사이클 MET 값 (강도별)
-const CYCLE_MET = {
-    1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
-    6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
+    monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+    formatShortDate: (date) => {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
+        return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
 };
 
 // 칼로리 계산 유틸리티
@@ -171,7 +171,33 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
+    // CalorieCalculator 클래스에 추가할 함수들
 
+    // 일반 계단 오르기 칼로리 계산
+    calculateRegularStairs: (floors, duration) => {
+        // 층수에 따른 기본 MET 값 계산
+        const baseMET = 4.0; // 기본 계단 오르기 MET
+        const floorBonus = floors * REGULAR_STAIRS_MET_PER_FLOOR; // 층수당 추가 MET
+        const finalMET = baseMET + floorBonus;
+
+        // 시간을 hour로 변환
+        const hours = duration / 60;
+
+        // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
+        return Math.round(finalMET * AppState.userWeight * hours);
+    },
+
+    // 천국의 계단(StairMaster) 칼로리 계산
+    calculateStairMaster: (level, duration) => {
+        // 레벨에 따른 MET 값
+        const met = STAIRMASTER_MET[level] || 6.0;
+
+        // 시간을 hour로 변환
+        const hours = duration / 60;
+
+        // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
+        return Math.round(met * AppState.userWeight * hours);
+    },
 
     // 미플린 공식 기반 BMR 계산 (새로 추가)
     calculateMifflinBMR: () => {

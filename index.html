@@ -242,9 +242,11 @@
             <!-- 웨이트 운동 (개별 저장 버튼 추가) -->
             <div class="card">
                 <div class="card-content">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h2 class="section-title" style="margin-bottom: 0;">🏋️‍♂️ 웨이트 운동</h2>
-                        <button id="saveWorkoutsBtn" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">
+                        <button id="saveWorkoutsBtn" class="btn btn-success"
+                            style="font-size: 12px; padding: 6px 12px;">
                             💾 웨이트 저장
                         </button>
                     </div>
@@ -376,17 +378,19 @@
             </div>
 
             <!-- 유산소 운동 (개별 저장 버튼 추가) -->
+            <!-- 유산소 운동 섹션 (5분할로 변경 + 계단 운동 추가) -->
             <div class="card">
                 <div class="card-content">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h2 class="section-title" style="margin-bottom: 0;">🏃‍♂️ 유산소 운동</h2>
                         <button id="saveCardioBtn" class="btn btn-success" style="font-size: 12px; padding: 6px 12px;">
                             💾 유산소 저장
                         </button>
                     </div>
 
-                    <!-- 운동 종류 선택 탭 수정 (3분할로 변경) -->
-                    <div class="grid grid-3 form-group">
+                    <!-- 운동 종류 선택 탭 (5분할로 변경) -->
+                    <div class="grid grid-5 form-group">
                         <div class="category-btn active" data-cardio-type="treadmill">
                             <div class="category-icon">🏃‍♂️</div>
                             <div>런닝머신</div>
@@ -398,6 +402,14 @@
                         <div class="category-btn" data-cardio-type="sidestep">
                             <div class="category-icon">👟</div>
                             <div>사이드스텝</div>
+                        </div>
+                        <div class="category-btn" data-cardio-type="regular-stairs">
+                            <div class="category-icon">🪜</div>
+                            <div>일반계단</div>
+                        </div>
+                        <div class="category-btn" data-cardio-type="stairmaster">
+                            <div class="category-icon">⛰️</div>
+                            <div>천국계단</div>
                         </div>
                     </div>
 
@@ -465,12 +477,59 @@
                         </div>
                     </div>
 
-                    <!-- 사이드스텝 폼 (스텝박스 고정) -->
+                    <!-- 사이드스텝 폼 (기존) -->
                     <div id="sidestepForm" class="hidden">
                         <h3 style="margin-bottom: 12px;">스텝박스 사이드스텝</h3>
                         <div class="form-group">
                             <label class="form-label">시간 (분)</label>
                             <input type="number" id="sidestepDuration" class="form-input" min="1" max="120" value="30">
+                        </div>
+                    </div>
+
+                    <!-- 일반 계단 오르기 폼 (새로 추가) -->
+                    <div id="regularStairsForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">일반 계단 오르기</h3>
+                        <div class="grid grid-2 form-group">
+                            <div>
+                                <label class="form-label">층수</label>
+                                <input type="number" id="stairsFloors" class="form-input" min="1" max="100" value="10"
+                                    step="1">
+                            </div>
+                            <div>
+                                <label class="form-label">시간 (분)</label>
+                                <input type="number" id="stairsDuration" class="form-input" min="1" max="120"
+                                    value="20">
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+                            💡 층수는 총 올라간 층수를 입력하세요 (예: 10층 건물 2번 = 20층)
+                        </div>
+                    </div>
+
+                    <!-- 천국의 계단(StairMaster) 폼 (새로 추가) -->
+                    <div id="stairmasterForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">천국의 계단 (StairMaster)</h3>
+                        <div class="grid grid-2 form-group">
+                            <div>
+                                <label class="form-label">속도 레벨 (1-10)</label>
+                                <select id="stairmasterLevel" class="form-select">
+                                    <option value="1">레벨 1 (느림)</option>
+                                    <option value="2">레벨 2</option>
+                                    <option value="3">레벨 3</option>
+                                    <option value="4">레벨 4</option>
+                                    <option value="5" selected>레벨 5 (보통)</option>
+                                    <option value="6">레벨 6</option>
+                                    <option value="7">레벨 7</option>
+                                    <option value="8">레벨 8</option>
+                                    <option value="9">레벨 9</option>
+                                    <option value="10">레벨 10 (빠름)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">시간 (분)</label>
+                                <input type="number" id="stairmasterDuration" class="form-input" min="1" max="120"
+                                    value="20">
+                            </div>
                         </div>
                     </div>
 
@@ -491,9 +550,11 @@
                 <div class="grid grid-3">
                     <!-- 아침 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-breakfast">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div class="meal-title">🌅 아침</div>
-                            <button id="saveBreakfastBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                            <button id="saveBreakfastBtn" class="btn btn-success"
+                                style="font-size: 10px; padding: 4px 8px;">
                                 💾 저장
                             </button>
                         </div>
@@ -539,9 +600,11 @@
 
                     <!-- 점심 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-lunch">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div class="meal-title">☀️ 점심</div>
-                            <button id="saveLunchBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                            <button id="saveLunchBtn" class="btn btn-success"
+                                style="font-size: 10px; padding: 4px 8px;">
                                 💾 저장
                             </button>
                         </div>
@@ -610,9 +673,11 @@
 
                     <!-- 저녁 (개별 저장 버튼 추가) -->
                     <div class="meal-card meal-dinner">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div class="meal-title">🌙 저녁</div>
-                            <button id="saveDinnerBtn" class="btn btn-success" style="font-size: 10px; padding: 4px 8px;">
+                            <button id="saveDinnerBtn" class="btn btn-success"
+                                style="font-size: 10px; padding: 4px 8px;">
                                 💾 저장
                             </button>
                         </div>

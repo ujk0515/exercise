@@ -85,6 +85,33 @@ const INCLINE_BONUS = {
     11: 2.2, 12: 2.4
 };
 
+// 사이클 MET 값 (강도별)
+const CYCLE_MET = {
+    1: 2.8, 2: 3.2, 3: 3.8, 4: 4.5, 5: 5.2,
+    6: 6.0, 7: 6.8, 8: 7.8, 9: 8.8, 10: 10.0
+};
+
+// 사이드스텝 MET 값 (스텝박스 고정)
+const SIDESTEP_MET = 6.0;
+
+// 🔥 새로 추가: 일반 계단 오르기 MET 값
+// 층수당 기본 칼로리 소모 (체중 1kg당 층당 0.15kcal 기준으로 MET 환산)
+const REGULAR_STAIRS_MET_PER_FLOOR = 0.02; // 층당 추가 MET
+
+// 🔥 새로 추가: 천국의 계단(StairMaster) MET 값 (속도별)
+const STAIRMASTER_MET = {
+    1: 4.0,  // 느린 속도
+    2: 4.5,
+    3: 5.0,
+    4: 5.5,
+    5: 6.0,  // 보통 속도
+    6: 6.5,
+    7: 7.0,
+    8: 7.5,
+    9: 8.0,
+    10: 9.0  // 빠른 속도
+};
+
 // 고정 칼로리 값
 const MEAL_CALORIES = {
     breakfast: 200,

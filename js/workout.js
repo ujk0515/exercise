@@ -136,7 +136,7 @@ class WorkoutManager {
 
 // 유산소 운동 관리 클래스
 class CardioManager {
-    // 유산소 운동 추가 (사이드스텝 로직 추가)
+    // 유산소 운동 추가 (계단 운동 로직 추가)
     static addCardio() {
         let cardio;
 
@@ -172,7 +172,6 @@ class CardioManager {
             DOM.setValue('cycleDuration', 30);
             DOM.setValue('cycleRPM', 80);
         } else if (AppState.selectedCardioType === 'sidestep') {
-            // 🔥 사이드스텝 로직 추가
             const duration = parseInt(DOM.getValue('sidestepDuration'));
             
             if (!duration) return;
@@ -186,6 +185,78 @@ class CardioManager {
                 calories
             };
             DOM.setValue('sidestepDuration', 30);
+        } else if (AppState.selectedCardioType === 'regular-stairs') {
+            // 일반 계단 오르기 로직
+            const floors = parseInt(DOM.getValue('stairsFloors'));
+            const duration = parseInt(DOM.getValue('stairsDuration'));
+            
+            if (!floors || !duration) return;
+            
+            const calories = CalorieCalculator.calculateRegularStairs(floors, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '일반 계단 오르기',
+                floors,
+                duration,
+                calories
+            };
+            DOM.setValue('stairsFloors', 10);
+            DOM.setValue('stairsDuration', 20);
+        } else if (AppState.selectedCardioType === 'stairmaster') {
+            // 천국의 계단(StairMaster) 로직
+            const level = parseInt(DOM.getValue('stairmasterLevel'));
+            const duration = parseInt(DOM.getValue('stairmasterDuration'));
+            
+            if (!level || !duration) return;
+            
+            const calories = CalorieCalculator.calculateStairMaster(level, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '천국의 계단',
+                level,
+                duration,
+                calories
+            };
+            DOM.setValue('stairmasterLevel', 5);
+            DOM.setValue('stairmasterDuration', 20);
+        } else if (AppState.selectedCardioType === 'regular-stairs') {
+            // 일반 계단 오르기 로직
+            const floors = parseInt(DOM.getValue('stairsFloors'));
+            const duration = parseInt(DOM.getValue('stairsDuration'));
+            
+            if (!floors || !duration) return;
+            
+            const calories = CalorieCalculator.calculateRegularStairs(floors, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '일반 계단 오르기',
+                floors,
+                duration,
+                calories
+            };
+            DOM.setValue('stairsFloors', 10);
+            DOM.setValue('stairsDuration', 20);
+        } else if (AppState.selectedCardioType === 'stairmaster') {
+            // 천국의 계단(StairMaster) 로직
+            const level = parseInt(DOM.getValue('stairmasterLevel'));
+            const duration = parseInt(DOM.getValue('stairmasterDuration'));
+            
+            if (!level || !duration) return;
+            
+            const calories = CalorieCalculator.calculateStairMaster(level, duration);
+            
+            cardio = {
+                id: Date.now(),
+                type: '천국의 계단',
+                level,
+                duration,
+                calories
+            };
+            DOM.setValue('stairmasterLevel', 5);
+            DOM.setValue('stairmasterDuration', 20);
         }
 
         AppState.cardioWorkouts.push(cardio);
@@ -196,7 +267,7 @@ class CardioManager {
         }
     }
 
-    // 유산소 운동 종류 변경 (사이드스텝 포함)
+    // 유산소 운동 종류 변경 (계단 포함)
     static changeCardioType(type) {
         DOM.getAll('[data-cardio-type]').forEach(btn => DOM.removeClass(btn, 'active'));
         const selectedBtn = document.querySelector(`[data-cardio-type="${type}"]`);
@@ -208,25 +279,32 @@ class CardioManager {
 
         const treadmillForm = DOM.get('treadmillForm');
         const cycleForm = DOM.get('cycleForm');
-        const sidestepForm = DOM.get('sidestepForm'); // 🔥 사이드스텝 폼 추가
+        const sidestepForm = DOM.get('sidestepForm');
+        const regularStairsForm = DOM.get('regularStairsForm'); // 일반 계단 폼
+        const stairmasterForm = DOM.get('stairmasterForm'); // 천국의 계단 폼
 
+        // 모든 폼 숨기기
+        if (treadmillForm) DOM.hide(treadmillForm);
+        if (cycleForm) DOM.hide(cycleForm);
+        if (sidestepForm) DOM.hide(sidestepForm);
+        if (regularStairsForm) DOM.hide(regularStairsForm);
+        if (stairmasterForm) DOM.hide(stairmasterForm);
+
+        // 선택된 폼만 보이기
         if (type === 'treadmill') {
             if (treadmillForm) DOM.show(treadmillForm);
-            if (cycleForm) DOM.hide(cycleForm);
-            if (sidestepForm) DOM.hide(sidestepForm); // 🔥 사이드스텝 숨기기
         } else if (type === 'cycle') {
-            if (treadmillForm) DOM.hide(treadmillForm);
             if (cycleForm) DOM.show(cycleForm);
-            if (sidestepForm) DOM.hide(sidestepForm); // 🔥 사이드스텝 숨기기
         } else if (type === 'sidestep') {
-            // 🔥 사이드스텝 선택시 처리
-            if (treadmillForm) DOM.hide(treadmillForm);
-            if (cycleForm) DOM.hide(cycleForm);
-            if (sidestepForm) DOM.show(sidestepForm); // 🔥 사이드스텝 보이기
+            if (sidestepForm) DOM.show(sidestepForm);
+        } else if (type === 'regular-stairs') {
+            if (regularStairsForm) DOM.show(regularStairsForm);
+        } else if (type === 'stairmaster') {
+            if (stairmasterForm) DOM.show(stairmasterForm);
         }
     }
 
-    // 유산소 운동 기록 렌더링 (사이드스텝 표시 포함)
+    // 유산소 운동 기록 렌더링 (계단 표시 포함)
     static renderCardio() {
         const container = DOM.get('cardioRecords');
         if (!container) return;
@@ -244,7 +322,7 @@ class CardioManager {
             const div = document.createElement('div');
             div.className = 'cardio-item';
             
-            // 🔥 사이드스텝 표시 로직 추가
+            // 운동 종류별 표시 로직
             let detailsText = '';
             if (cardio.type === '런닝머신') {
                 detailsText = `각도 ${cardio.incline}도, 속도 ${cardio.speed}km/h, ${cardio.duration}분`;
@@ -252,6 +330,14 @@ class CardioManager {
                 detailsText = `강도 ${cardio.intensity}단계, ${cardio.rpm || 80}RPM, ${cardio.duration}분`;
             } else if (cardio.type === '스텝박스 사이드스텝') {
                 detailsText = `${cardio.duration}분`;
+            } else if (cardio.type === '일반 계단 오르기') {
+                detailsText = `${cardio.floors}층, ${cardio.duration}분`;
+            } else if (cardio.type === '천국의 계단') {
+                detailsText = `레벨 ${cardio.level}, ${cardio.duration}분`;
+            } else if (cardio.type === '일반 계단 오르기') {
+                detailsText = `${cardio.floors}층, ${cardio.duration}분`;
+            } else if (cardio.type === '천국의 계단') {
+                detailsText = `레벨 ${cardio.level}, ${cardio.duration}분`;
             }
             
             div.innerHTML = `
