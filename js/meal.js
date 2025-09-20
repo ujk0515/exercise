@@ -180,7 +180,7 @@ class MealManager {
 
         if (AppState.customDinnerItems.length === 0) {
             DOM.hide(listContainer);
-            DOM.show(emptyState);
+            DOM.hide(emptyState);
             return;
         }
 
@@ -224,7 +224,7 @@ class MealManager {
         SummaryManager.updateSummary();
     }
 
-    // 점심 타입 변경 함수 (안정성 강화)
+    // 점심 타입 변경 함수 (수정된 버전 - 안정성 강화)
     static changeLunchType() {
         const selectedRadio = document.querySelector('input[name="lunchType"]:checked');
         
@@ -241,11 +241,16 @@ class MealManager {
         SummaryManager.updateSummary();
     }
 
-    // 점심 칼로리 계산 함수 (새로 추가)
+    // 점심 칼로리 계산 함수 (수정된 버전)
     static getLunchCalories() {
-        const useDefault = DOM.get('useDefaultLunch').checked;
-        if (useDefault) {
-            return MEAL_CALORIES.lunch[AppState.selectedLunchType];
+        const useDefault = DOM.get('useDefaultLunch');
+        if (useDefault && useDefault.checked) {
+            // 실제 선택된 라디오 버튼의 값을 확인
+            const selectedRadio = document.querySelector('input[name="lunchType"]:checked');
+            if (selectedRadio) {
+                return MEAL_CALORIES.lunch[selectedRadio.value] || MEAL_CALORIES.lunch.galbi;
+            }
+            return MEAL_CALORIES.lunch[AppState.selectedLunchType] || MEAL_CALORIES.lunch.galbi;
         } else {
             return ArrayUtils.sum(AppState.customLunchItems, 'calories');
         }
@@ -257,18 +262,28 @@ class MealManager {
         AppState.customLunchItems = [];
         AppState.customDinnerItems = [];
 
-        DOM.get('useDefaultBreakfast').checked = true;
-        DOM.get('useDefaultLunch').checked = true;
-        DOM.get('useDefaultDinner').checked = true;
+        const useDefaultBreakfast = DOM.get('useDefaultBreakfast');
+        const useDefaultLunch = DOM.get('useDefaultLunch');
+        const useDefaultDinner = DOM.get('useDefaultDinner');
+
+        if (useDefaultBreakfast) useDefaultBreakfast.checked = true;
+        if (useDefaultLunch) useDefaultLunch.checked = true;
+        if (useDefaultDinner) useDefaultDinner.checked = true;
 
         MealManager.toggleBreakfastMenu();
         MealManager.toggleLunchMenu();
         MealManager.toggleDinnerMenu();
 
-        // 점심 라디오 버튼 초기화 (새로 추가)
+        // 점심 라디오 버튼 초기화 (수정된 부분)
         AppState.selectedLunchType = 'galbi';
-        document.querySelector('input[name="lunchType"][value="galbi"]').checked = true;
-        DOM.setText('selectedLunchCalories', '480');
+        const galbiRadio = document.querySelector('input[name="lunchType"][value="galbi"]');
+        if (galbiRadio) {
+            galbiRadio.checked = true;
+        }
+        const selectedLunchCaloriesElement = DOM.get('selectedLunchCalories');
+        if (selectedLunchCaloriesElement) {
+            DOM.setText('selectedLunchCalories', '480');
+        }
 
         DOM.setValue('newBreakfastName', '');
         DOM.setValue('newBreakfastCalories', '');

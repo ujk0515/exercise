@@ -136,7 +136,7 @@ class WorkoutManager {
 
 // 유산소 운동 관리 클래스
 class CardioManager {
-    // 유산소 운동 추가 (계단 운동 로직 추가)
+    // 유산소 운동 추가 (수정된 버전 - 중복 제거 및 누락 함수 추가)
     static addCardio() {
         let cardio;
 
@@ -155,6 +155,7 @@ class CardioManager {
                 incline, speed, duration, calories
             };
             DOM.setValue('duration', 30);
+            
         } else if (AppState.selectedCardioType === 'cycle') {
             const intensity = parseInt(DOM.getValue('cycleIntensity'));
             const rpm = parseInt(DOM.getValue('cycleRPM'));
@@ -171,6 +172,7 @@ class CardioManager {
             };
             DOM.setValue('cycleDuration', 30);
             DOM.setValue('cycleRPM', 80);
+            
         } else if (AppState.selectedCardioType === 'sidestep') {
             const duration = parseInt(DOM.getValue('sidestepDuration'));
             
@@ -185,6 +187,7 @@ class CardioManager {
                 calories
             };
             DOM.setValue('sidestepDuration', 30);
+            
         } else if (AppState.selectedCardioType === 'regular-stairs') {
             // 일반 계단 오르기 로직
             const floors = parseInt(DOM.getValue('stairsFloors'));
@@ -203,42 +206,7 @@ class CardioManager {
             };
             DOM.setValue('stairsFloors', 10);
             DOM.setValue('stairsDuration', 20);
-        } else if (AppState.selectedCardioType === 'stairmaster') {
-            // 천국의 계단(StairMaster) 로직
-            const level = parseInt(DOM.getValue('stairmasterLevel'));
-            const duration = parseInt(DOM.getValue('stairmasterDuration'));
             
-            if (!level || !duration) return;
-            
-            const calories = CalorieCalculator.calculateStairMaster(level, duration);
-            
-            cardio = {
-                id: Date.now(),
-                type: '천국의 계단',
-                level,
-                duration,
-                calories
-            };
-            DOM.setValue('stairmasterLevel', 5);
-            DOM.setValue('stairmasterDuration', 20);
-        } else if (AppState.selectedCardioType === 'regular-stairs') {
-            // 일반 계단 오르기 로직
-            const floors = parseInt(DOM.getValue('stairsFloors'));
-            const duration = parseInt(DOM.getValue('stairsDuration'));
-            
-            if (!floors || !duration) return;
-            
-            const calories = CalorieCalculator.calculateRegularStairs(floors, duration);
-            
-            cardio = {
-                id: Date.now(),
-                type: '일반 계단 오르기',
-                floors,
-                duration,
-                calories
-            };
-            DOM.setValue('stairsFloors', 10);
-            DOM.setValue('stairsDuration', 20);
         } else if (AppState.selectedCardioType === 'stairmaster') {
             // 천국의 계단(StairMaster) 로직
             const level = parseInt(DOM.getValue('stairmasterLevel'));
@@ -259,11 +227,13 @@ class CardioManager {
             DOM.setValue('stairmasterDuration', 20);
         }
 
-        AppState.cardioWorkouts.push(cardio);
-        CardioManager.renderCardio();
-        SummaryManager.updateSummary();
-        if (typeof WorkoutSummaryManager !== 'undefined') {
-            WorkoutSummaryManager.updateWorkoutSummary();
+        if (cardio) {
+            AppState.cardioWorkouts.push(cardio);
+            CardioManager.renderCardio();
+            SummaryManager.updateSummary();
+            if (typeof WorkoutSummaryManager !== 'undefined') {
+                WorkoutSummaryManager.updateWorkoutSummary();
+            }
         }
     }
 
@@ -330,10 +300,6 @@ class CardioManager {
                 detailsText = `강도 ${cardio.intensity}단계, ${cardio.rpm || 80}RPM, ${cardio.duration}분`;
             } else if (cardio.type === '스텝박스 사이드스텝') {
                 detailsText = `${cardio.duration}분`;
-            } else if (cardio.type === '일반 계단 오르기') {
-                detailsText = `${cardio.floors}층, ${cardio.duration}분`;
-            } else if (cardio.type === '천국의 계단') {
-                detailsText = `레벨 ${cardio.level}, ${cardio.duration}분`;
             } else if (cardio.type === '일반 계단 오르기') {
                 detailsText = `${cardio.floors}층, ${cardio.duration}분`;
             } else if (cardio.type === '천국의 계단') {

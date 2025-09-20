@@ -171,7 +171,11 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    // CalorieCalculator 클래스에 추가할 함수들
+    // 사이드스텝 칼로리 계산 (추가된 함수)
+    calculateSidestep: (duration) => {
+        const hours = duration / 60;
+        return Math.round(SIDESTEP_MET * AppState.userWeight * hours);
+    },
 
     // 일반 계단 오르기 칼로리 계산
     calculateRegularStairs: (floors, duration) => {
