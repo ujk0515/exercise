@@ -1,4 +1,4 @@
-// Supabase 관리 클래스 (기존 방식 유지 + 개별 저장 기능 추가)
+// Supabase 관리 클래스 (완전 마무리 버전)
 class SupabaseManager {
     constructor() {
         // URL과 키 검증
@@ -22,7 +22,7 @@ class SupabaseManager {
         }
     }
 
-    // === 새로 추가된 개별 저장 함수들 ===
+    // === 개별 저장 함수들 (팝업 적용) ===
 
     // 웨이트 운동만 저장
     async saveWorkoutsOnly() {
@@ -58,11 +58,11 @@ class SupabaseManager {
                 if (insertError) throw insertError;
             }
 
-            NotificationUtils.showSuccessPopup('웨이트 운동이 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 웨이트 운동이 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('웨이트 운동 저장 오류:', error);
-            NotificationUtils.alert('웨이트 운동 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 웨이트 운동 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
@@ -102,11 +102,11 @@ class SupabaseManager {
                 if (insertError) throw insertError;
             }
 
-            NotificationUtils.showSuccessPopup('유산소 운동이 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 유산소 운동이 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('유산소 운동 저장 오류:', error);
-            NotificationUtils.alert('유산소 운동 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 유산소 운동 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
@@ -151,11 +151,11 @@ class SupabaseManager {
 
             if (insertError) throw insertError;
 
-            NotificationUtils.showSuccessPopup('아침 식사가 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 아침 식사가 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('아침 식사 저장 오류:', error);
-            NotificationUtils.alert('아침 식사 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 아침 식사 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
@@ -201,11 +201,11 @@ class SupabaseManager {
 
             if (insertError) throw insertError;
 
-            NotificationUtils.showSuccessPopup('점심 식사가 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 점심 식사가 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('점심 식사 저장 오류:', error);
-            NotificationUtils.alert('점심 식사 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 점심 식사 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
@@ -250,11 +250,11 @@ class SupabaseManager {
 
             if (insertError) throw insertError;
 
-            NotificationUtils.showSuccessPopup('저녁 식사가 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 저녁 식사가 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('저녁 식사 저장 오류:', error);
-            NotificationUtils.alert('저녁 식사 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 저녁 식사 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
@@ -271,16 +271,16 @@ class SupabaseManager {
 
             if (error) throw error;
 
-            NotificationUtils.showSuccessPopup('사용자 정보가 저장되었습니다!');
+            NotificationUtils.showSuccessPopup('✅ 사용자 정보가 저장되었습니다!');
             return { success: true };
         } catch (error) {
             console.error('사용자 정보 저장 오류:', error);
-            NotificationUtils.alert('사용자 정보 저장 실패: ' + error.message);
+            NotificationUtils.showErrorPopup('❌ 사용자 정보 저장 실패: ' + error.message);
             return { success: false, error };
         }
     }
 
-    // === 기존 함수들 (그대로 유지) ===
+    // === 기존 함수들 (내부 로직용) ===
 
     // 사용자 데이터 저장/업데이트
     async saveUser(weight) {
@@ -439,7 +439,7 @@ class SupabaseManager {
         }
     }
 
-    // 전체 데이터 저장
+    // 전체 데이터 저장 (팝업 적용)
     async saveAllData(selectedDate, workouts, cardioWorkouts, useDefaultBreakfast, useDefaultLunch, useDefaultDinner, customBreakfastItems, customLunchItems, customDinnerItems, userWeight) {
         const saveBtn = DOM.get('saveToSupabase');
 
@@ -467,13 +467,14 @@ class SupabaseManager {
             const mealResult = await this.saveMeals(selectedDate, useDefaultBreakfast, useDefaultLunch, useDefaultDinner, customBreakfastItems, customLunchItems, customDinnerItems);
             if (!mealResult.success) throw mealResult.error;
 
+            // 성공 팝업 표시
             NotificationUtils.showSuccessPopup(
-                `✅ ${selectedDate} 데이터가 성공적으로 저장되었습니다!`
+                `✅ ${selectedDate} 전체 데이터가 성공적으로 저장되었습니다!`
             );
 
         } catch (error) {
-            console.error('저장 오류:', error);
-            NotificationUtils.alert('저장 실패: ' + error.message);
+            console.error('전체 저장 오류:', error);
+            NotificationUtils.showErrorPopup('❌ 전체 저장 실패: ' + error.message);
         } finally {
             saveBtn.textContent = '💾 Supabase 저장';
             saveBtn.disabled = false;

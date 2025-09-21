@@ -373,7 +373,7 @@ class FitnessApp {
         }
     }
 
-    // 유틸리티 관련 이벤트 리스너
+    // 유틸리티 관련 이벤트 리스너 (수정된 버전)
     static setupUtilityEventListeners() {
         // 기존 전체 저장/다운로드/초기화 버튼들
         const downloadBtn = DOM.get('downloadData');
@@ -395,25 +395,33 @@ class FitnessApp {
             resetBtn.addEventListener('click', FitnessApp.resetAllData);
         }
 
-        // 새로 추가된 개별 저장 버튼들
+        // === 개별 저장 버튼들 (수정된 버전) ===
         
         // 웨이트 운동 저장
         const saveWorkoutsBtn = DOM.get('saveWorkoutsBtn');
         if (saveWorkoutsBtn) {
+            console.log('웨이트 저장 버튼 이벤트 리스너 등록 완료');
             saveWorkoutsBtn.addEventListener('click', async function () {
-                console.log('웨이트 저장 버튼 클릭!');
+                console.log('웨이트 저장 버튼 클릭됨!');
+                
                 if (AppState.workouts.length === 0) {
-                    alert('저장할 웨이트 운동이 없습니다.');
+                    NotificationUtils.showErrorPopup('❌ 저장할 웨이트 운동이 없습니다.');
                     return;
                 }
 
+                const originalText = this.textContent;
                 this.textContent = '💾 저장 중...';
                 this.disabled = true;
 
                 try {
                     await supabaseManager.saveWorkoutsOnly();
+                    NotificationUtils.showSuccessPopup('✅ 웨이트 운동이 저장되었습니다!');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } catch (error) {
+                    console.error('웨이트 저장 중 오류:', error);
+                    NotificationUtils.showErrorPopup('❌ 웨이트 저장 중 오류가 발생했습니다.');
                 } finally {
-                    this.textContent = '💾 웨이트 저장';
+                    this.textContent = originalText;
                     this.disabled = false;
                 }
             });
@@ -422,20 +430,28 @@ class FitnessApp {
         // 유산소 운동 저장
         const saveCardioBtn = DOM.get('saveCardioBtn');
         if (saveCardioBtn) {
+            console.log('유산소 저장 버튼 이벤트 리스너 등록 완료');
             saveCardioBtn.addEventListener('click', async function () {
-                console.log('유산소 저장 버튼 클릭!');
+                console.log('유산소 저장 버튼 클릭됨!');
+                
                 if (AppState.cardioWorkouts.length === 0) {
-                    alert('저장할 유산소 운동이 없습니다.');
+                    NotificationUtils.showErrorPopup('❌ 저장할 유산소 운동이 없습니다.');
                     return;
                 }
 
+                const originalText = this.textContent;
                 this.textContent = '💾 저장 중...';
                 this.disabled = true;
 
                 try {
                     await supabaseManager.saveCardioOnly();
+                    NotificationUtils.showSuccessPopup('✅ 유산소 운동이 저장되었습니다!');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } catch (error) {
+                    console.error('유산소 저장 중 오류:', error);
+                    NotificationUtils.showErrorPopup('❌ 유산소 저장 중 오류가 발생했습니다.');
                 } finally {
-                    this.textContent = '💾 유산소 저장';
+                    this.textContent = originalText;
                     this.disabled = false;
                 }
             });
@@ -444,15 +460,23 @@ class FitnessApp {
         // 아침 식사 저장
         const saveBreakfastBtn = DOM.get('saveBreakfastBtn');
         if (saveBreakfastBtn) {
+            console.log('아침 저장 버튼 이벤트 리스너 등록 완료');
             saveBreakfastBtn.addEventListener('click', async function () {
-                console.log('아침 저장 버튼 클릭!');
+                console.log('아침 저장 버튼 클릭됨!');
+                
+                const originalText = this.textContent;
                 this.textContent = '💾 저장 중...';
                 this.disabled = true;
 
                 try {
                     await supabaseManager.saveBreakfastOnly();
+                    NotificationUtils.showSuccessPopup('✅ 아침 식사가 저장되었습니다!');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } catch (error) {
+                    console.error('아침 저장 중 오류:', error);
+                    NotificationUtils.showErrorPopup('❌ 아침 저장 중 오류가 발생했습니다.');
                 } finally {
-                    this.textContent = '💾 저장';
+                    this.textContent = originalText;
                     this.disabled = false;
                 }
             });
@@ -461,15 +485,23 @@ class FitnessApp {
         // 점심 식사 저장
         const saveLunchBtn = DOM.get('saveLunchBtn');
         if (saveLunchBtn) {
+            console.log('점심 저장 버튼 이벤트 리스너 등록 완료');
             saveLunchBtn.addEventListener('click', async function () {
-                console.log('점심 저장 버튼 클릭!');
+                console.log('점심 저장 버튼 클릭됨!');
+                
+                const originalText = this.textContent;
                 this.textContent = '💾 저장 중...';
                 this.disabled = true;
 
                 try {
                     await supabaseManager.saveLunchOnly();
+                    NotificationUtils.showSuccessPopup('✅ 점심 식사가 저장되었습니다!');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } catch (error) {
+                    console.error('점심 저장 중 오류:', error);
+                    NotificationUtils.showErrorPopup('❌ 점심 저장 중 오류가 발생했습니다.');
                 } finally {
-                    this.textContent = '💾 저장';
+                    this.textContent = originalText;
                     this.disabled = false;
                 }
             });
@@ -478,15 +510,23 @@ class FitnessApp {
         // 저녁 식사 저장
         const saveDinnerBtn = DOM.get('saveDinnerBtn');
         if (saveDinnerBtn) {
+            console.log('저녁 저장 버튼 이벤트 리스너 등록 완료');
             saveDinnerBtn.addEventListener('click', async function () {
-                console.log('저녁 저장 버튼 클릭!');
+                console.log('저녁 저장 버튼 클릭됨!');
+                
+                const originalText = this.textContent;
                 this.textContent = '💾 저장 중...';
                 this.disabled = true;
 
                 try {
                     await supabaseManager.saveDinnerOnly();
+                    NotificationUtils.showSuccessPopup('✅ 저녁 식사가 저장되었습니다!');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } catch (error) {
+                    console.error('저녁 저장 중 오류:', error);
+                    NotificationUtils.showErrorPopup('❌ 저녁 저장 중 오류가 발생했습니다.');
                 } finally {
-                    this.textContent = '💾 저장';
+                    this.textContent = originalText;
                     this.disabled = false;
                 }
             });

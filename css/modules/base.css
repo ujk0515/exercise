@@ -476,6 +476,29 @@ body {
     word-wrap: break-word;
 }
 
+/* 실패 메시지 애니메이션 (신규 추가) */
+.error-popup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+    animation: slideInDown 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    max-width: 90vw;
+    word-wrap: break-word;
+}
+
 @keyframes slideInDown {
     from {
         opacity: 0;

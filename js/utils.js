@@ -343,17 +343,82 @@ const RenderUtils = {
     }
 };
 
-// 알림 유틸리티
+// 알림 유틸리티 (수정된 버전 - 실패 팝업 추가)
 const NotificationUtils = {
-    // 성공 팝업 표시
+    // 간단한 토스트 팝업 표시
     showSuccessPopup: (message, duration = 3000) => {
-        const popup = DOM.get('successPopup');
-        popup.textContent = message;
-        DOM.show(popup);
+        // 기존 토스트 제거
+        const existingToast = document.querySelector('.simple-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
 
+        // 간단한 토스트 생성
+        const toast = document.createElement('div');
+        toast.className = 'simple-toast';
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            z-index: 99999;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            max-width: 90vw;
+            word-wrap: break-word;
+        `;
+
+        document.body.appendChild(toast);
+
+        // 지정된 시간 후 제거
         setTimeout(() => {
-            DOM.hide(popup);
+            if (toast && toast.parentNode) {
+                toast.remove();
+            }
         }, duration);
+    },
+
+    // 실패 팝업 표시 (신규 추가)
+    showErrorPopup: (message, duration = 3000) => {
+        // 기존 팝업 제거
+        NotificationUtils.removeExistingPopups();
+        
+        // 새 팝업 생성
+        const popup = document.createElement('div');
+        popup.className = 'error-popup';
+        popup.textContent = message;
+        document.body.appendChild(popup);
+
+        // 지정된 시간 후 제거
+        setTimeout(() => {
+            if (popup && popup.parentNode) {
+                popup.parentNode.removeChild(popup);
+            }
+        }, duration);
+    },
+
+    // 기존 팝업 제거 (중복 방지)
+    removeExistingPopups: () => {
+        const existingSuccessPopups = document.querySelectorAll('.success-popup');
+        const existingErrorPopups = document.querySelectorAll('.error-popup');
+        
+        existingSuccessPopups.forEach(popup => {
+            if (popup.parentNode) {
+                popup.parentNode.removeChild(popup);
+            }
+        });
+        
+        existingErrorPopups.forEach(popup => {
+            if (popup.parentNode) {
+                popup.parentNode.removeChild(popup);
+            }
+        });
     },
 
     // 확인 대화상자
@@ -361,7 +426,7 @@ const NotificationUtils = {
         return window.confirm(message);
     },
 
-    // 알림 대화상자
+    // 알림 대화상자 (deprecated - 팝업 사용 권장)
     alert: (message) => {
         window.alert(message);
     }
