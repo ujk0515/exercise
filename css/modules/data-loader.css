@@ -300,6 +300,50 @@
     opacity: 0.9;
 }
 
+/* 13인치 고해상도 화면용 개선 */
+@media (max-width: 2560px) and (min-width: 1401px) {
+    .data-loader-container {
+        padding: 20px;
+    }
+
+    .calendar-day {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+
+    .monthly-stats-grid,
+    .yearly-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+    }
+
+    .calendar-container {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .selected-data-preview {
+        padding: 16px;
+        font-size: 13px;
+    }
+
+    .preview-title {
+        font-size: 13px;
+    }
+
+    .preview-item {
+        font-size: 12px;
+    }
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .monthly-stats-grid,
@@ -307,11 +351,11 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    
+
     .summary-container {
         gap: 20px;
     }
-    
+
     .monthly-summary,
     .yearly-summary {
         padding: 16px;

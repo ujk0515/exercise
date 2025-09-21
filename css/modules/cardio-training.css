@@ -1,1 +1,103 @@
 /* Cardio Training specific styles */
+
+/* 13인치 고해상도 화면용 유산소 운동 개선 */
+@media (max-width: 2560px) and (min-width: 1401px) {
+    /* 유산소 운동 버튼 그리드 개선 */
+    .cardio-type-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    /* 유산소 운동 선택 버튼 스타일 개선 */
+    .cardio-type-btn {
+        padding: 12px 8px;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .cardio-type-btn.active {
+        border-color: #10b981;
+        background: #f0fdf4;
+        color: #065f46;
+    }
+
+    .cardio-type-btn:hover {
+        border-color: #10b981;
+        background: #f9fafb;
+    }
+
+    /* 런닝머신 입력 필드 그리드 */
+    .treadmill-inputs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* 사이클 입력 필드 그리드 */
+    .cycle-inputs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* 입력 필드 라벨 개선 */
+    .cardio-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cardio-input-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .cardio-input {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .cardio-input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    /* 유산소 추가 버튼 개선 */
+    .add-cardio-btn {
+        width: 100%;
+        padding: 12px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 16px;
+    }
+
+    .add-cardio-btn:hover {
+        background: #059669;
+    }
+
+    .add-cardio-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
+}
