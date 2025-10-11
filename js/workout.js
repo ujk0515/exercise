@@ -211,11 +211,11 @@ class CardioManager {
             // 천국의 계단(StairMaster) 로직
             const level = parseInt(DOM.getValue('stairmasterLevel'));
             const duration = parseInt(DOM.getValue('stairmasterDuration'));
-            
+
             if (!level || !duration) return;
-            
+
             const calories = CalorieCalculator.calculateStairMaster(level, duration);
-            
+
             cardio = {
                 id: Date.now(),
                 type: '천국의 계단',
@@ -225,6 +225,22 @@ class CardioManager {
             };
             DOM.setValue('stairmasterLevel', 5);
             DOM.setValue('stairmasterDuration', 20);
+
+        } else if (AppState.selectedCardioType === 'mountain-climber') {
+            // 마운트 클라이머 로직
+            const duration = parseInt(DOM.getValue('mountainClimberDuration'));
+
+            if (!duration) return;
+
+            const calories = CalorieCalculator.calculateMountainClimber(duration);
+
+            cardio = {
+                id: Date.now(),
+                type: '마운트 클라이머',
+                duration,
+                calories
+            };
+            DOM.setValue('mountainClimberDuration', 20);
         }
 
         if (cardio) {
@@ -252,6 +268,7 @@ class CardioManager {
         const sidestepForm = DOM.get('sidestepForm');
         const regularStairsForm = DOM.get('regularStairsForm'); // 일반 계단 폼
         const stairmasterForm = DOM.get('stairmasterForm'); // 천국의 계단 폼
+        const mountainClimberForm = DOM.get('mountainClimberForm'); // 마운트 클라이머 폼
 
         // 모든 폼 숨기기
         if (treadmillForm) DOM.hide(treadmillForm);
@@ -259,6 +276,7 @@ class CardioManager {
         if (sidestepForm) DOM.hide(sidestepForm);
         if (regularStairsForm) DOM.hide(regularStairsForm);
         if (stairmasterForm) DOM.hide(stairmasterForm);
+        if (mountainClimberForm) DOM.hide(mountainClimberForm);
 
         // 선택된 폼만 보이기
         if (type === 'treadmill') {
@@ -271,6 +289,8 @@ class CardioManager {
             if (regularStairsForm) DOM.show(regularStairsForm);
         } else if (type === 'stairmaster') {
             if (stairmasterForm) DOM.show(stairmasterForm);
+        } else if (type === 'mountain-climber') {
+            if (mountainClimberForm) DOM.show(mountainClimberForm);
         }
     }
 
@@ -304,6 +324,8 @@ class CardioManager {
                 detailsText = `${cardio.floors}층, ${cardio.duration}분`;
             } else if (cardio.type === '천국의 계단') {
                 detailsText = `레벨 ${cardio.level}, ${cardio.duration}분`;
+            } else if (cardio.type === '마운트 클라이머') {
+                detailsText = `${cardio.duration}분 (인터벌)`;
             }
             
             div.innerHTML = `

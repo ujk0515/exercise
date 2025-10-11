@@ -126,8 +126,8 @@
             </div>
         </div>
 
-        <!-- 데이터 불러오기, 웨이트, 운동기록, 유산소 (4분할) -->
-        <div class="grid grid-4">
+        <!-- 데이터 불러오기, 웨이트, 유산소 (3분할) -->
+        <div class="grid grid-3">
             <!-- 데이터 불러오기 -->
             <div class="card">
                 <div class="card-content">
@@ -342,42 +342,6 @@
                 </div>
             </div>
 
-            <!-- 운동 기록 -->
-            <div class="card">
-                <div class="card-content">
-                    <h2 class="section-title">📋 운동 기록</h2>
-
-                    <div class="workout-summary-section">
-                        <div class="workout-summary-grid">
-                            <div class="summary-stat">
-                                <div class="stat-number" id="totalWorkoutSets">0</div>
-                                <div class="stat-label">총 세트</div>
-                            </div>
-                            <div class="summary-stat">
-                                <div class="stat-number" id="totalWorkoutCalories">0</div>
-                                <div class="stat-label">총 소모칼로리</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 웨이트 운동 기록 -->
-                    <div class="records-section">
-                        <div class="records-title">🏋️‍♂️ 웨이트 운동 기록</div>
-                        <div id="workoutRecords">
-                            <div class="empty-state">아직 웨이트 운동 기록이 없습니다</div>
-                        </div>
-                    </div>
-
-                    <!-- 유산소 운동 기록 -->
-                    <div class="records-section">
-                        <div class="records-title">🏃‍♂️ 유산소 운동 기록</div>
-                        <div id="cardioRecords">
-                            <div class="empty-state">아직 유산소 운동 기록이 없습니다</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- 유산소 운동 (개별 저장 버튼 추가) -->
             <!-- 유산소 운동 섹션 (5분할로 변경 + 계단 운동 추가) -->
             <div class="card">
@@ -390,8 +354,8 @@
                         </button>
                     </div>
 
-                    <!-- 운동 종류 선택 탭 (5분할로 변경) -->
-                    <div class="grid grid-5 form-group">
+                    <!-- 운동 종류 선택 탭 (3x2 배치로 변경) -->
+                    <div class="grid grid-3 form-group">
                         <div class="category-btn active" data-cardio-type="treadmill">
                             <div class="category-icon">🏃‍♂️</div>
                             <div>런닝머신</div>
@@ -411,6 +375,10 @@
                         <div class="category-btn" data-cardio-type="stairmaster">
                             <div class="category-icon">⛰️</div>
                             <div>천국계단</div>
+                        </div>
+                        <div class="category-btn" data-cardio-type="mountain-climber">
+                            <div class="category-icon">🧗</div>
+                            <div>마운트클라이머</div>
                         </div>
                     </div>
 
@@ -534,6 +502,18 @@
                         </div>
                     </div>
 
+                    <!-- 마운트 클라이머 폼 (새로 추가) -->
+                    <div id="mountainClimberForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">마운트 클라이머 (인터벌)</h3>
+                        <div class="form-group">
+                            <label class="form-label">시간 (분)</label>
+                            <input type="number" id="mountainClimberDuration" class="form-input" min="1" max="120" value="20">
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+                            💡 1분 빠르게 + 1분 천천히 인터벌 방식 (평균 MET 8.0)
+                        </div>
+                    </div>
+
                     <button id="addCardio" class="btn btn-success btn-full">
                         ➕ 유산소 추가
                     </button>
@@ -541,6 +521,42 @@
             </div>
 
 
+        </div>
+
+        <!-- 운동 기록 (가운데 정렬, 3개 카드 너비와 동일) -->
+        <div class="card" style="max-width: calc(100% * 0.75 + 48px); margin: 0 auto 24px auto;">
+            <div class="card-content">
+                <h2 class="section-title">📋 운동 기록</h2>
+
+                <div class="workout-summary-section">
+                    <div class="workout-summary-grid">
+                        <div class="summary-stat">
+                            <div class="stat-number" id="totalWorkoutSets">0</div>
+                            <div class="stat-label">총 세트</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-number" id="totalWorkoutCalories">0</div>
+                            <div class="stat-label">총 소모칼로리</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 웨이트 운동 기록 -->
+                <div class="records-section">
+                    <div class="records-title">🏋️‍♂️ 웨이트 운동 기록</div>
+                    <div id="workoutRecords">
+                        <div class="empty-state">아직 웨이트 운동 기록이 없습니다</div>
+                    </div>
+                </div>
+
+                <!-- 유산소 운동 기록 -->
+                <div class="records-section">
+                    <div class="records-title">🏃‍♂️ 유산소 운동 기록</div>
+                    <div id="cardioRecords">
+                        <div class="empty-state">아직 유산소 운동 기록이 없습니다</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 식사 기록 (개별 저장 버튼 추가) -->

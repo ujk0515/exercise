@@ -60,10 +60,6 @@ body {
         padding: 20px;
     }
 
-    .grid-4 {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
     .form-input, .form-select {
         padding: 10px 14px;
         font-size: 15px;
@@ -82,9 +78,9 @@ body {
     }
 }
 
-/* 1200px 이하: 4분할, 5분할 -> 2분할 */
+/* 1200px 이하: 4분할, 5분할, 6분할 -> 2분할 */
 @media (max-width: 1200px) {
-    .grid-4, .grid-5 {
+    .grid-4, .grid-5, .grid-6 {
         grid-template-columns: 1fr 1fr;
     }
     .container {

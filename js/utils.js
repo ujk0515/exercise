@@ -236,6 +236,18 @@ const CalorieCalculator = {
 
         const hours = duration / 60;
         return Math.round(finalMET * AppState.userWeight * hours);
+    },
+
+    // 마운트 클라이머 칼로리 계산 (인터벌: 1분 빠르게 + 1분 천천히)
+    calculateMountainClimber: (duration) => {
+        // 인터벌 평균 MET: (고강도 10.0 + 저강도 6.0) / 2 = 8.0
+        const averageMET = 8.0;
+
+        // 시간을 hour로 변환
+        const hours = duration / 60;
+
+        // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
+        return Math.round(averageMET * AppState.userWeight * hours);
     }
 };
 
