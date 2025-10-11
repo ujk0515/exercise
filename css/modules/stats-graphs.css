@@ -12,8 +12,19 @@
     margin-top: 16px;
 }
 
+/* 통계 그래프 영역의 차트 버튼만을 위한 스타일 (다른 영역에 영향 없음) */
 .category-btn[data-chart] {
+    /* 기존 category-btn 스타일 오버라이드 */
+    aspect-ratio: auto !important;
+    min-height: auto !important;
+    padding: 12px 8px !important;
+    height: auto !important;
     transition: all 0.3s ease;
+}
+
+.category-btn[data-chart] .category-icon {
+    font-size: 1.5rem !important;
+    margin-bottom: 4px !important;
 }
 
 .category-btn[data-chart]:hover {
