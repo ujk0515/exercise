@@ -25,7 +25,7 @@ const EXERCISE_DATABASE = {
             'high_row_cable': { name: '하이로우 (케이블)', met: 5.0, type: 'machine' },
             'high_row_machine': { name: '하이로우 (머신)', met: 4.8, type: 'machine' },
             'seated_row': { name: '시티드 로우', met: 4.8, type: 'machine' },
-            'one_arm_seated_row': { name: '원암 시티드 로우', met: 5.2, type: 'machine' },
+            'one_arm_seated_row': { name: '원암 시티드 로우', met: 4.8, type: 'machine', singleSide: true },
             'reverse_pec_deck': { name: '리버스 펙덱 플라이', met: 4.0, type: 'machine' },
             'cable_arm_pulldown': { name: '케이블 암 풀다운', met: 4.5, type: 'machine' },
             'tbar_row': { name: 'T바 로우', met: 5.5, type: 'barbell' }
@@ -49,7 +49,9 @@ const EXERCISE_DATABASE = {
         exercises: {
             'incline_smith_shoulder': { name: '인클라인 스미스 머신 체스트 프레스 (어깨 중심)', met: 5.0, type: 'machine' },
             'dumbbell_shoulder_press': { name: '덤벨 숄더 프레스', met: 5.5, type: 'dumbbell' },
+            'smith_machine_shoulder_press_single': { name: '스미스 머신 숄더 프레스 (한쪽씩)', met: 4.5, type: 'machine', singleSide: true },
             'side_lateral_raise': { name: '사이드 레터럴 레이즈', met: 4.0, type: 'dumbbell' },
+            'y_raise': { name: 'Y-레이즈', met: 4.2, type: 'dumbbell' },
             'ez_bar_upright_row': { name: '이지바 업라이트 로우', met: 4.8, type: 'barbell' },
             'cable_face_pull': { name: '케이블 페이스 풀', met: 4.2, type: 'machine' },
             'machine_shoulder_press': { name: '머신 숄더 프레스', met: 4.5, type: 'machine' },
@@ -60,9 +62,9 @@ const EXERCISE_DATABASE = {
         name: '하체',
         exercises: {
             'leg_press': { name: '레그프레스', met: 5.5, type: 'machine' },
-            'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 6.0, type: 'machine' },
+            'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 5.5, type: 'machine', singleSide: true },
             'seated_leg_press': { name: '시티드 레그프레스', met: 5.2, type: 'machine' },
-            'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.8, type: 'machine' },
+            'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.2, type: 'machine', singleSide: true },
             'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0, type: 'machine' },
             'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0, type: 'machine' },
             'leg_extension': { name: '레그 익스텐션', met: 4.5, type: 'machine' },
@@ -106,7 +108,7 @@ const SIDESTEP_MET = 6.0;
 
 // 🔥 새로 추가: 일반 계단 오르기 MET 값
 // 층수당 기본 칼로리 소모 (체중 1kg당 층당 0.15kcal 기준으로 MET 환산)
-const REGULAR_STAIRS_MET_PER_FLOOR = 0.02; // 층당 추가 MET
+const REGULAR_STAIRS_MET_PER_FLOOR = 0.05; // 층당 추가 MET
 
 // 🔥 새로 추가: 천국의 계단(StairMaster) MET 값 (속도별)
 const STAIRMASTER_MET = {

@@ -112,6 +112,34 @@ body {
     .card-content {
         padding: 16px;
     }
+
+    /* 웨이트 운동 카테고리 버튼 영역 - 2분할 */
+    .card-content .grid-3[class*="form-group"]:has([data-category]) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* 유산소 운동 타입 버튼 영역 - 2분할 */
+    .card-content .grid-3[class*="form-group"]:has([data-cardio-type]) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* 모바일 전용 버튼 크기 조정 */
+    .category-btn {
+        aspect-ratio: auto;
+        min-height: 70px;
+        padding: 12px 8px;
+    }
+
+    .category-icon {
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+    }
+
+    .category-btn div:not(.category-icon) {
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 480px) {

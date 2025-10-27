@@ -113,6 +113,10 @@ const CalorieCalculator = {
         const exercise = EXERCISE_DATABASE[category].exercises[exerciseKey];
         if (!exercise) return 0;
 
+        // 한쪽씩 운동인 경우 회수 2배 적용
+        const isSingleSide = exercise.singleSide || false;
+        const actualReps = isSingleSide ? reps * 2 : reps;
+
         // 총 무게 계산
         let totalWeight = 0;
         Object.entries(weightCombination).forEach(([weight, count]) => {
@@ -123,7 +127,7 @@ const CalorieCalculator = {
         const isBodyweight = exercise.bodyweight || false;
         if (isBodyweight) {
             // 맨몸 운동은 단순 계산
-            const totalMinutes = (reps * sets * 2) / 60; // 1회당 2초로 계산
+            const totalMinutes = (actualReps * sets * 2) / 60; // 1회당 2초로 계산
             const hours = totalMinutes / 60;
             return Math.round(exercise.met * AppState.userWeight * hours);
         }
@@ -143,7 +147,7 @@ const CalorieCalculator = {
 
         // 운동 시간 계산 - 현실적으로 수정 (휴식 시간 제외)
         const repTime = 2; // 1회당 2초로 감소 (기존 3초)
-        const totalSeconds = reps * sets * repTime; // 휴식 시간 제외
+        const totalSeconds = actualReps * sets * repTime; // 휴식 시간 제외
         const hours = totalSeconds / 3600;
 
         // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
@@ -238,10 +242,10 @@ const CalorieCalculator = {
         return Math.round(finalMET * AppState.userWeight * hours);
     },
 
-    // 마운트 클라이머 칼로리 계산 (인터벌: 1분 빠르게 + 1분 천천히)
+    // 마운트 클라이머 칼로리 계산 (계단 속도 대비 2배 페이스)
     calculateMountainClimber: (duration) => {
-        // 인터벌 평균 MET: (고강도 10.0 + 저강도 6.0) / 2 = 8.0
-        const averageMET = 8.0;
+        // 계단 오르기 대비 2배 빠른 페이스 = MET 9.0
+        const averageMET = 9.0;
 
         // 시간을 hour로 변환
         const hours = duration / 60;
