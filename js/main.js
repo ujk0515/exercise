@@ -261,6 +261,20 @@ class FitnessApp {
                 }
             });
         }
+
+        // 버피테스트 강도 선택 이벤트 (덤벨 무게 필드 표시/숨김)
+        DOM.getAll('input[name="burpeeIntensity"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const dumbbellWeightContainer = DOM.get('burpeeDumbbellWeightContainer');
+                if (dumbbellWeightContainer) {
+                    if (this.value === 'weighted') {
+                        DOM.show(dumbbellWeightContainer);
+                    } else {
+                        DOM.hide(dumbbellWeightContainer);
+                    }
+                }
+            });
+        });
     }
 
     // 식사 관련 이벤트 리스너

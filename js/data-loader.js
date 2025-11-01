@@ -314,12 +314,28 @@ class DataLoaderManager {
             content += `
                 <div class="preview-section">
                     <div class="preview-title">🏃‍♂️ 유산소 운동 (${dayCardio.length}개)</div>
-                    ${dayCardio.map(c => `
-                        <div class="preview-item">• ${c.exercise_type} - ${c.exercise_type === '런닝머신'
-                    ? `${c.incline}도, ${c.speed}km/h, ${c.duration}분`
-                    : `강도 ${c.intensity}단계, ${c.rpm || 80}RPM, ${c.duration}분`
-                } (${c.calories}kcal)</div>
-                    `).join('')}
+                    ${dayCardio.map(c => {
+                        let details = '';
+                        if (c.exercise_type === '런닝머신') {
+                            details = `${c.incline}도, ${c.speed}km/h, ${c.duration}분`;
+                        } else if (c.exercise_type === '사이클') {
+                            details = `강도 ${c.intensity}단계, ${c.rpm || 80}RPM, ${c.duration}분`;
+                        } else if (c.exercise_type === '버피테스트') {
+                            const intensityText = c.dumbbell_weight ? `덤벨 ${c.dumbbell_weight}kg` : '맨몸';
+                            details = `${intensityText}, ${c.reps}회`;
+                        } else if (c.exercise_type === '일반 계단 오르기') {
+                            details = `${c.duration}분`;
+                        } else if (c.exercise_type === '천국의 계단') {
+                            details = `${c.duration}분`;
+                        } else if (c.exercise_type === '마운트 클라이머') {
+                            details = `${c.duration}분 (인터벌)`;
+                        } else if (c.exercise_type === '스텝박스 사이드스텝') {
+                            details = `${c.duration}분`;
+                        } else {
+                            details = `${c.duration}분`;
+                        }
+                        return `<div class="preview-item">• ${c.exercise_type} - ${details} (${c.calories}kcal)</div>`;
+                    }).join('')}
                 </div>
             `;
         }

@@ -380,6 +380,10 @@
                             <div class="category-icon">🧗</div>
                             <div>마운트클라이머</div>
                         </div>
+                        <div class="category-btn" data-cardio-type="burpee-test">
+                            <div class="category-icon">💪</div>
+                            <div>버피테스트</div>
+                        </div>
                     </div>
 
                     <!-- 런닝머신 폼 (기존) -->
@@ -511,6 +515,42 @@
                         </div>
                         <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">
                             💡 1분 빠르게 + 1분 천천히 인터벌 방식 (평균 MET 8.0)
+                        </div>
+                    </div>
+
+                    <!-- 버피테스트 폼 (새로 추가) -->
+                    <div id="burpeeTestForm" class="hidden">
+                        <h3 style="margin-bottom: 12px;">버피테스트</h3>
+
+                        <!-- 운동 강도 선택 -->
+                        <div class="form-group">
+                            <label class="form-label">운동 강도</label>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                    <input type="radio" name="burpeeIntensity" value="bodyweight" checked>
+                                    <span>맨몸</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                    <input type="radio" name="burpeeIntensity" value="weighted">
+                                    <span>덤벨</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 덤벨 무게 입력 (덤벨 선택 시에만 표시) -->
+                        <div id="burpeeDumbbellWeightContainer" class="form-group hidden">
+                            <label class="form-label">덤벨 무게 (kg)</label>
+                            <input type="number" id="burpeeDumbbellWeight" class="form-input" min="1" max="50" step="0.5" value="5">
+                        </div>
+
+                        <!-- 횟수 입력 -->
+                        <div class="form-group">
+                            <label class="form-label">횟수 (회)</label>
+                            <input type="number" id="burpeeReps" class="form-input" min="1" max="500" value="20">
+                        </div>
+
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+                            💡 정확한 자세로 천천히 수행 (1회당 약 5초 소요)
                         </div>
                     </div>
 

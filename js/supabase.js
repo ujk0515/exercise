@@ -89,10 +89,12 @@ class SupabaseManager {
                     exercise_type: cardio.type,
                     incline: cardio.incline || null,
                     speed: cardio.speed || null,
-                    intensity: cardio.intensity || null,
+                    intensity: (typeof cardio.intensity === 'number') ? cardio.intensity : null,
                     rpm: cardio.rpm || null,
-                    duration: parseInt(cardio.duration),
-                    calories: parseInt(cardio.calories)
+                    duration: cardio.duration ? parseInt(cardio.duration) : null,
+                    calories: parseInt(cardio.calories),
+                    reps: cardio.reps || null,
+                    dumbbell_weight: cardio.dumbbellWeight || null
                 }));
 
                 const { error: insertError } = await this.client
@@ -339,10 +341,12 @@ class SupabaseManager {
                 exercise_type: cardio.type,
                 incline: cardio.incline || null,
                 speed: cardio.speed || null,
-                intensity: cardio.intensity || null,
+                intensity: (typeof cardio.intensity === 'number') ? cardio.intensity : null,
                 rpm: cardio.rpm || null,
-                duration: parseInt(cardio.duration),
-                calories: parseInt(cardio.calories)
+                duration: cardio.duration ? parseInt(cardio.duration) : null,
+                calories: parseInt(cardio.calories),
+                reps: cardio.reps || null,
+                dumbbell_weight: cardio.dumbbellWeight || null
             }));
 
             const { error } = await this.client

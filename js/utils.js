@@ -207,6 +207,29 @@ const CalorieCalculator = {
         return Math.round(met * AppState.userWeight * hours);
     },
 
+    // 버피테스트 칼로리 계산 (횟수 기반)
+    calculateBurpeeTest: (intensity, dumbbellWeight, reps) => {
+        // 기본 MET 값 (맨몸 vs 덤벨)
+        let baseMET = intensity === 'bodyweight'
+            ? BURPEE_TEST_MET.bodyweight
+            : BURPEE_TEST_MET.weighted;
+
+        // 덤벨 사용 시 무게 보너스 추가
+        if (intensity === 'weighted' && dumbbellWeight > 0) {
+            // 덤벨 무게가 체중 대비 비율로 MET 증가
+            const weightRatio = dumbbellWeight / AppState.userWeight;
+            const weightBonus = weightRatio * 5; // 체중 대비 10%당 MET 0.5 증가
+            baseMET += weightBonus;
+        }
+
+        // 1회당 약 5초 소요 기준으로 총 시간 계산
+        const totalSeconds = reps * 5;
+        const hours = totalSeconds / 3600;
+
+        // MET 공식: 칼로리 = MET × 체중(kg) × 시간(hour)
+        return Math.round(baseMET * AppState.userWeight * hours);
+    },
+
     // 미플린 공식 기반 BMR 계산 (새로 추가)
     calculateMifflinBMR: () => {
         const weight = AppState.userWeight;

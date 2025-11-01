@@ -124,6 +124,12 @@ const STAIRMASTER_MET = {
     10: 9.0  // 빠른 속도
 };
 
+// 🔥 새로 추가: 버피테스트 MET 값
+const BURPEE_TEST_MET = {
+    bodyweight: 6.5,  // 맨몸 버피 (정확한 자세, 중간 속도)
+    weighted: 8.0     // 덤벨 버피 기본값
+};
+
 // 고정 칼로리 값
 const MEAL_CALORIES = {
     breakfast: 200,

@@ -241,6 +241,28 @@ class CardioManager {
                 calories
             };
             DOM.setValue('mountainClimberDuration', 20);
+
+        } else if (AppState.selectedCardioType === 'burpee-test') {
+            // 버피테스트 로직
+            const intensityElement = document.querySelector('input[name="burpeeIntensity"]:checked');
+            const intensityType = intensityElement ? intensityElement.value : 'bodyweight';
+            const dumbbellWeight = intensityType === 'weighted' ? parseFloat(DOM.getValue('burpeeDumbbellWeight')) : 0;
+            const reps = parseInt(DOM.getValue('burpeeReps'));
+
+            if (!reps) return;
+
+            const calories = CalorieCalculator.calculateBurpeeTest(intensityType, dumbbellWeight, reps);
+
+            cardio = {
+                id: Date.now(),
+                type: '버피테스트',
+                intensityType: intensityType,
+                dumbbellWeight: intensityType === 'weighted' ? dumbbellWeight : null,
+                reps,
+                calories
+            };
+            DOM.setValue('burpeeReps', 20);
+            DOM.setValue('burpeeDumbbellWeight', 5);
         }
 
         if (cardio) {
@@ -269,6 +291,7 @@ class CardioManager {
         const regularStairsForm = DOM.get('regularStairsForm'); // 일반 계단 폼
         const stairmasterForm = DOM.get('stairmasterForm'); // 천국의 계단 폼
         const mountainClimberForm = DOM.get('mountainClimberForm'); // 마운트 클라이머 폼
+        const burpeeTestForm = DOM.get('burpeeTestForm'); // 버피테스트 폼
 
         // 모든 폼 숨기기
         if (treadmillForm) DOM.hide(treadmillForm);
@@ -277,6 +300,7 @@ class CardioManager {
         if (regularStairsForm) DOM.hide(regularStairsForm);
         if (stairmasterForm) DOM.hide(stairmasterForm);
         if (mountainClimberForm) DOM.hide(mountainClimberForm);
+        if (burpeeTestForm) DOM.hide(burpeeTestForm);
 
         // 선택된 폼만 보이기
         if (type === 'treadmill') {
@@ -291,6 +315,8 @@ class CardioManager {
             if (stairmasterForm) DOM.show(stairmasterForm);
         } else if (type === 'mountain-climber') {
             if (mountainClimberForm) DOM.show(mountainClimberForm);
+        } else if (type === 'burpee-test') {
+            if (burpeeTestForm) DOM.show(burpeeTestForm);
         }
     }
 
@@ -326,8 +352,11 @@ class CardioManager {
                 detailsText = `레벨 ${cardio.level}, ${cardio.duration}분`;
             } else if (cardio.type === '마운트 클라이머') {
                 detailsText = `${cardio.duration}분 (인터벌)`;
+            } else if (cardio.type === '버피테스트') {
+                const intensityText = cardio.intensityType === 'weighted' ? `덤벨 ${cardio.dumbbellWeight}kg` : '맨몸';
+                detailsText = `${intensityText}, ${cardio.reps}회`;
             }
-            
+
             div.innerHTML = `
                 <div>
                     <div style="font-weight: 600;">${cardio.type}</div>
