@@ -65,6 +65,7 @@ const EXERCISE_DATABASE = {
             'leg_press_single': { name: '레그프레스(다리 한쪽씩x2)', met: 5.5, type: 'machine', singleSide: true },
             'seated_leg_press': { name: '시티드 레그프레스', met: 5.2, type: 'machine' },
             'seated_leg_press_single': { name: '시티드 레그프레스(다리 한쪽씩x2)', met: 5.2, type: 'machine', singleSide: true },
+            'v_squat': { name: 'V스쿼트', met: 5.3, type: 'machine' },
             'hip_adduction': { name: '힙 어덕션(안쪽)', met: 4.0, type: 'machine' },
             'hip_abduction': { name: '힙 어브덕션(바깥쪽)', met: 4.0, type: 'machine' },
             'leg_extension': { name: '레그 익스텐션', met: 4.5, type: 'machine' },
