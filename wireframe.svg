@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="2400" viewBox="0 0 1440 2400">
+  <defs>
+    <style>
+      .bg { fill: #f5f7fb; }
+      .card { fill: #ffffff; stroke: #cfd6e4; stroke-width: 2; rx: 12; }
+      .header { fill: #ffffff; stroke: #cfd6e4; stroke-width: 2; rx: 12; }
+      .tab { fill: #eef2f7; stroke: #cfd6e4; }
+      .btn { fill: #e8eefc; stroke: #9db6f5; }
+      .fab { fill: #3b82f6; }
+      .legend { fill: #f0f3f8; stroke: #cfd6e4; }
+      .text-title { font: 700 22px 'Inter', Arial, sans-serif; fill: #111827; }
+      .text-sub { font: 400 14px 'Inter', Arial, sans-serif; fill: #6b7280; }
+      .text-card-title { font: 700 18px 'Inter', Arial, sans-serif; fill: #111827; }
+      .text-label { font: 600 13px 'Inter', Arial, sans-serif; fill: #374151; }
+      .text-small { font: 400 12px 'Inter', Arial, sans-serif; fill: #6b7280; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect class="bg" x="0" y="0" width="1440" height="2400" />
+
+  <!-- success popup (hidden by default in app) -->
+  <rect x="420" y="16" width="600" height="36" rx="8" fill="#e8fbe8" stroke="#b7e4b7"/>
+  <text x="720" y="40" text-anchor="middle" class="text-small" fill="#166534">성공 팝업 (예시)</text>
+
+  <!-- fixed header card -->
+  <rect class="header" x="60" y="72" width="1320" height="140" />
+  <text x="92" y="118" class="text-title">🏋️‍♂️ 운동 기록 일지</text>
+  <text x="92" y="142" class="text-sub">체계적인 운동 및 식단 관리 시스템</text>
+
+  <!-- BMR collapsible area (center) -->
+  <rect x="500" y="94" width="380" height="96" rx="10" fill="#f9fafb" stroke="#e5e7eb" />
+  <text x="510" y="118" class="text-label">BMR 계산 (토글)</text>
+  <text x="510" y="140" class="text-small">나이 / 키 / 체중 / 성별 입력</text>
+  <text x="510" y="160" class="text-small">BMR / TDEE 결과</text>
+
+  <!-- date picker (right) -->
+  <rect x="1130" y="110" width="220" height="40" rx="8" fill="#eef2f7" stroke="#cfd6e4" />
+  <text x="1240" y="136" text-anchor="middle" class="text-small">날짜 선택</text>
+
+  <!-- Daily Summary card -->
+  <rect class="card" x="60" y="236" width="1320" height="180" />
+  <text x="92" y="268" class="text-card-title">📊 일일 요약</text>
+  <!-- four stat boxes -->
+  <rect x="92" y="290" width="280" height="70" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <rect x="392" y="290" width="280" height="70" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <rect x="692" y="290" width="280" height="70" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <rect x="992" y="290" width="280" height="70" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="232" y="330" text-anchor="middle" class="text-small">소모 칼로리</text>
+  <text x="532" y="330" text-anchor="middle" class="text-small">섭취 칼로리</text>
+  <text x="832" y="330" text-anchor="middle" class="text-small">칼로리 수지</text>
+  <text x="1132" y="330" text-anchor="middle" class="text-small">상태</text>
+  <!-- actions -->
+  <rect class="btn" x="92" y="368" width="200" height="36" rx="8"/>
+  <rect class="btn" x="308" y="368" width="200" height="36" rx="8"/>
+  <rect x="524" y="368" width="200" height="36" rx="8" fill="#fecaca" stroke="#fca5a5"/>
+  <text x="192" y="392" text-anchor="middle" class="text-small">📥 엑셀 다운로드</text>
+  <text x="408" y="392" text-anchor="middle" class="text-small">💾 Supabase 저장</text>
+  <text x="624" y="392" text-anchor="middle" class="text-small">🔄 전체 초기화</text>
+
+  <!-- 4-column grid: Data Loader, Weight, Records, Cardio -->
+  <!-- Column widths: 4 cards each 312 wide + gaps -->
+  <g transform="translate(60, 444)">
+    <!-- Data Loader -->
+    <rect class="card" x="0" y="0" width="312" height="520"/>
+    <text x="20" y="32" class="text-card-title">📥 데이터 불러오기</text>
+    <rect x="20" y="56" width="272" height="84" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="34" y="84" class="text-small">월간/연간 요약 (불러온 후 표시)</text>
+    <rect x="20" y="152" width="272" height="40" rx="8" class="btn"/>
+    <text x="156" y="178" text-anchor="middle" class="text-small">📥 현재 월 데이터 불러오기</text>
+    <rect x="20" y="206" width="272" height="212" rx="10" class="legend"/>
+    <text x="34" y="230" class="text-small">캘린더 (이전/다음 + 범례)</text>
+    <rect x="20" y="430" width="272" height="72" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="34" y="454" class="text-small">선택 날짜 데이터 미리보기</text>
+
+    <!-- Weight Training -->
+    <rect class="card" x="336" y="0" width="312" height="520"/>
+    <text x="356" y="32" class="text-card-title">🏋️‍♂️ 웨이트 운동</text>
+    <rect x="356" y="54" width="272" height="40" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="492" y="80" text-anchor="middle" class="text-small">체중 입력</text>
+    <rect x="356" y="102" width="272" height="64" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="492" y="136" text-anchor="middle" class="text-small">카테고리 버튼 (등/가슴/어깨/하체)</text>
+    <rect x="356" y="174" width="272" height="44" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="492" y="200" text-anchor="middle" class="text-small">운동 종목 선택</text>
+    <rect x="356" y="224" width="272" height="120" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="492" y="256" text-anchor="middle" class="text-small">무게 조합 입력 + 총합</text>
+    <rect x="356" y="352" width="272" height="74" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="492" y="392" text-anchor="middle" class="text-small">횟수 / 세트</text>
+    <rect x="356" y="436" width="272" height="44" rx="8" class="btn"/>
+    <text x="492" y="462" text-anchor="middle" class="text-small">➕ 운동 추가</text>
+
+    <!-- Workout Records -->
+    <rect class="card" x="672" y="0" width="312" height="520"/>
+    <text x="692" y="32" class="text-card-title">📋 운동 기록</text>
+    <rect x="692" y="54" width="272" height="60" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="828" y="86" text-anchor="middle" class="text-small">총 세트 / 총 소모칼로리</text>
+    <rect x="692" y="122" width="272" height="164" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="828" y="206" text-anchor="middle" class="text-small">웨이트 운동 기록</text>
+    <rect x="692" y="294" width="272" height="164" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="828" y="378" text-anchor="middle" class="text-small">유산소 운동 기록</text>
+
+    <!-- Cardio -->
+    <rect class="card" x="1008" y="0" width="312" height="520"/>
+    <text x="1028" y="32" class="text-card-title">🏃‍♂️ 유산소 운동</text>
+    <rect x="1028" y="54" width="272" height="44" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="1164" y="82" text-anchor="middle" class="text-small">런닝머신 / 사이클 탭</text>
+    <rect x="1028" y="106" width="272" height="120" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="1164" y="146" text-anchor="middle" class="text-small">런닝머신: 각도/속도/시간</text>
+    <rect x="1028" y="234" width="272" height="120" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="1164" y="274" text-anchor="middle" class="text-small">사이클: 강도/RPM/시간</text>
+    <rect x="1028" y="364" width="272" height="44" rx="8" class="btn"/>
+    <text x="1164" y="390" text-anchor="middle" class="text-small">➕ 유산소 추가</text>
+  </g>
+
+  <!-- Meals card -->
+  <rect class="card" x="60" y="1000" width="1320" height="360"/>
+  <text x="92" y="1032" class="text-card-title">🍽️ 식사 기록</text>
+  <!-- three meal columns -->
+  <rect x="92" y="1054" width="392" height="270" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="112" y="1080" class="text-label">🌅 아침</text>
+  <rect x="524" y="1054" width="392" height="270" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="544" y="1080" class="text-label">☀️ 점심</text>
+  <rect x="956" y="1054" width="392" height="270" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="976" y="1080" class="text-label">🌙 저녁</text>
+
+  <!-- Charts card -->
+  <rect class="card" x="60" y="1384" width="1320" height="520"/>
+  <text x="92" y="1416" class="text-card-title">📊 통계 및 그래프</text>
+  <!-- tabs -->
+  <rect class="tab" x="92" y="1438" width="180" height="36" rx="8"/>
+  <rect class="tab" x="284" y="1438" width="180" height="36" rx="8"/>
+  <rect class="tab" x="476" y="1438" width="180" height="36" rx="8"/>
+  <rect class="tab" x="668" y="1438" width="180" height="36" rx="8"/>
+  <text x="182" y="1462" text-anchor="middle" class="text-small">칼로리 추이</text>
+  <text x="374" y="1462" text-anchor="middle" class="text-small">오늘 구성</text>
+  <text x="566" y="1462" text-anchor="middle" class="text-small">운동별 비교</text>
+  <text x="758" y="1462" text-anchor="middle" class="text-small">월간 트렌드</text>
+  <!-- chart canvas areas -->
+  <rect x="92" y="1490" width="1180" height="360" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+  <rect class="btn" x="700" y="1860" width="180" height="40" rx="8"/>
+  <text x="790" y="1886" text-anchor="middle" class="text-small">🔄 차트 새로고침</text>
+
+  <!-- FAB (bottom-right) -->
+  <g transform="translate(1260, 2080)">
+    <circle class="fab" cx="60" cy="60" r="60"/>
+    <text x="60" y="68" text-anchor="middle" class="text-title" fill="#ffffff">+</text>
+    <!-- mini actions -->
+    <rect x="-40" y="-10" width="200" height="32" rx="8" class="btn"/>
+    <text x="60" y="12" text-anchor="middle" class="text-small">초기화 / 저장 / 다운로드</text>
+  </g>
+
+  <!-- Footer note -->
+  <text x="720" y="2350" text-anchor="middle" class="text-small" fill="#9ca3af">현재 레이아웃의 데스크톱 기준 와이어프레임 (모바일: 세로 스택)</text>
+</svg>
+
